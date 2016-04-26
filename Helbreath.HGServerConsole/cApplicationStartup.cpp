@@ -4,7 +4,7 @@
 
 void cApplicationStartup::Startup()
 {
-	printf("Start...");
+	printf("Start...");	
 }
 
 cApplicationStartup::cApplicationStartup()

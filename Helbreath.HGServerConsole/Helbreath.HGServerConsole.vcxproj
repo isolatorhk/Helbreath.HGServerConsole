@@ -9,14 +9,6 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4918B998-13EF-44CF-9662-DAAF08045402}</ProjectGuid>
@@ -28,28 +20,15 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -62,23 +41,11 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -87,20 +54,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -115,24 +69,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,11 +79,91 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Astoria.cpp" />
     <ClCompile Include="cApplicationStartup.cpp" />
+    <ClCompile Include="char\Client.cpp" />
+    <ClCompile Include="char\combat.cpp" />
+    <ClCompile Include="char\Crafting.cpp" />
+    <ClCompile Include="char\GuildsMan.cpp" />
+    <ClCompile Include="char\item\BuildItem.cpp" />
+    <ClCompile Include="char\item\Fish.cpp" />
+    <ClCompile Include="char\item\Item.cpp" />
+    <ClCompile Include="char\item\Mineral.cpp" />
+    <ClCompile Include="char\item\Potion.cpp" />
+    <ClCompile Include="char\Magic.cpp" />
+    <ClCompile Include="char\Npc.cpp" />
+    <ClCompile Include="char\Quest.cpp" />
+    <ClCompile Include="char\Skill.cpp" />
+    <ClCompile Include="char\Unit.cpp" />
+    <ClCompile Include="DelayedEvents.cpp" />
+    <ClCompile Include="HG.cpp" />
+    <ClCompile Include="Ini.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="map\DynamicObject.cpp" />
+    <ClCompile Include="map\Map.cpp" />
+    <ClCompile Include="map\OccupyFlag.cpp" />
+    <ClCompile Include="map\StrategicPoint.cpp" />
+    <ClCompile Include="map\Teleport.cpp" />
+    <ClCompile Include="map\TeleportLoc.cpp" />
+    <ClCompile Include="map\Tile.cpp" />
+    <ClCompile Include="Misc.cpp" />
+    <ClCompile Include="net\Msg.cpp" />
+    <ClCompile Include="net\XSocket.cpp" />
+    <ClCompile Include="ui\Wmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Astoria.h" />
     <ClInclude Include="cApplicationStartup.h" />
+    <ClInclude Include="char\ActionID.h" />
+    <ClInclude Include="char\Client.h" />
+    <ClInclude Include="char\combat.h" />
+    <ClInclude Include="char\Crafting.h" />
+    <ClInclude Include="char\GuildsMan.h" />
+    <ClInclude Include="char\item\BuildItem.h" />
+    <ClInclude Include="char\item\Fish.h" />
+    <ClInclude Include="char\item\Item.h" />
+    <ClInclude Include="char\item\Mineral.h" />
+    <ClInclude Include="char\item\Potion.h" />
+    <ClInclude Include="char\Magic.h" />
+    <ClInclude Include="char\movement.h" />
+    <ClInclude Include="char\Npc.h" />
+    <ClInclude Include="char\Quest.h" />
+    <ClInclude Include="char\Skill.h" />
+    <ClInclude Include="char\SkillNum.h" />
+    <ClInclude Include="char\Unit.h" />
+    <ClInclude Include="DelayedEvents.h" />
+    <ClInclude Include="GlobalDef.h" />
+    <ClInclude Include="HG.h" />
+    <ClInclude Include="Ini.h" />
+    <ClInclude Include="map\DynamicObject.h" />
+    <ClInclude Include="map\DynamicObjectID.h" />
+    <ClInclude Include="map\Map.h" />
+    <ClInclude Include="map\OccupyFlag.h" />
+    <ClInclude Include="map\StrategicPoint.h" />
+    <ClInclude Include="map\Teleport.h" />
+    <ClInclude Include="map\TeleportLoc.h" />
+    <ClInclude Include="map\Tile.h" />
+    <ClInclude Include="Math.h" />
+    <ClInclude Include="Misc.h" />
+    <ClInclude Include="net\MessageIndex.h" />
+    <ClInclude Include="net\Msg.h" />
+    <ClInclude Include="net\UserMessages.h" />
+    <ClInclude Include="net\XSocket.h" />
+    <ClInclude Include="res\resource.h" />
+    <ClInclude Include="StrTok.h" />
+    <ClInclude Include="ui\winmain.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="libs\StrTok.lib" />
+    <Library Include="libs\WINMM.LIB" />
+    <Library Include="libs\WS2_32.LIB" />
+    <Library Include="libs\WSOCK32.LIB" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="res\resources.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

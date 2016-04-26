@@ -13,6 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="char">
+      <UniqueIdentifier>{bd8a9af2-e787-4974-9dd5-52e1427c43de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs">
+      <UniqueIdentifier>{cd5ccba4-2793-4b60-a6bf-680a6440a647}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="map">
+      <UniqueIdentifier>{f5c3f991-0835-4556-a568-fb7e74449ff2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="net">
+      <UniqueIdentifier>{6bef5484-fcf9-4f65-9680-e2a7e67022be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui">
+      <UniqueIdentifier>{707b0bf4-f7c1-4b33-8d1a-e8de3e2d1d9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="char\item">
+      <UniqueIdentifier>{a0af185e-7eb1-4df0-9f86-d75cdc98b482}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -21,10 +39,238 @@
     <ClCompile Include="cApplicationStartup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Astoria.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DelayedEvents.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HG.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ini.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Misc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="char\Client.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
+    <ClCompile Include="char\combat.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
+    <ClCompile Include="char\Crafting.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
+    <ClCompile Include="char\GuildsMan.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
+    <ClCompile Include="char\Magic.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
+    <ClCompile Include="char\Npc.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
+    <ClCompile Include="char\Quest.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
+    <ClCompile Include="char\Skill.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
+    <ClCompile Include="char\Unit.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
+    <ClCompile Include="char\item\BuildItem.cpp">
+      <Filter>char\item</Filter>
+    </ClCompile>
+    <ClCompile Include="char\item\Fish.cpp">
+      <Filter>char\item</Filter>
+    </ClCompile>
+    <ClCompile Include="char\item\Item.cpp">
+      <Filter>char\item</Filter>
+    </ClCompile>
+    <ClCompile Include="char\item\Mineral.cpp">
+      <Filter>char\item</Filter>
+    </ClCompile>
+    <ClCompile Include="char\item\Potion.cpp">
+      <Filter>char\item</Filter>
+    </ClCompile>
+    <ClCompile Include="map\DynamicObject.cpp">
+      <Filter>map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\Map.cpp">
+      <Filter>map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\OccupyFlag.cpp">
+      <Filter>map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\StrategicPoint.cpp">
+      <Filter>map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\Teleport.cpp">
+      <Filter>map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\TeleportLoc.cpp">
+      <Filter>map</Filter>
+    </ClCompile>
+    <ClCompile Include="map\Tile.cpp">
+      <Filter>map</Filter>
+    </ClCompile>
+    <ClCompile Include="net\Msg.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="net\XSocket.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\Wmain.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cApplicationStartup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Astoria.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DelayedEvents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalDef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HG.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ini.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Misc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StrTok.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="char\ActionID.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\Client.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\combat.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\Crafting.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\GuildsMan.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\Magic.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\movement.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\Npc.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\Quest.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\Skill.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\SkillNum.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\Unit.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\item\BuildItem.h">
+      <Filter>char\item</Filter>
+    </ClInclude>
+    <ClInclude Include="char\item\Fish.h">
+      <Filter>char\item</Filter>
+    </ClInclude>
+    <ClInclude Include="char\item\Item.h">
+      <Filter>char\item</Filter>
+    </ClInclude>
+    <ClInclude Include="char\item\Mineral.h">
+      <Filter>char\item</Filter>
+    </ClInclude>
+    <ClInclude Include="char\item\Potion.h">
+      <Filter>char\item</Filter>
+    </ClInclude>
+    <ClInclude Include="map\DynamicObject.h">
+      <Filter>map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\DynamicObjectID.h">
+      <Filter>map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\Map.h">
+      <Filter>map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\OccupyFlag.h">
+      <Filter>map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\StrategicPoint.h">
+      <Filter>map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\Teleport.h">
+      <Filter>map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\TeleportLoc.h">
+      <Filter>map</Filter>
+    </ClInclude>
+    <ClInclude Include="map\Tile.h">
+      <Filter>map</Filter>
+    </ClInclude>
+    <ClInclude Include="net\MessageIndex.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\Msg.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\UserMessages.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\XSocket.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\winmain.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="res\resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="libs\StrTok.lib">
+      <Filter>libs</Filter>
+    </Library>
+    <Library Include="libs\WINMM.LIB">
+      <Filter>libs</Filter>
+    </Library>
+    <Library Include="libs\WS2_32.LIB">
+      <Filter>libs</Filter>
+    </Library>
+    <Library Include="libs\WSOCK32.LIB">
+      <Filter>libs</Filter>
+    </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="res\resources.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
