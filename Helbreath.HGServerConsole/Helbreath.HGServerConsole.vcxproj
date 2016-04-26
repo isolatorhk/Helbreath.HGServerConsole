@@ -132,6 +132,7 @@
     <ClInclude Include="char\SkillNum.h" />
     <ClInclude Include="char\Unit.h" />
     <ClInclude Include="DelayedEvents.h" />
+    <ClInclude Include="englishitem.h" />
     <ClInclude Include="GlobalDef.h" />
     <ClInclude Include="HG.h" />
     <ClInclude Include="Ini.h" />
