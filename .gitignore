@@ -44,6 +44,8 @@
 *.out
 *.app
 
+!/.nuget/NuGet.exe
+
 # Visual C++ cache files
 ipch/
 *.aps
