@@ -263,9 +263,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="libs\libmysql.lib">
-      <Filter>libs</Filter>
-    </Library>
     <Library Include="libs\StrTok.lib">
       <Filter>libs</Filter>
     </Library>

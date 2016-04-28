@@ -165,7 +165,6 @@
     <ResourceCompile Include="res\resources.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="libs\libmysql.lib" />
     <Library Include="libs\StrTok.lib" />
     <Library Include="libs\WINMM.LIB" />
     <Library Include="libs\WS2_32.LIB" />
