@@ -157,16 +157,17 @@
     <ClInclude Include="ui\winmain.h" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="libs\StrTok.lib" />
-    <Library Include="libs\WINMM.LIB" />
-    <Library Include="libs\WS2_32.LIB" />
-    <Library Include="libs\WSOCK32.LIB" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="res\1.ico" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="res\resources.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="libs\libmysql.lib" />
+    <Library Include="libs\StrTok.lib" />
+    <Library Include="libs\WINMM.LIB" />
+    <Library Include="libs\WS2_32.LIB" />
+    <Library Include="libs\WSOCK32.LIB" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

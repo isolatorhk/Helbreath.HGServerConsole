@@ -16,9 +16,6 @@
     <Filter Include="char">
       <UniqueIdentifier>{bd8a9af2-e787-4974-9dd5-52e1427c43de}</UniqueIdentifier>
     </Filter>
-    <Filter Include="libs">
-      <UniqueIdentifier>{cd5ccba4-2793-4b60-a6bf-680a6440a647}</UniqueIdentifier>
-    </Filter>
     <Filter Include="map">
       <UniqueIdentifier>{f5c3f991-0835-4556-a568-fb7e74449ff2}</UniqueIdentifier>
     </Filter>
@@ -30,6 +27,9 @@
     </Filter>
     <Filter Include="char\item">
       <UniqueIdentifier>{a0af185e-7eb1-4df0-9f86-d75cdc98b482}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs">
+      <UniqueIdentifier>{9457af49-1e19-45c7-a983-f4b8b18c0d28}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -253,6 +253,19 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="res\resources.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="libs\libmysql.lib">
+      <Filter>libs</Filter>
+    </Library>
     <Library Include="libs\StrTok.lib">
       <Filter>libs</Filter>
     </Library>
@@ -265,15 +278,5 @@
     <Library Include="libs\WSOCK32.LIB">
       <Filter>libs</Filter>
     </Library>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="res\1.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="res\resources.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
   </ItemGroup>
 </Project>
