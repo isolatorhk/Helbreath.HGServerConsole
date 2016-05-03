@@ -1,6 +1,10 @@
 #pragma once
 
-#include "ui/winmain.h"
+#include <winsock2.h>
+#include <windows.h>
+#include "HG.h"
+
+#define WM_USER_TIMERSIGNAL		WM_USER + 500
 
 class cApplicationStartup
 {
@@ -8,5 +12,9 @@ public:
 	void Startup();
 	cApplicationStartup();
 	~cApplicationStartup();
+private:
+	HWND CreateBackgroundWindow();
+	void InitializeSockets();
+	void StartHGServer();
 };
 
