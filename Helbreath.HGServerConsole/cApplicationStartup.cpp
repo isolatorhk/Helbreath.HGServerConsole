@@ -108,7 +108,7 @@ void cApplicationStartup::Startup()
 	InitializeSockets();	
 	StartHGServer();
 
-	SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
+	SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS); // get know what it does!
 
 	/*G_mmTimer = _StartTimer(TICKDELAY);
 
