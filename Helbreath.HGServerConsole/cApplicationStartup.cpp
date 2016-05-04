@@ -1,9 +1,21 @@
 #include "cApplicationStartup.h"
 #include <stdio.h>
 
+HWND hwnd = NULL;
 CGame *g_gameCopy = NULL;
 XSocket *g_pListenSockCopy = NULL;
 bool G_bShutdownCopy = FALSE;
+MMRESULT G_mmTimerCopy = NULL;
+
+void OnAccept()
+{
+	g_gameCopy->bAccept(g_pListenSockCopy);
+}
+
+void CALLBACK _TimerFunc(UINT wID, UINT wUser, DWORD dwUSer, DWORD dw1, DWORD dw2)
+{
+	PostMessage(hwnd, WM_USER_TIMERSIGNAL, wID, NULL);
+}
 
 LRESULT CALLBACK BackgroundWindowProcess(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -112,7 +124,7 @@ void cApplicationStartup::Startup()
 
 	SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS); // get know what it does!
 
-	/*G_mmTimer = _StartTimer(TICKDELAY);*/	
+	G_mmTimerCopy = this->StartTimer(TICKDELAY);
 
 	while (1) {
 		if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) {
@@ -131,9 +143,20 @@ cApplicationStartup::cApplicationStartup()
 {
 }
 
-
 cApplicationStartup::~cApplicationStartup()
 {
+}
+
+MMRESULT cApplicationStartup::StartTimer(DWORD dwTime)
+{
+	TIMECAPS caps;
+	MMRESULT timerid;
+
+	timeGetDevCaps(&caps, sizeof(caps));
+	timeBeginPeriod(caps.wPeriodMin);
+	timerid = timeSetEvent(dwTime, 0, _TimerFunc, 0, (UINT)TIME_PERIODIC);
+
+	return timerid;
 }
 
 HWND cApplicationStartup::CreateBackgroundWindow()
@@ -200,7 +223,8 @@ void cApplicationStartup::InitializeSockets()
 
 void cApplicationStartup::StartHGServer()
 {	
-	HWND hwnd = CreateBackgroundWindow();
+	hwnd = CreateBackgroundWindow();
+
 	g_gameCopy = new CGame(hwnd);
 	if (g_gameCopy->bInit() == FALSE) {
 		printf("(!!!) STOPPED!");

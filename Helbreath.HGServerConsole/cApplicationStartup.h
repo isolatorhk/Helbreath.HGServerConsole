@@ -13,6 +13,7 @@ public:
 	cApplicationStartup();
 	~cApplicationStartup();
 private:
+	MMRESULT StartTimer(DWORD dwTime);
 	HWND CreateBackgroundWindow();
 	void InitializeSockets();
 	void StartHGServer();

@@ -85,7 +85,7 @@ void Initialize()
 
 	SetPriorityClass( GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS );
 
-	G_mmTimer = _StartTimer(TICKDELAY);
+	//G_mmTimer = _StartTimer(TICKDELAY);
 
 	G_pListenSock = new class XSocket(G_hWnd, SERVERSOCKETBLOCKLIMIT);
 	G_pListenSock->bListen(g_game->m_cGameServerAddr, g_game->m_iGameServerPort, WM_USER_ACCEPT);
@@ -160,28 +160,6 @@ void OnPaint()
 		g_game->DisplayInfo(hdc);
 
 	EndPaint(G_hWnd, &ps);
-}
-//=============================================================================
-void OnAccept()
-{
-	g_game->bAccept(G_pListenSock);
-}
-//=============================================================================
-void CALLBACK _TimerFunc(UINT wID, UINT wUser, DWORD dwUSer, DWORD dw1, DWORD dw2)
-{
-	PostMessage(G_hWnd, WM_USER_TIMERSIGNAL, wID, NULL);
-}
-//=============================================================================
-MMRESULT _StartTimer(DWORD dwTime)
-{
- TIMECAPS caps;
- MMRESULT timerid;
-
-	timeGetDevCaps(&caps, sizeof(caps));
-	timeBeginPeriod(caps.wPeriodMin);
-	timerid = timeSetEvent(dwTime, 0, _TimerFunc, 0, (UINT)TIME_PERIODIC);
-
-	return timerid;
 }
 //=============================================================================
 void _StopTimer(MMRESULT timerid)
