@@ -3,6 +3,7 @@
 
 CGame *g_gameCopy = NULL;
 XSocket *g_pListenSockCopy = NULL;
+bool G_bShutdownCopy = FALSE;
 
 LRESULT CALLBACK BackgroundWindowProcess(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -36,23 +37,23 @@ LRESULT CALLBACK BackgroundWindowProcess(HWND hWnd, UINT message, WPARAM wParam,
 		break;
 
 	case WM_KEYDOWN:
-		//g_game->OnKeyDown(wParam, lParam);
+		g_gameCopy->OnKeyDown(wParam, lParam);
 		return (DefWindowProc(hWnd, message, wParam, lParam));
 		break;
 
 	case WM_KEYUP:
-		//g_game->OnKeyUp(wParam, lParam);
+		g_gameCopy->OnKeyUp(wParam, lParam);
 		return (DefWindowProc(hWnd, message, wParam, lParam));
 		break;
 
 	case WM_USER_STARTGAMESIGNAL:
-		//g_game->OnStartGameSignal();
+		g_gameCopy->OnStartGameSignal();
 		break;
 
 	case WM_USER_TIMERSIGNAL:
-		/*if (G_bShutdown == FALSE) {
-			g_game->OnTimer(NULL);
-		}*/
+		if (!G_bShutdownCopy) {
+			g_gameCopy->OnTimer(NULL);
+		}
 		break;
 
 	case WM_USER_ACCEPT:
@@ -68,14 +69,14 @@ LRESULT CALLBACK BackgroundWindowProcess(HWND hWnd, UINT message, WPARAM wParam,
 		break;
 
 	case WM_DESTROY:
-		//G_bShutdown = TRUE;
+		G_bShutdownCopy = TRUE;
 		OnDestroy();
 		break;
 
 	case WM_CLOSE:
-		/*if (g_game->bOnClose() == TRUE) {
+		if (g_gameCopy->bOnClose()) {
 			return (DefWindowProc(hWnd, message, wParam, lParam));
-		}*/
+		}
 		//G_iQuitProgramCount++;
 		//if (G_iQuitProgramCount >= 2) {
 		//	return (DefWindowProc(hWnd, message, wParam, lParam));
@@ -83,17 +84,17 @@ LRESULT CALLBACK BackgroundWindowProcess(HWND hWnd, UINT message, WPARAM wParam,
 		break;
 
 	default:
-		/*if (G_bShutdown == TRUE) {
+		if (G_bShutdownCopy) {
 			break;
-		}*/
+		}
 		if (message == WM_ONWEBSOCKETEVENT) {
-			//g_game->OnWebSocketEvent(message, wParam, lParam);
+			g_gameCopy->OnWebSocketEvent(message, wParam, lParam);
 		}
 		if ((message >= WM_ONLOGSOCKETEVENT + 1) && (message <= WM_ONLOGSOCKETEVENT + MAXSUBLOGSOCK)) {
-			//g_game->OnSubLogSocketEvent(message, wParam, lParam);
+			g_gameCopy->OnSubLogSocketEvent(message, wParam, lParam);
 		}
 		if ((message >= WM_ONCLIENTSOCKETEVENT) && (message < WM_ONCLIENTSOCKETEVENT + MAXCLIENTS)) {
-			//g_game->OnClientSocketEvent(message, wParam, lParam);
+			g_gameCopy->OnClientSocketEvent(message, wParam, lParam);
 		}
 		return (DefWindowProc(hWnd, message, wParam, lParam));
 	}
