@@ -6,7 +6,7 @@
 #include "combat.h"
 #include "..\..\shared\NetMessages.h"
 
-extern class CGame *   g_game;
+extern class CGame *   g_gameCopy;
 extern char            g_cTxt[512];
 extern class CClient ** g_clientList;
 extern class CNpc **	g_npcList;
@@ -349,12 +349,12 @@ void CClient::SetStr(int str, bool check)
 		if(m_iHP > GetMaxHP())
 		{
 			m_iHP = GetMaxHP();
-			g_game->SendNotifyMsg(NULL, m_handle, NOTIFY_HP, NULL, NULL, NULL, NULL);
+			g_gameCopy->SendNotifyMsg(NULL, m_handle, NOTIFY_HP, NULL, NULL, NULL, NULL);
 		}
 		if(m_iSP > GetMaxSP())
 		{
 			m_iSP = GetMaxSP();
-			g_game->SendNotifyMsg(NULL, m_handle, NOTIFY_SP, NULL, NULL, NULL, NULL);
+			g_gameCopy->SendNotifyMsg(NULL, m_handle, NOTIFY_SP, NULL, NULL, NULL, NULL);
 		}
 	}
 }
@@ -365,7 +365,7 @@ void CClient::SetMag(int mag)
 	if(m_iMP > GetMaxMP())
 	{
 		m_iMP = GetMaxMP();
-		g_game->SendNotifyMsg(NULL, m_handle, NOTIFY_MP, NULL, NULL, NULL, NULL);
+		g_gameCopy->SendNotifyMsg(NULL, m_handle, NOTIFY_MP, NULL, NULL, NULL, NULL);
 	}
 }
 
@@ -377,7 +377,7 @@ void CClient::SetInt(int __int, bool check)
 		if(m_iMP > GetMaxMP())
 		{
 			m_iMP = GetMaxMP();
-			g_game->SendNotifyMsg(NULL, m_handle, NOTIFY_MP, NULL, NULL, NULL, NULL);
+			g_gameCopy->SendNotifyMsg(NULL, m_handle, NOTIFY_MP, NULL, NULL, NULL, NULL);
 		}
 	}
 }
@@ -396,12 +396,12 @@ void CClient::SetAngelStr(int str)
 	if(m_iHP > GetMaxHP())
 	{
 		m_iHP = GetMaxHP();
-		g_game->SendNotifyMsg(NULL, m_handle, NOTIFY_HP, NULL, NULL, NULL, NULL);
+		g_gameCopy->SendNotifyMsg(NULL, m_handle, NOTIFY_HP, NULL, NULL, NULL, NULL);
 	}
 	if(m_iSP > GetMaxSP())
 	{
 		m_iSP = GetMaxSP();
-		g_game->SendNotifyMsg(NULL, m_handle, NOTIFY_SP, NULL, NULL, NULL, NULL);
+		g_gameCopy->SendNotifyMsg(NULL, m_handle, NOTIFY_SP, NULL, NULL, NULL, NULL);
 	}
 /*	Done client-side.
 	for (short sItemIndex = 0; sItemIndex < MAXITEMS; sItemIndex++)
@@ -409,7 +409,7 @@ void CClient::SetAngelStr(int str)
 			(m_bIsItemEquipped[sItemIndex] == TRUE))
 		{
 			if(m_pItemList[sItemIndex]->m_wWeight/100 > GetStr())
-				g_game->ReleaseItemHandler(m_handle, sItemIndex, TRUE);
+				g_gameCopy->ReleaseItemHandler(m_handle, sItemIndex, TRUE);
 		}*/
 }
 void CClient::SetAngelDex(int dex)
@@ -422,7 +422,7 @@ void CClient::SetAngelInt(int __int)
 	if(m_iMP > GetMaxMP())
 	{
 		m_iMP = GetMaxMP();
-		g_game->SendNotifyMsg(NULL, m_handle, NOTIFY_MP, NULL, NULL, NULL, NULL);
+		g_gameCopy->SendNotifyMsg(NULL, m_handle, NOTIFY_MP, NULL, NULL, NULL, NULL);
 	}
 }
 void CClient::SetAngelMag(int mag)
@@ -431,7 +431,7 @@ void CClient::SetAngelMag(int mag)
 	if(m_iMP > GetMaxMP())
 	{
 		m_iMP = GetMaxMP();
-		g_game->SendNotifyMsg(NULL, m_handle, NOTIFY_MP, NULL, NULL, NULL, NULL);
+		g_gameCopy->SendNotifyMsg(NULL, m_handle, NOTIFY_MP, NULL, NULL, NULL, NULL);
 	}
 }
 
@@ -509,7 +509,7 @@ bool CClient::CheckTotalSkillMasteryPoints(int iSkill)
 						if (m_iHitRatio < 0) m_iHitRatio = 0;
 					}
 				}
-				g_game->SendNotifyMsg(NULL, m_handle, NOTIFY_SKILL, sDownSkillIndex, m_cSkillMastery[sDownSkillIndex], NULL, NULL);
+				g_gameCopy->SendNotifyMsg(NULL, m_handle, NOTIFY_SKILL, sDownSkillIndex, m_cSkillMastery[sDownSkillIndex], NULL, NULL);
 			}
 			else {
 				return FALSE;
@@ -702,7 +702,7 @@ void CClient::AddHP(long hp)
 	int maxHP = GetMaxHP();
 	m_iHP += hp; 
 	if (m_iHP > maxHP) m_iHP = maxHP;
-	g_game->SendNotifyMsg(NULL, m_handle, NOTIFY_HP, NULL, NULL, NULL, NULL);
+	g_gameCopy->SendNotifyMsg(NULL, m_handle, NOTIFY_HP, NULL, NULL, NULL, NULL);
 }
 int CClient::GetPoisonResistRatio() {
 	return m_cSkillMastery[SKILL_POISONRES] + m_iAddPR;
@@ -826,7 +826,7 @@ void CClient::SkillUp(skillIndexes skillindex, int skillups) {
 			}
 			CheckTotalSkillMasteryPoints(skillindex);
 			// notify of the skillup
-			g_game->SendNotifyMsg(NULL, this->m_handle, NOTIFY_SKILL, skillindex, m_cSkillMastery[skillindex], NULL, NULL);
+			g_gameCopy->SendNotifyMsg(NULL, this->m_handle, NOTIFY_SKILL, skillindex, m_cSkillMastery[skillindex], NULL, NULL);
 			return;
 		} // if not, we ignore it
 	} else { // we get a lil closer to skill up
@@ -854,11 +854,11 @@ void CClient::KilledHandler(int iAttackerH, char cAttackerType, short sDamage)
 
 	if (m_isExchangeMode == TRUE) {
 		iExH = m_exchangeH;
-		g_game->_ClearExchangeStatus(iExH);
-		g_game->_ClearExchangeStatus(m_handle);
+		g_gameCopy->_ClearExchangeStatus(iExH);
+		g_gameCopy->_ClearExchangeStatus(m_handle);
 	}
 
-	g_game->RemoveFromTarget(m_handle, OWNERTYPE_PLAYER);
+	g_gameCopy->RemoveFromTarget(m_handle, OWNERTYPE_PLAYER);
 
 	ZeroMemory(cAttackerName, sizeof(cAttackerName));
 	switch (cAttackerType) {
@@ -875,19 +875,19 @@ void CClient::KilledHandler(int iAttackerH, char cAttackerType, short sDamage)
 		break;
 	}
 
-	g_game->SendNotifyMsg(NULL, m_handle, NOTIFY_KILLED, NULL, NULL, NULL, cAttackerName);
+	g_gameCopy->SendNotifyMsg(NULL, m_handle, NOTIFY_KILLED, NULL, NULL, NULL, cAttackerName);
 	if (cAttackerType == OWNERTYPE_PLAYER) {
 		sAttackerWeapon = ((g_clientList[iAttackerH]->m_sAppr2 & 0x0FF0) >> 4);
 	}
 	else sAttackerWeapon = 1;
-	g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, OBJECTDYING, sDamage, sAttackerWeapon, NULL);
+	g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, OBJECTDYING, sDamage, sAttackerWeapon, NULL);
 	g_mapList[m_cMapIndex]->ClearOwner(/*12,*/ m_handle, OWNERTYPE_PLAYER, m_sX, m_sY);
 	g_mapList[m_cMapIndex]->SetDeadOwner(m_handle, OWNERTYPE_PLAYER, m_sX, m_sY);
 
 	int itemInd;
-	if(g_game->m_astoria.get() && g_game->m_astoria->IsCapture() && (itemInd = HasItem(ITEM_RELIC)))
+	if(g_gameCopy->m_astoria.get() && g_gameCopy->m_astoria->IsCapture() && (itemInd = HasItem(ITEM_RELIC)))
 	{
-		g_game->DropItemHandler(m_handle, itemInd, 1, m_pItemList[itemInd]->m_cName, FALSE);
+		g_gameCopy->DropItemHandler(m_handle, itemInd, 1, m_pItemList[itemInd]->m_cName, FALSE);
 	}
 
 	if (g_mapList[m_cMapIndex]->m_cType == MAPTYPE_NOPENALTY_NOREWARD) return;
@@ -908,39 +908,39 @@ void CClient::KilledHandler(int iAttackerH, char cAttackerType, short sDamage)
 			if (m_iPKCount == 0) {
 
 			//	g_clientList[iAttackerH]->ApplyPKPenalty(m_handle);
-				g_game->EnemyKillRewardHandler(iAttackerH, m_handle);
+				g_gameCopy->EnemyKillRewardHandler(iAttackerH, m_handle);
 			}
 			else {
-				g_game->PK_KillRewardHandler(iAttackerH, m_handle);
+				g_gameCopy->PK_KillRewardHandler(iAttackerH, m_handle);
 			}
 		} 
 		else {
 			if (g_clientList[iAttackerH]->IsNeutral()) {
 				if (m_iPKCount == 0) {
 					//	g_clientList[iAttackerH]->ApplyPKPenalty(m_handle);
-					g_game->EnemyKillRewardHandler(iAttackerH, m_handle);
+					g_gameCopy->EnemyKillRewardHandler(iAttackerH, m_handle);
 				}
 				else {
 					g_clientList[iAttackerH]->ApplyPKPenalty(m_handle);
 				}
 			}
 			else {
-				if(g_game->m_astoria.get())
-					g_game->m_astoria->PlayerKill(g_clientList[iAttackerH], this);
+				if(g_gameCopy->m_astoria.get())
+					g_gameCopy->m_astoria->PlayerKill(g_clientList[iAttackerH], this);
 				
-				if (g_game->m_bHeldenianMode && g_mapList[m_cMapIndex]->m_bIsHeldenianMap) 
-					g_game->HeldenianPlayerKill(g_clientList[iAttackerH], this);
+				if (g_gameCopy->m_bHeldenianMode && g_mapList[m_cMapIndex]->m_bIsHeldenianMap) 
+					g_gameCopy->HeldenianPlayerKill(g_clientList[iAttackerH], this);
 
 				if (m_side == g_clientList[iAttackerH]->m_side) {
 					if (m_iPKCount == 0) {
 						g_clientList[iAttackerH]->ApplyPKPenalty(m_handle);
 					}
 					else {
-						g_game->PK_KillRewardHandler(iAttackerH, m_handle);
+						g_gameCopy->PK_KillRewardHandler(iAttackerH, m_handle);
 					}
 				}
 				else {
-					g_game->EnemyKillRewardHandler(iAttackerH, m_handle);
+					g_gameCopy->EnemyKillRewardHandler(iAttackerH, m_handle);
 				}
 			}
 		}
@@ -972,7 +972,7 @@ void CClient::KilledHandler(int iAttackerH, char cAttackerType, short sDamage)
 	}
 	else if (cAttackerType == OWNERTYPE_NPC) {
 
-		g_game->_bPKLog(PKLOG_BYNPC,(int) -1,m_handle,cAttackerName) ;
+		g_gameCopy->_bPKLog(PKLOG_BYNPC,(int) -1,m_handle,cAttackerName) ;
 
 		if (m_iPKCount == 0) {
 			// Innocent
@@ -1005,7 +1005,7 @@ void CClient::KilledHandler(int iAttackerH, char cAttackerType, short sDamage)
 							//testcode
 							wsprintf(g_cTxt, "Enemy Player Killed by Npc! Construction +%d", (m_iLevel / 2));
 							PutLogList(g_cTxt);
-							g_game->SendNotifyMsg(NULL, i, NOTIFY_CONSTRUCTIONPOINT, g_clientList[i]->m_iConstructionPoint, g_clientList[i]->m_iWarContribution, NULL, NULL);
+							g_gameCopy->SendNotifyMsg(NULL, i, NOTIFY_CONSTRUCTIONPOINT, g_clientList[i]->m_iConstructionPoint, g_clientList[i]->m_iWarContribution, NULL, NULL);
 							return;
 					}
 
@@ -1019,16 +1019,16 @@ void CClient::KilledHandler(int iAttackerH, char cAttackerType, short sDamage)
 					ip = (int*)cp;
 					*ip = (m_iLevel / 2);
 					cp += 4;
-					g_game->bStockMsgToGateServer(cData, 9);
+					g_gameCopy->bStockMsgToGateServer(cData, 9);
 			}
 		}
 	}
 	else if (cAttackerType == OWNERTYPE_PLAYER_INDIRECT) {
-		g_game->_bPKLog(PKLOG_BYOTHER,(int) -1,m_handle,NULL) ;
+		g_gameCopy->_bPKLog(PKLOG_BYOTHER,(int) -1,m_handle,NULL) ;
 		// m_iExp -= dice(1, 50);
 		// if (m_iExp < 0) m_iExp = 0;
 
-		// g_game->SendNotifyMsg(NULL, m_handle, NOTIFY_EXP, NULL, NULL, NULL, NULL);
+		// g_gameCopy->SendNotifyMsg(NULL, m_handle, NOTIFY_EXP, NULL, NULL, NULL, NULL);
 	}
 }
 
@@ -1038,22 +1038,22 @@ void CClient::ApplyCombatKilledPenalty(char cPenaltyLevel, bool bIsSAattacked, b
 
 	if (m_bIsInitComplete == FALSE) return;
 
-	if (g_game->m_bIsCrusadeMode) 
+	if (g_gameCopy->m_bIsCrusadeMode) 
 	{
 		DecPKCount();
 		return;
 	}
-	else if (g_game->m_bIsApocalypseMode && g_mapList[m_cMapIndex]->m_bIsApocalypseMap) 
+	else if (g_gameCopy->m_bIsApocalypseMode && g_mapList[m_cMapIndex]->m_bIsApocalypseMap) 
 	{
 		DecPKCount();
 		return;
 	}
-	else if (g_game->m_bHeldenianMode && g_mapList[m_cMapIndex]->m_bIsHeldenianMap) 
+	else if (g_gameCopy->m_bHeldenianMode && g_mapList[m_cMapIndex]->m_bIsHeldenianMap) 
 	{
 		DecPKCount();
 		return;
 	}
-	else if(g_game->m_astoria.get() && m_cMapIndex == g_game->m_iAstoriaMapIndex)
+	else if(g_gameCopy->m_astoria.get() && m_cMapIndex == g_gameCopy->m_iAstoriaMapIndex)
 	{
 		DecPKCount();	
 		return;
@@ -1070,7 +1070,7 @@ void CClient::ApplyCombatKilledPenalty(char cPenaltyLevel, bool bIsSAattacked, b
 		m_iExp -= iExp;
 		if (m_iExp < 0) m_iExp = 0;
 
-		g_game->SendNotifyMsg(NULL, m_handle, NOTIFY_EXP, NULL, NULL, NULL, NULL);
+		g_gameCopy->SendNotifyMsg(NULL, m_handle, NOTIFY_EXP, NULL, NULL, NULL, NULL);
 
 		if (m_bIsNeutral != TRUE) {
 #ifdef ITEMDROP
@@ -1104,7 +1104,7 @@ void CClient::PenaltyItemDrop(int iTotal, bool bIsSAattacked , bool bItemDrop)
 			if (m_pItemList[m_iAlterItemDropIndex]->m_wCurLifeSpan > 0)
 				m_pItemList[m_iAlterItemDropIndex]->m_wCurLifeSpan--;
 
-			g_game->DropItemHandler(m_handle, m_iAlterItemDropIndex, -1, m_pItemList[m_iAlterItemDropIndex]->m_cName);
+			g_gameCopy->DropItemHandler(m_handle, m_iAlterItemDropIndex, -1, m_pItemList[m_iAlterItemDropIndex]->m_cName);
 
 			m_iAlterItemDropIndex = -1;
 		}
@@ -1117,7 +1117,7 @@ void CClient::PenaltyItemDrop(int iTotal, bool bIsSAattacked , bool bItemDrop)
 					if (m_pItemList[m_iAlterItemDropIndex]->m_wCurLifeSpan > 0)
 						m_pItemList[m_iAlterItemDropIndex]->m_wCurLifeSpan--;
 
-					g_game->DropItemHandler(m_handle, m_iAlterItemDropIndex, -1, m_pItemList[m_iAlterItemDropIndex]->m_cName);
+					g_gameCopy->DropItemHandler(m_handle, m_iAlterItemDropIndex, -1, m_pItemList[m_iAlterItemDropIndex]->m_cName);
 					m_iAlterItemDropIndex = -1;
 					return;
 				}
@@ -1177,7 +1177,7 @@ PID_DROP:;
 			}
 			else if ((m_bIsLuckyEffect == TRUE) && (dice(1,10) == 5)) {
 			}
-			else g_game->DropItemHandler(m_handle, cItemIndex, -1, m_pItemList[cItemIndex]->m_cName);
+			else g_gameCopy->DropItemHandler(m_handle, cItemIndex, -1, m_pItemList[cItemIndex]->m_cName);
 	}
 }
 
@@ -1198,8 +1198,8 @@ void CClient::ApplyPKPenalty(short sVictimH)
 
 	IncPKCount();
 
-	g_game->_bPKLog(PKLOG_BYPK,m_handle,sVictimH,NULL) ;
-	g_game->m_stCityStatus[m_side].iCrimes++;
+	g_gameCopy->_bPKLog(PKLOG_BYPK,m_handle,sVictimH,NULL) ;
+	g_gameCopy->m_stCityStatus[m_side].iCrimes++;
 
 	m_reputation -= 5;
 
@@ -1211,7 +1211,7 @@ void CClient::ApplyPKPenalty(short sVictimH)
 		ZeroMemory(m_cLockedMapName, sizeof(m_cLockedMapName));
 		strcpy(m_cLockedMapName, sideMapJail[m_side]);
 		m_iLockedMapTime = 60*3;
-		g_game->RequestTeleportHandler(m_handle, 2, m_cLockedMapName, -1, -1);
+		g_gameCopy->RequestTeleportHandler(m_handle, 2, m_cLockedMapName, -1, -1);
 	}
 }
 
@@ -1274,12 +1274,12 @@ void CClient::DecPKCount()
 {
 	if (m_iPKCount > 0) {
 		m_iPKCount--;
-		g_game->SendNotifyMsg(NULL, m_handle, NOTIFY_PKPENALTY, NULL, NULL, NULL, NULL);
-		g_game->_bPKLog(PKLOG_REDUCECRIMINAL,(int) -1,m_handle,NULL);
+		g_gameCopy->SendNotifyMsg(NULL, m_handle, NOTIFY_PKPENALTY, NULL, NULL, NULL, NULL);
+		g_gameCopy->_bPKLog(PKLOG_REDUCECRIMINAL,(int) -1,m_handle,NULL);
 		if(m_iPKCount == 0)
 		{	
 			SetStatusFlag(STATUS_PK, FALSE);
-			g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
+			g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
 		}
 
 	}
@@ -1290,14 +1290,14 @@ void CClient::IncPKCount()
 	m_iPKCount++;
 	SetStatusFlag(STATUS_PK, TRUE);
 
-	g_game->SendNotifyMsg(NULL, m_handle, NOTIFY_PKPENALTY, NULL, NULL, NULL, NULL);
-	g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
+	g_gameCopy->SendNotifyMsg(NULL, m_handle, NOTIFY_PKPENALTY, NULL, NULL, NULL, NULL);
+	g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
 }
 
 void CClient::Notify(int iFromH, WORD wMsgType, DWORD sV1, DWORD sV2, DWORD sV3, char * pString, 
 	DWORD sV4, DWORD sV5, DWORD sV6, DWORD sV7, DWORD sV8, DWORD sV9, char * pString2) const
 {
-	g_game->SendNotifyMsg(iFromH, this->m_handle, wMsgType, sV1, sV2, sV3, pString, 
+	g_gameCopy->SendNotifyMsg(iFromH, this->m_handle, wMsgType, sV1, sV2, sV3, pString, 
 		sV4, sV5, sV6, sV7, sV8, sV9, pString2);
 }
 
@@ -1346,35 +1346,35 @@ float CClient::GetDropFactor() const
 }
  bool CClient::IsHeldWinner() const
 {
-	switch(g_game->m_iLastHeldenianType)
+	switch(g_gameCopy->m_iLastHeldenianType)
 	{
 	case 1:
-		return  (m_side == g_game->m_iHeldenianType1Winner);
+		return  (m_side == g_gameCopy->m_iHeldenianType1Winner);
 
 	case 2:
-		return  (m_side == g_game->m_iHeldenianType2Winner);
+		return  (m_side == g_gameCopy->m_iHeldenianType2Winner);
 	}
 	return FALSE;
 }
  bool CClient::IsHeldLoser() const
 {
-	switch(g_game->m_iLastHeldenianType)
+	switch(g_gameCopy->m_iLastHeldenianType)
 	{
 	case 1:
-		return  (m_side != g_game->m_iHeldenianType1Winner);
+		return  (m_side != g_gameCopy->m_iHeldenianType1Winner);
 
 	case 2:
-		return  (m_side != g_game->m_iHeldenianType2Winner);
+		return  (m_side != g_gameCopy->m_iHeldenianType2Winner);
 	}
 	return FALSE;
 }
 bool CClient::CheckNearbyFlags()
 {
-	if (!g_game->m_bHeldenianMode || g_game->m_iHeldenianType != 1 ||
-		m_cMapIndex != g_game->m_iBtFieldMapIndex)
+	if (!g_gameCopy->m_bHeldenianMode || g_gameCopy->m_iHeldenianType != 1 ||
+		m_cMapIndex != g_gameCopy->m_iBtFieldMapIndex)
 		return FALSE;
 
-	COccupyFlag ** flagList = g_mapList[g_game->m_iBtFieldMapIndex]->m_pOccupyFlag;
+	COccupyFlag ** flagList = g_mapList[g_gameCopy->m_iBtFieldMapIndex]->m_pOccupyFlag;
 	COccupyFlag * flag;
 	for (int i = 1; i < MAXOCCUPYFLAG; i++)
 	{

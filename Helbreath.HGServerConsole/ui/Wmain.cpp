@@ -45,7 +45,6 @@ DWORD			G_dwLogTime ;
 
 class XSocket * G_pListenSock = NULL;
 class XSocket * G_pLogSock    = NULL;
-class CGame *   g_game       = NULL;
 
 class CMap	**	g_mapList	= NULL;
 class CClient ** g_clientList = NULL;
@@ -74,10 +73,10 @@ void OnDestroy()
 	if (G_pListenSock != NULL) delete G_pListenSock;
 	if (G_pLogSock != NULL) delete G_pLogSock;
 
-	if (g_game != NULL) {
-		g_game->Quit();
-		delete g_game;
-	}
+	/*if (g_gameCopy != NULL) {
+		g_gameCopy->Quit();
+		delete g_gameCopy;
+	}*/
 
 	if (G_mmTimer != NULL) _StopTimer(G_mmTimer);
 	_TermWinsock();
@@ -130,8 +129,8 @@ void OnPaint()
              CurMsg --;
             }
 
-	if (g_game	!= NULL)
-		g_game->DisplayInfo(hdc);
+	/*if (g_gameCopy	!= NULL)
+		g_gameCopy->DisplayInfo(hdc);*/
 
 	EndPaint(G_hWnd, &ps);
 }

@@ -3,7 +3,7 @@
 #include "Unit.h"
 #include "../DelayedEvents.h"
 
-extern class CGame *   g_game;
+extern class CGame *   g_gameCopy;
 extern class CMagic ** g_magicConfigList;
 extern class CClient ** g_clientList;
 extern class CNpc **	g_npcList;
@@ -35,14 +35,14 @@ void Unit::SetStatusFlag(long flag, bool enabled)
 	else 
 		m_iStatus &= STATUS_ALL - flag;
 
-	g_game->SendEventToNearClient_TypeA(m_handle, m_ownerType, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
+	g_gameCopy->SendEventToNearClient_TypeA(m_handle, m_ownerType, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
 }
 
 void Unit::ToggleStatusFlag(long flag)
 {
 	m_iStatus ^= flag;	
 	
-	g_game->SendEventToNearClient_TypeA(m_handle, m_ownerType, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
+	g_gameCopy->SendEventToNearClient_TypeA(m_handle, m_ownerType, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
 }
 void Unit::RemoveInvisibility() {
 	SetMagicFlag(MAGICTYPE_INVISIBILITY, FALSE);
@@ -122,7 +122,7 @@ bool Unit::AddMagicEffect(short magicType, long effectTime, char kind)
 		this, NULL, NULL, NULL, kind, NULL, NULL);
 
 	if (IsPlayer())
-		g_game->SendNotifyMsg(NULL, m_handle, NOTIFY_MAGICEFFECTON, magicType, kind, NULL, NULL);
+		g_gameCopy->SendNotifyMsg(NULL, m_handle, NOTIFY_MAGICEFFECTON, magicType, kind, NULL, NULL);
 
 	SetMagicFlag(magicType, TRUE);
 	return TRUE;
@@ -134,7 +134,7 @@ bool Unit::RemoveMagicEffect(char magicType)
 		return FALSE;
 
 	if (IsPlayer())
-		g_game->SendNotifyMsg(NULL, m_handle, NOTIFY_MAGICEFFECTOFF, magicType, m_cMagicEffectStatus[magicType], NULL, NULL);
+		g_gameCopy->SendNotifyMsg(NULL, m_handle, NOTIFY_MAGICEFFECTOFF, magicType, m_cMagicEffectStatus[magicType], NULL, NULL);
 
 	SetMagicFlag(magicType, FALSE);
 	m_cMagicEffectStatus[magicType] = NULL;

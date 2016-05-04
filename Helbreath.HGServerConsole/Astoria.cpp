@@ -1,6 +1,6 @@
 #include "hg.h"
 
-extern class CGame *   g_game;
+extern class CGame *   g_gameCopy;
 extern class CMap	**	g_mapList;
 
 CAstoria::CAstoria(const EventType type) : _eventType(type)
@@ -19,7 +19,7 @@ CAstoria::CAstoria(const EventType type) : _eventType(type)
 
 	_shieldCount = MAXALTARS;
 
-	g_game->ShuffleAstoriaBasePos();
+	g_gameCopy->ShuffleAstoriaBasePos();
 
 	switch(_eventType)
 	{
@@ -28,7 +28,7 @@ CAstoria::CAstoria(const EventType type) : _eventType(type)
 		break;
 	}
 
-	g_game->CreateAstoriaFlags();
+	g_gameCopy->CreateAstoriaFlags();
 
 	m_beginTime = timeGetTime();
 }
@@ -42,7 +42,7 @@ CAstoria::~CAstoria(void)
 		break;
 	}
 
-	g_game->DeleteFlags();
+	g_gameCopy->DeleteFlags();
 }
 
 void CAstoria::PlayerGetRelic(CClient * player)
@@ -51,7 +51,7 @@ void CAstoria::PlayerGetRelic(CClient * player)
 	_relicHolder->SetStatusFlag(STATUS_RELICHOLDER, TRUE);
 	_relicHolder->RemoveMagicEffect(MAGICTYPE_INVISIBILITY);
 
-	g_game->NotifyRelicGrabbed(_relicHolder);
+	g_gameCopy->NotifyRelicGrabbed(_relicHolder);
 }
 
 void CAstoria::PlayerDropRelic(CClient * player)
@@ -67,7 +67,7 @@ void CAstoria::PlayerDropRelic(CClient * player)
 	if(_IsRelicInAltar())
 	{
 		_relicOwnedTime = timeGetTime();
-		g_game->NotifyRelicInAltar(_relicOwnedSide);
+		g_gameCopy->NotifyRelicInAltar(_relicOwnedSide);
 	}
 }
 
@@ -107,7 +107,7 @@ bool CAstoria::_IsRelicInAltar()
 	{
 		if(_relicPos == altarPos[i])
 		{
-			_relicOwnedSide = g_game->m_astoriaBasePos[i];
+			_relicOwnedSide = g_gameCopy->m_astoriaBasePos[i];
 			return TRUE;
 		}
 	}
@@ -117,11 +117,11 @@ bool CAstoria::_IsRelicInAltar()
 void CAstoria::_CaptureStart()
 {
 	_relic = new CItem(); 
-	g_game->_bInitItemAttr(_relic, ITEM_RELIC);
+	g_gameCopy->_bInitItemAttr(_relic, ITEM_RELIC);
 	_relicPos = relicStartPos;
 
-	g_mapList[g_game->m_iAstoriaMapIndex]->bSetItem(_relicPos.x, _relicPos.y, _relic);
-	g_game->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, COMMONTYPE_SETITEM, g_game->m_iAstoriaMapIndex,
+	g_mapList[g_gameCopy->m_iAstoriaMapIndex]->bSetItem(_relicPos.x, _relicPos.y, _relic);
+	g_gameCopy->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, COMMONTYPE_SETITEM, g_gameCopy->m_iAstoriaMapIndex,
 		_relicPos.x, _relicPos.y, _relic->m_sSprite, _relic->m_sSpriteFrame, _relic->m_cItemColor);
 }
 
@@ -131,15 +131,15 @@ void CAstoria::_CaptureEnd()
 	{
 		uint32 i = _relicHolder->HasItem(ITEM_RELIC);
 		if(i != ITEM_NONE)
-			g_game->DropItemHandler(_relicHolder->m_handle, i, 1, _relicHolder->m_pItemList[i]->m_cName, FALSE);
+			g_gameCopy->DropItemHandler(_relicHolder->m_handle, i, 1, _relicHolder->m_pItemList[i]->m_cName, FALSE);
 	}
 
 	short nextItemSprite, nextItemSpriteFrame;
 	char  nextItemColor;
 
-	g_mapList[g_game->m_iAstoriaMapIndex]->pGetItem(_relicPos.x, _relicPos.y, &nextItemSprite, &nextItemSpriteFrame, &nextItemColor);
+	g_mapList[g_gameCopy->m_iAstoriaMapIndex]->pGetItem(_relicPos.x, _relicPos.y, &nextItemSprite, &nextItemSpriteFrame, &nextItemColor);
 
-	g_game->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, COMMONTYPE_SETITEM, g_game->m_iAstoriaMapIndex,
+	g_gameCopy->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, COMMONTYPE_SETITEM, g_gameCopy->m_iAstoriaMapIndex,
 		_relicPos.x, _relicPos.y, nextItemSprite, nextItemSpriteFrame, nextItemColor);
 
 	if(_relic)
@@ -159,5 +159,5 @@ void CAstoria::PlayerKill(CClient * killer, CClient * victim)
 		_sideStats[killer->m_side].kills++;
 	_sideStats[victim->m_side].deaths++;
 
-	g_game->NotifyEventStats(_sideStats);
+	g_gameCopy->NotifyEventStats(_sideStats);
 }

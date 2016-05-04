@@ -8,7 +8,7 @@
 #include "combat.h"
 #include "../DelayedEvents.h"
 
-extern class CGame *   g_game;
+extern class CGame *   g_gameCopy;
 extern char            g_cTxt[512];
 extern class CMap	**	g_mapList;
 extern class CClient ** g_clientList;
@@ -16,7 +16,7 @@ extern class CNpc **	g_npcList;
 extern class CNpc **   g_npcConfigList;
 extern class CMagic ** g_magicConfigList;
 
-class CMisc  *  g_misc = &g_game->m_Misc;
+class CMisc  *  g_misc = &g_gameCopy->m_Misc;
 
 
 extern char _tmp_cTmpDirX[9];
@@ -385,7 +385,7 @@ void CNpc::behavior_move()
 		else sDistance = abs(sY - dY);
 
 		if (sDistance >= 3) {
-			cDir = g_game->cGetNextMoveDir(sX, sY, dX, dY, m_cMapIndex, m_cTurn, &m_tmp_iError);
+			cDir = g_gameCopy->cGetNextMoveDir(sX, sY, dX, dY, m_cMapIndex, m_cTurn, &m_tmp_iError);
 			if (cDir == 0) {
 			}
 			else {
@@ -396,13 +396,13 @@ void CNpc::behavior_move()
 				m_sX   = dX;
 				m_sY   = dY;
 				m_cDir = cDir;
-				g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTMOVE, NULL, NULL, NULL);
+				g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTMOVE, NULL, NULL, NULL);
 			}
 		}
 	}
 	else 
 	{
-		cDir = g_game->cGetNextMoveDir(m_sX, m_sY, 
+		cDir = g_gameCopy->cGetNextMoveDir(m_sX, m_sY, 
 			m_dX, m_dY, 
 			m_cMapIndex, m_cTurn, &m_tmp_iError);
 
@@ -417,7 +417,7 @@ void CNpc::behavior_move()
 			m_sX   = dX;
 			m_sY   = dY;
 			m_cDir = cDir;
-			g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTMOVE, NULL, NULL, NULL);
+			g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTMOVE, NULL, NULL, NULL);
 		}
 	}
 }
@@ -439,7 +439,7 @@ void CNpc::behavior_stop()
 				bFlag = behavior_manaCollector();
 
 				if (bFlag == TRUE) {
-					g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, m_sX, m_sY, 1); 
+					g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, m_sX, m_sY, 1); 
 				}
 			}
 			break;
@@ -450,7 +450,7 @@ void CNpc::behavior_stop()
 				bFlag = behavior_detector();
 
 				if (bFlag == TRUE) {
-					g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, m_sX, m_sY, 1); 
+					g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, m_sX, m_sY, 1); 
 				}
 			}
 			break;
@@ -590,7 +590,7 @@ void CNpc::behavior_attack()
 			case 89: // AGT
 				if (target) { 
 				if(m_cTargetType == OWNERTYPE_PLAYER) {
-				g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 1); 
+				g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 1); 
 				m_iMagicHitRatio = 1000;
 				magicHandler(dX, dY, 61);
 					}
@@ -599,7 +599,7 @@ void CNpc::behavior_attack()
 			case 87: // CT
 				if (target) { 
 				if(m_cTargetType == OWNERTYPE_PLAYER) {
-				g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, m_sX + _tmp_cTmpDirX[cDir], m_sY + _tmp_cTmpDirY[cDir], 2); 				
+				g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, m_sX + _tmp_cTmpDirX[cDir], m_sY + _tmp_cTmpDirY[cDir], 2); 				
 				Unit *target = GetUnit(m_iTargetIndex,OWNERTYPE_PLAYER);
 				calculateAttackEffect(target, this, dX, dY, 2);
 					}
@@ -607,13 +607,13 @@ void CNpc::behavior_attack()
 				break;	
 			case 36: // Crossbow Guard Tower
 				{
-				g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, m_sX + _tmp_cTmpDirX[cDir], m_sY + _tmp_cTmpDirY[cDir], 2); 				
+				g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, m_sX + _tmp_cTmpDirX[cDir], m_sY + _tmp_cTmpDirY[cDir], 2); 				
 				Unit *target = GetUnit(m_iTargetIndex,m_cTargetType);
 				calculateAttackEffect(target, this, dX, dY, 2);
 				} break;
 
 			case 37: // Cannon Guard Tower: 
-				g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 1); 
+				g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 1); 
 				m_iMagicHitRatio = 1000;
 				magicHandler(dX, dY, 61);
 				break;
@@ -622,12 +622,12 @@ void CNpc::behavior_attack()
 
 		else {
 			if (m_cMagicLevel == 11) {
-				g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, m_sX, m_sY, 1); 
+				g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, m_sX, m_sY, 1); 
 				m_iMagicHitRatio = 1000;
 				magicHandler(m_sX, m_sY, 75);
 			} else 
 			{
-				g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, m_sX + _tmp_cTmpDirX[cDir], m_sY + _tmp_cTmpDirY[cDir], 1); 
+				g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, m_sX + _tmp_cTmpDirX[cDir], m_sY + _tmp_cTmpDirY[cDir], 1); 
 				Unit *target = GetUnit(m_iTargetIndex,m_cTargetType);
 				calculateAttackEffect(target, this, dX, dY, 1); 
 			}
@@ -790,7 +790,7 @@ void CNpc::behavior_attack()
 						}
 					}
 
-					g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, m_sX + _tmp_cTmpDirX[cDir], m_sY + _tmp_cTmpDirY[cDir], 1); 
+					g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, m_sX + _tmp_cTmpDirX[cDir], m_sY + _tmp_cTmpDirY[cDir], 1); 
 					magicHandler(dX, dY, iMagicType);
 					m_dwTime = dwTime; 
 					return;
@@ -808,7 +808,7 @@ void CNpc::behavior_attack()
 					iMagicType = 0;
 
 				if (iMagicType != -1) {
-					g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, m_sX + _tmp_cTmpDirX[cDir], m_sY + _tmp_cTmpDirY[cDir], 1); 
+					g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, m_sX + _tmp_cTmpDirX[cDir], m_sY + _tmp_cTmpDirY[cDir], 1); 
 					magicHandler(dX, dY, iMagicType);
 					m_dwTime = dwTime; 
 					return;
@@ -827,7 +827,7 @@ void CNpc::behavior_attack()
 				case 89: // AGT
 						if (target) { 
 						if(m_cTargetType == OWNERTYPE_PLAYER) {
-						g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 1); 
+						g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 1); 
 						m_iMagicHitRatio = 1000;
 						magicHandler(dX, dY, 61);
 							}
@@ -836,7 +836,7 @@ void CNpc::behavior_attack()
 				case 87: // CT
 						if (target) { 
 						if(m_cTargetType == OWNERTYPE_PLAYER) {
-						g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 2); 
+						g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 2); 
 						Unit *target = GetUnit(m_iTargetIndex,m_cTargetType);
 						calculateAttackEffect(target, this, dX, dY, 2);
 							}
@@ -844,13 +844,13 @@ void CNpc::behavior_attack()
 						break;
 					case 36: // Crossbow Guard Tower
 						{
-							g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 2); 
+							g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 2); 
 							Unit *target = GetUnit(m_iTargetIndex,m_cTargetType);
 							calculateAttackEffect(target, this, dX, dY, 2);						
 						} break;
 
 					case 37: // Cannon Guard Tower
-						g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 1); 
+						g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 1); 
 						m_iMagicHitRatio = 1000;
 						magicHandler(dX, dY, 61);
 						break;
@@ -859,14 +859,14 @@ void CNpc::behavior_attack()
 				else {
 					switch (m_sType) {
 					case 51: 
-						g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 1); 
+						g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 1); 
 						m_iMagicHitRatio = 1000;
 						magicHandler(dX, dY, 61);
 						break;
 
 					case 54: // Dark Elf
 						{
-							g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 2); 
+							g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 2); 
 							Unit *target = GetUnit(m_iTargetIndex,m_cTargetType);
 							calculateAttackEffect(target, this, dX, dY, 2);
 						} break;
@@ -885,14 +885,14 @@ void CNpc::behavior_attack()
 										target, NULL, NULL, NULL, 1, NULL, NULL);
 								}
 							}
-							g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 20); 
+							g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 20); 
 							Unit *target = GetUnit(m_iTargetIndex, m_cTargetType);
 							calculateAttackEffect(target, this, dX, dY, 20);
 						}
 						break;
 
 					default:
-						g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 20);
+						g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTATTACK, dX, dY, 20);
 						calculateAttackEffect(GetUnit(m_iTargetIndex, m_cTargetType), this, dX, dY, 20);
 						break;
 					}
@@ -924,7 +924,7 @@ NBA_CHASE:;
 		m_iAttackCount = 0;
 
 		{
-			cDir = g_game->cGetNextMoveDir(sX, sY, dX, dY,m_cMapIndex, m_cTurn, &m_tmp_iError);
+			cDir = g_gameCopy->cGetNextMoveDir(sX, sY, dX, dY,m_cMapIndex, m_cTurn, &m_tmp_iError);
 			if (cDir == 0) {
 				return;
 			}
@@ -935,7 +935,7 @@ NBA_CHASE:;
 			m_sX   = dX;
 			m_sY   = dY;
 			m_cDir = cDir;
-			g_game->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTMOVE, NULL, NULL, NULL);
+			g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTMOVE, NULL, NULL, NULL);
 		}
 	}
 }
@@ -974,7 +974,7 @@ bool CNpc::behavior_manaCollector()
 							if (g_clientList[sOwnerH]->m_iMP > iMaxMP) 
 								g_clientList[sOwnerH]->m_iMP = iMaxMP;
 
-							g_game->SendNotifyMsg(NULL, sOwnerH, NOTIFY_MP, NULL, NULL, NULL, NULL);
+							g_gameCopy->SendNotifyMsg(NULL, sOwnerH, NOTIFY_MP, NULL, NULL, NULL, NULL);
 						}
 					}
 					break;
@@ -982,11 +982,11 @@ bool CNpc::behavior_manaCollector()
 				case OWNERTYPE_NPC:
 					if ((g_npcList[sOwnerH]->m_sType == NPC_MANASTONE) && (g_npcList[sOwnerH]->m_iV1 > 0)) {
 						if (g_npcList[sOwnerH]->m_iV1 >= 3) {
-							g_game->m_iCollectedMana[m_side] += 3;
+							g_gameCopy->m_iCollectedMana[m_side] += 3;
 							g_npcList[sOwnerH]->m_iV1 -= 3;
 							bRet = TRUE;
 						} else {
-							g_game->m_iCollectedMana[m_side] += g_npcList[sOwnerH]->m_iV1; 
+							g_gameCopy->m_iCollectedMana[m_side] += g_npcList[sOwnerH]->m_iV1; 
 							g_npcList[sOwnerH]->m_iV1 = 0;
 							bRet = TRUE;
 						}
@@ -1004,10 +1004,10 @@ void CNpc::behavior_grandMagicGenerator()
 {
 	if(IsNeutral()) return;
 	
-	if (g_game->m_mana[m_side] > g_game->m_iMaxGMGMana) {
-		g_game->_GrandMagicLaunchMsgSend(1, m_side);
-		g_game->MeteorStrikeMsgHandler(m_side);
-		g_game->m_mana[m_side] = 0;
+	if (g_gameCopy->m_mana[m_side] > g_gameCopy->m_iMaxGMGMana) {
+		g_gameCopy->_GrandMagicLaunchMsgSend(1, m_side);
+		g_gameCopy->MeteorStrikeMsgHandler(m_side);
+		g_gameCopy->m_mana[m_side] = 0;
 	}
 }
 
@@ -1201,7 +1201,7 @@ void CNpc::targetSearch(short * pTarget, char * pTargetType)
 					iPKCount    = 0;
 
 					if (m_sType == 21) {
-						if (g_game->getPlayerNum(g_npcList[sOwner]->m_cMapIndex, dX, dY, 2) != 0) {
+						if (g_gameCopy->getPlayerNum(g_npcList[sOwner]->m_cMapIndex, dX, dY, 2) != 0) {
 							sOwner     = NULL;
 							cOwnerType = NULL;
 						}
@@ -1289,7 +1289,7 @@ void CNpc::magicHandler(short dX, short dY, short sType) // magicHandler
 
 	iResult = m_iMagicHitRatio;
 
-	iWhetherBonus = g_game->iGetWhetherMagicBonusEffect(sType, g_mapList[m_cMapIndex]->m_cWhetherStatus);
+	iWhetherBonus = g_gameCopy->iGetWhetherMagicBonusEffect(sType, g_mapList[m_cMapIndex]->m_cWhetherStatus);
 
 	spell = g_magicConfigList[sType];
 	iMagicAttr = spell->m_iAttribute;
@@ -1313,7 +1313,7 @@ void CNpc::magicHandler(short dX, short dY, short sType) // magicHandler
 						target = g_mapList[m_cMapIndex]->GetOwner(ix, iy);
 						if (target){
 							target->RemoveMagicEffect(spell->m_sType);
-							g_game->RemoveFromTarget(target);
+							g_gameCopy->RemoveFromTarget(target);
 						}
 					}
 				break;
@@ -1340,13 +1340,13 @@ void CNpc::magicHandler(short dX, short dY, short sType) // magicHandler
 				for(int pNo=0; pNo < 5; pNo++){
 					g_mapList[m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, tX+crossPnts[pNo][0], tY+crossPnts[pNo][1]);
 					if (CheckResistingMagicSuccess(m_cDir, GetUnit(sOwnerH, cOwnerType), iResult) == FALSE)
-						g_game->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
+						g_gameCopy->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
 
 					g_mapList[m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, tX+crossPnts[pNo][0], tY+crossPnts[pNo][1]);
 					if ( (cOwnerType == OWNERTYPE_PLAYER) && (g_clientList[sOwnerH] != NULL) &&
 						(g_clientList[sOwnerH]->m_iHP > 0) ) {
 							if (CheckResistingMagicSuccess(m_cDir, GetUnit(sOwnerH, cOwnerType), iResult) == FALSE)
-								g_game->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARRANGE] + iWhetherBonus, FALSE, iMagicAttr);
+								g_gameCopy->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARRANGE] + iWhetherBonus, FALSE, iMagicAttr);
 					}
 				}
 				if ( (abs(tX - dX) <= 1) && (abs(tY - dY) <= 1)) break;
@@ -1356,26 +1356,26 @@ void CNpc::magicHandler(short dX, short dY, short sType) // magicHandler
 				for (ix = dX - spell->m_hRange; ix <= dX + spell->m_hRange; ix++) {
 					g_mapList[m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 					if (CheckResistingMagicSuccess(m_cDir, GetUnit(sOwnerH, cOwnerType), iResult) == FALSE)
-						g_game->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARRANGE] + iWhetherBonus, FALSE, iMagicAttr);
+						g_gameCopy->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARRANGE] + iWhetherBonus, FALSE, iMagicAttr);
 
 					g_mapList[m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
 					if ( (cOwnerType == OWNERTYPE_PLAYER) && (g_clientList[sOwnerH] != NULL) &&
 						(g_clientList[sOwnerH]->m_iHP > 0) ) {
 							if (CheckResistingMagicSuccess(m_cDir, GetUnit(sOwnerH, cOwnerType), iResult) == FALSE)
-								g_game->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARRANGE] + iWhetherBonus, FALSE, iMagicAttr);
+								g_gameCopy->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARRANGE] + iWhetherBonus, FALSE, iMagicAttr);
 					}
 				}
 
 			// dX, dY
 			g_mapList[m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 			if (CheckResistingMagicSuccess(m_cDir, GetUnit(sOwnerH, cOwnerType), iResult) == FALSE)
-				g_game->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, FALSE, iMagicAttr);
+				g_gameCopy->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, FALSE, iMagicAttr);
 
 			g_mapList[m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, dX, dY);
 			if ( (cOwnerType == OWNERTYPE_PLAYER) && (g_clientList[sOwnerH] != NULL) &&
 				(g_clientList[sOwnerH]->m_iHP > 0) ) {
 					if (CheckResistingMagicSuccess(m_cDir, GetUnit(sOwnerH, cOwnerType), iResult) == FALSE)
-						g_game->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, FALSE, iMagicAttr);
+						g_gameCopy->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, FALSE, iMagicAttr);
 			}
 			break;
 		case MAGICTYPE_ICE_LINEAR:
@@ -1389,14 +1389,14 @@ void CNpc::magicHandler(short dX, short dY, short sType) // magicHandler
 				for(int pNo=0; pNo < 5; pNo++){
 					target = g_mapList[m_cMapIndex]->GetOwner(tX+crossPnts[pNo][0], tY+crossPnts[pNo][1]);
 					if (target && CheckResistingMagicSuccess(m_cDir, target, iResult) == FALSE) {
-						g_game->Effect_Damage_Spot_DamageMove(m_handle, OWNERTYPE_NPC, target->m_handle, target->m_ownerType, sX, sY, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
+						g_gameCopy->Effect_Damage_Spot_DamageMove(m_handle, OWNERTYPE_NPC, target->m_handle, target->m_ownerType, sX, sY, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
 						if(target && !target->IsDead() && checkResistingIceSuccess(m_cDir, target, iResult) == FALSE)
 							target->AddMagicEffect(spell->m_sType, spell->m_sValue[MAGICV_ICEDURATION]);
 					}
 
 					target = g_mapList[m_cMapIndex]->GetDeadOwner(tX+crossPnts[pNo][0], tY+crossPnts[pNo][1]);
 					if (target && !target->IsDead() && target->IsPlayer() && CheckResistingMagicSuccess(m_cDir, target, iResult) == FALSE) {
-						g_game->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, target->m_handle, target->m_ownerType, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
+						g_gameCopy->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, target->m_handle, target->m_ownerType, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
 						if(target && !target->IsDead() && checkResistingIceSuccess(m_cDir, target, iResult) == FALSE)
 							target->AddMagicEffect(spell->m_sType, spell->m_sValue[MAGICV_ICEDURATION]);
 					}
@@ -1408,14 +1408,14 @@ void CNpc::magicHandler(short dX, short dY, short sType) // magicHandler
 				for (ix = dX - spell->m_hRange; ix <= dX + spell->m_hRange; ix++) {
 					target = g_mapList[m_cMapIndex]->GetOwner(ix, iy);
 					if (target && CheckResistingMagicSuccess(m_cDir, target, iResult) == FALSE) {
-						g_game->Effect_Damage_Spot_DamageMove(m_handle, OWNERTYPE_NPC, target->m_handle, target->m_ownerType, sX, sY, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
+						g_gameCopy->Effect_Damage_Spot_DamageMove(m_handle, OWNERTYPE_NPC, target->m_handle, target->m_ownerType, sX, sY, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
 						if(target && !target->IsDead() && checkResistingIceSuccess(m_cDir, target, iResult) == FALSE)
 							target->AddMagicEffect(spell->m_sType, spell->m_sValue[MAGICV_ICEDURATION]);
 					}
 
 					target = g_mapList[m_cMapIndex]->GetDeadOwner(ix, iy);
 					if (target && !target->IsDead() && target->IsPlayer() && CheckResistingMagicSuccess(m_cDir, target, iResult) == FALSE) {
-						g_game->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, target->m_handle, target->m_ownerType, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
+						g_gameCopy->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, target->m_handle, target->m_ownerType, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
 						if(target && !target->IsDead() && checkResistingIceSuccess(m_cDir, target, iResult) == FALSE)
 							target->AddMagicEffect(spell->m_sType, spell->m_sValue[MAGICV_ICEDURATION]);
 					}
@@ -1423,14 +1423,14 @@ void CNpc::magicHandler(short dX, short dY, short sType) // magicHandler
 
 			target = g_mapList[m_cMapIndex]->GetOwner(dX, dY);
 			if (target && CheckResistingMagicSuccess(m_cDir, target, iResult) == FALSE) {
-				g_game->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, target->m_handle, target->m_ownerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr); 
+				g_gameCopy->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, target->m_handle, target->m_ownerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr); 
 				if(target && !target->IsDead() && checkResistingIceSuccess(m_cDir, target, iResult) == FALSE)
 					target->AddMagicEffect(spell->m_sType, spell->m_sValue[MAGICV_ICEDURATION]);
 			}
 
 			target = g_mapList[m_cMapIndex]->GetDeadOwner(dX, dY);
 			if (target && !target->IsDead() && target->IsPlayer()  && CheckResistingMagicSuccess(m_cDir, target, iResult) == FALSE) {
-				g_game->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, target->m_handle, target->m_ownerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
+				g_gameCopy->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, target->m_handle, target->m_ownerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
 				if(target && !target->IsDead() && checkResistingIceSuccess(m_cDir, target, iResult) == FALSE)
 					target->AddMagicEffect(spell->m_sType, spell->m_sValue[MAGICV_ICEDURATION]);
 			}
@@ -1440,44 +1440,44 @@ void CNpc::magicHandler(short dX, short dY, short sType) // magicHandler
 		case MAGICTYPE_DAMAGE_SPOT:
 			g_mapList[m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 			if (CheckResistingMagicSuccess(m_cDir, GetUnit(sOwnerH, cOwnerType), iResult) == FALSE)
-				g_game->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
+				g_gameCopy->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
 
 			g_mapList[m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, dX, dY);
 			if ( (cOwnerType == OWNERTYPE_PLAYER) && (g_clientList[sOwnerH] != NULL) &&
 				(g_clientList[sOwnerH]->m_iHP > 0) ) {
 					if (CheckResistingMagicSuccess(m_cDir, GetUnit(sOwnerH, cOwnerType), iResult) == FALSE)
-						g_game->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
+						g_gameCopy->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
 			}
 			break;
 
 		case MAGICTYPE_HPUP_SPOT:
 			g_mapList[m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
-			g_game->Effect_HpUp_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS]);
+			g_gameCopy->Effect_HpUp_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS]);
 			break;
 
 		case MAGICTYPE_DAMAGE_AREA:
 			g_mapList[m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 			if (CheckResistingMagicSuccess(m_cDir, GetUnit(sOwnerH, cOwnerType), iResult) == FALSE)
-				g_game->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
+				g_gameCopy->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
 
 			g_mapList[m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, dX, dY);
 			if ( (cOwnerType == OWNERTYPE_PLAYER) && (g_clientList[sOwnerH] != NULL) &&
 				(g_clientList[sOwnerH]->m_iHP > 0) ) {
 					if (CheckResistingMagicSuccess(m_cDir, GetUnit(sOwnerH, cOwnerType), iResult) == FALSE)
-						g_game->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
+						g_gameCopy->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
 			}
 
 			for (iy = dY - spell->m_vRange; iy <= dY + spell->m_vRange; iy++)
 				for (ix = dX - spell->m_hRange; ix <= dX + spell->m_hRange; ix++) {
 					g_mapList[m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 					if (CheckResistingMagicSuccess(m_cDir, GetUnit(sOwnerH, cOwnerType), iResult) == FALSE)
-						g_game->Effect_Damage_Spot_DamageMove(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, dX, dY, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
+						g_gameCopy->Effect_Damage_Spot_DamageMove(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, dX, dY, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
 
 					g_mapList[m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
 					if ( (cOwnerType == OWNERTYPE_PLAYER) && (g_clientList[sOwnerH] != NULL) &&
 						(g_clientList[sOwnerH]->m_iHP > 0) ) {
 							if (CheckResistingMagicSuccess(m_cDir, GetUnit(sOwnerH, cOwnerType), iResult) == FALSE)
-								g_game->Effect_Damage_Spot_DamageMove(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, dX, dY, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
+								g_gameCopy->Effect_Damage_Spot_DamageMove(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, dX, dY, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
 					}
 				}
 			break;
@@ -1487,13 +1487,13 @@ void CNpc::magicHandler(short dX, short dY, short sType) // magicHandler
 				for (ix = dX - spell->m_hRange; ix <= dX + spell->m_hRange; ix++) {
 					g_mapList[m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 					if (CheckResistingMagicSuccess(m_cDir, GetUnit(sOwnerH, cOwnerType), iResult) == FALSE)
-						g_game->Effect_Damage_Spot_DamageMove(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, dX, dY, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
+						g_gameCopy->Effect_Damage_Spot_DamageMove(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, dX, dY, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
 
 					g_mapList[m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
 					if ( (cOwnerType == OWNERTYPE_PLAYER) && (g_clientList[sOwnerH] != NULL) &&
 						(g_clientList[sOwnerH]->m_iHP > 0) ) {
 							if (CheckResistingMagicSuccess(m_cDir, GetUnit(sOwnerH, cOwnerType), iResult) == FALSE)
-								g_game->Effect_Damage_Spot_DamageMove(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, dX, dY, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
+								g_gameCopy->Effect_Damage_Spot_DamageMove(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, dX, dY, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS] + iWhetherBonus, FALSE, iMagicAttr);
 					}
 				}
 			break;
@@ -1501,12 +1501,12 @@ void CNpc::magicHandler(short dX, short dY, short sType) // magicHandler
 		case MAGICTYPE_SPDOWN_AREA:
 			g_mapList[m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 			if (CheckResistingMagicSuccess(m_cDir, GetUnit(sOwnerH, cOwnerType), iResult) == FALSE)
-				g_game->Effect_SpDown_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS]);
+				g_gameCopy->Effect_SpDown_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS]);
 			for (iy = dY - spell->m_vRange; iy <= dY + spell->m_vRange; iy++)
 				for (ix = dX - spell->m_hRange; ix <= dX + spell->m_hRange; ix++) {
 					g_mapList[m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 					if (CheckResistingMagicSuccess(m_cDir, GetUnit(sOwnerH, cOwnerType), iResult) == FALSE)
-						g_game->Effect_SpDown_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS]);
+						g_gameCopy->Effect_SpDown_Spot(m_handle, OWNERTYPE_NPC, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_LINEARTHROW], spell->m_sValue[MAGICV_LINEARRANGE], spell->m_sValue[MAGICV_LINEARBONUS]);
 				}
 			break;
 
@@ -1534,9 +1534,9 @@ void CNpc::magicHandler(short dX, short dY, short sType) // magicHandler
 						(target->IsNPC() && g_npcList[target->m_handle]->m_bIsSummoned))) {
 						if ((CheckResistingMagicSuccess(m_cDir, target, iResult) == FALSE) 
 							&& (checkResistingIceSuccess(m_cDir, target, iResult) == FALSE)) {
-							//g_game->Effect_Damage_Spot(iClientH, OWNERTYPE_PLAYER, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
+							//g_gameCopy->Effect_Damage_Spot(iClientH, OWNERTYPE_PLAYER, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
 							
-							g_game->Effect_Damage_Spot_DamageMove(m_handle, OWNERTYPE_NPC,  target->m_handle, target->m_ownerType, dX, dY, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
+							g_gameCopy->Effect_Damage_Spot_DamageMove(m_handle, OWNERTYPE_NPC,  target->m_handle, target->m_ownerType, dX, dY, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
 							if (target && !target->IsDead())
 								target->AddMagicEffect(spell->m_sType, spell->m_sValue[MAGICV_ICEDURATION]);
 						}
@@ -1547,8 +1547,8 @@ void CNpc::magicHandler(short dX, short dY, short sType) // magicHandler
 						if ((CheckResistingMagicSuccess(m_cDir, target, iResult) == FALSE)
 							&& (checkResistingIceSuccess(m_cDir, target, iResult) == FALSE)) {
 
-								//g_game->Effect_Damage_Spot(iClientH, OWNERTYPE_PLAYER, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
-								g_game->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, target->m_handle, target->m_ownerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
+								//g_gameCopy->Effect_Damage_Spot(iClientH, OWNERTYPE_PLAYER, sOwnerH, cOwnerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
+								g_gameCopy->Effect_Damage_Spot(m_handle, OWNERTYPE_NPC, target->m_handle, target->m_ownerType, spell->m_sValue[MAGICV_THROW], spell->m_sValue[MAGICV_RANGE], spell->m_sValue[MAGICV_BONUS] + iWhetherBonus, TRUE, iMagicAttr);
 								if (target && !target->IsDead())
 									target->AddMagicEffect(spell->m_sType, spell->m_sValue[MAGICV_ICEDURATION]);
 						}
@@ -1568,7 +1568,7 @@ NMH_NOEFFECT:;
 	if (m_iMP < 0) 
 		m_iMP = 0;
 
-	g_game->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, COMMONTYPE_MAGIC, m_cMapIndex,
+	g_gameCopy->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, COMMONTYPE_MAGIC, m_cMapIndex,
 		m_sX, m_sY, dX, dY, (sType+100), m_sType);
 
 }
