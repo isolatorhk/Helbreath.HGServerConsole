@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 CGame *g_gameCopy = NULL;
+XSocket *g_pListenSockCopy = NULL;
 
 LRESULT CALLBACK BackgroundWindowProcess(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -110,14 +111,7 @@ void cApplicationStartup::Startup()
 
 	SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS); // get know what it does!
 
-	/*G_mmTimer = _StartTimer(TICKDELAY);
-
-	G_pListenSock = new class XSocket(G_hWnd, SERVERSOCKETBLOCKLIMIT);
-	G_pListenSock->bListen(g_game->m_cGameServerAddr, g_game->m_iGameServerPort, WM_USER_ACCEPT);
-
-
-	G_sLogCounter = 0;
-	ZeroMemory(G_cLogBuffer, sizeof(G_cLogBuffer));*/
+	/*G_mmTimer = _StartTimer(TICKDELAY);*/	
 
 	while (1) {
 		if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) {
@@ -204,11 +198,18 @@ void cApplicationStartup::InitializeSockets()
 }
 
 void cApplicationStartup::StartHGServer()
-{
+{	
 	HWND hwnd = CreateBackgroundWindow();
 	g_gameCopy = new CGame(hwnd);
-	/*if (g_gameCopy->bInit() == FALSE) {
+	if (g_gameCopy->bInit() == FALSE) {
+		printf("(!!!) STOPPED!");
 		PutLogList("(!!!) STOPPED!");
 		return;
-	}*/
+	}
+
+	g_pListenSockCopy = new XSocket(hwnd, SERVERSOCKETBLOCKLIMIT);
+	g_pListenSockCopy->bListen(g_gameCopy->m_cGameServerAddr, g_gameCopy->m_iGameServerPort, WM_USER_ACCEPT);
+
+	/*G_sLogCounter = 0;
+	ZeroMemory(G_cLogBuffer, sizeof(G_cLogBuffer));*/
 }

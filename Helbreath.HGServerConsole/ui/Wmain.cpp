@@ -179,7 +179,7 @@ MMRESULT _StartTimer(DWORD dwTime)
 
 	timeGetDevCaps(&caps, sizeof(caps));
 	timeBeginPeriod(caps.wPeriodMin);
-	timerid = timeSetEvent(dwTime,0,_TimerFunc,0, (UINT)TIME_PERIODIC);
+	timerid = timeSetEvent(dwTime, 0, _TimerFunc, 0, (UINT)TIME_PERIODIC);
 
 	return timerid;
 }
@@ -247,7 +247,8 @@ void Assertion(const char * assertion, const char * file, const uint32 line)
 
 void PutLogList(const char * cMsg)
 {
-
+	printf(cMsg);
+	printf("\n");
 	G_cMsgUpdated = TRUE;
 	PutLogFileList(cMsg, ADMIN_LOGFILE);
 	SendMessage(List1,(UINT)LB_ADDSTRING,(WPARAM)0,(LPARAM)cMsg);
