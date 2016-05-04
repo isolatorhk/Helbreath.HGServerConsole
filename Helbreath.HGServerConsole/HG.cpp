@@ -3887,7 +3887,7 @@ bool CGame::bReadProgramConfigFile(char * cFn)
 
 	pFile = fopen(cFn, "rt");
 	if (pFile == NULL) {
-		//	PutLogList("(!) Cannot open configuration file.");
+		PutLogList("(!) Cannot open configuration file.");
 		return FALSE;
 	}
 	else {
@@ -4056,8 +4056,9 @@ bool CGame::bReadProgramConfigFile(char * cFn)
 
 		delete[] cp;
 	}
-	if (pFile != NULL) fclose(pFile);
-
+	if (pFile != NULL) {
+		fclose(pFile);
+	}
 	return TRUE;
 }
 
