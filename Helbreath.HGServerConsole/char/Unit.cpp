@@ -2,6 +2,7 @@
 #include "..\HG.h"
 #include "Unit.h"
 #include "../DelayedEvents.h"
+
 extern class CGame *   g_game;
 extern class CMagic ** g_magicConfigList;
 extern class CClient ** g_clientList;

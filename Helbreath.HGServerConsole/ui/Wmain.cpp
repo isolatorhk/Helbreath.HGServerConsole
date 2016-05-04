@@ -67,33 +67,7 @@ struct sMsg
         BYTE MsgLvl[MAXLOGMSGS];
         WORD CurMsg;
 }LogMsg;
-//=============================================================================
-void Initialize()
-{
 
-	if (_InitWinsock() == FALSE) {
-		MessageBox(G_hWnd, "Socket 1.1 not found! Cannot execute program.","ERROR", MB_ICONEXCLAMATION | MB_OK);
-		PostQuitMessage(0);
-		return;
-	}
-
-	g_game = new class CGame(G_hWnd);
-	if (g_game->bInit() == FALSE) {
-		PutLogList("(!!!) STOPPED!");
-		return;
-	}
-
-	SetPriorityClass( GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS );
-
-	//G_mmTimer = _StartTimer(TICKDELAY);
-
-	G_pListenSock = new class XSocket(G_hWnd, SERVERSOCKETBLOCKLIMIT);
-	G_pListenSock->bListen(g_game->m_cGameServerAddr, g_game->m_iGameServerPort, WM_USER_ACCEPT);
-
-
-	G_sLogCounter = 0 ;
-	ZeroMemory(G_cLogBuffer, sizeof(G_cLogBuffer));
-}
 //=============================================================================
 void OnDestroy()
 {

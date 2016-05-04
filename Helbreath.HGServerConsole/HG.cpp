@@ -7545,7 +7545,6 @@ void CGame::MsgProcess()
 				break;
 
 			case MSGID_NPCCONFIGURATIONCONTENTS:
-
 				PutLogList("(!) NPC configuration contents received. Now decoding...");
 				m_bIsNpcAvailable = _bDecodeNpcConfigFileContents((char *)(pData + INDEX2_MSGTYPE + 2), dwMsgSize);
 				break;
