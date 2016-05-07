@@ -4,7 +4,7 @@
 #include "skill.h"
 #include "../DelayedEvents.h"
 
-extern class CGame *   g_game;
+extern class CGame *   g_gameCopy;
 extern class CClient ** g_clientList;
 extern class CMap	**	g_mapList;
 extern class CNpc **	g_npcList;
@@ -407,7 +407,7 @@ int calculateAttackEffect(Unit *_target, Unit *_attacker, int tdX, int tdY, int 
 
 			if ((wWeaponType == 25) && (npc_target->m_cActionLimit == 5) && (npc_target->m_iBuildCount > 0)) {
 
-				if (client_attacker->m_iCrusadeDuty != 2 && !g_game->m_astoria.get() && (client_attacker->m_iAdminUserLevel == 0)) {
+				if (client_attacker->m_iCrusadeDuty != 2 && !g_gameCopy->m_astoria.get() && (client_attacker->m_iAdminUserLevel == 0)) {
 					goto TAG_41025;
 				}
 
@@ -420,9 +420,9 @@ int calculateAttackEffect(Unit *_target, Unit *_attacker, int tdX, int tdY, int 
 					switch (npc_target->m_iBuildCount) {
 					case 1: 		
 						npc_target->m_sAppr2 = 0;
-						g_game->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
+						g_gameCopy->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
 
-						if(g_game->m_bIsCrusadeMode)
+						if(g_gameCopy->m_bIsCrusadeMode)
 						{
 							switch (_target->m_sType) 
 							{
@@ -436,16 +436,16 @@ int calculateAttackEffect(Unit *_target, Unit *_attacker, int tdX, int tdY, int 
 							if (client_attacker->m_iWarContribution > MAXWARCONTRIBUTION)
 								client_attacker->m_iWarContribution = MAXWARCONTRIBUTION;
 
-							g_game->SendNotifyMsg(NULL, _attacker->m_handle, NOTIFY_CONSTRUCTIONPOINT, client_attacker->m_iConstructionPoint, client_attacker->m_iWarContribution, NULL, NULL);
+							g_gameCopy->SendNotifyMsg(NULL, _attacker->m_handle, NOTIFY_CONSTRUCTIONPOINT, client_attacker->m_iConstructionPoint, client_attacker->m_iWarContribution, NULL, NULL);
 						}
 						break;
 					case 5: 		
 						npc_target->m_sAppr2 = 1;
-						g_game->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
+						g_gameCopy->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
 						break;
 					case 10: 
 						npc_target->m_sAppr2 = 2;
-						g_game->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
+						g_gameCopy->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
 						break;
 					}
 					break;
@@ -479,14 +479,14 @@ int calculateAttackEffect(Unit *_target, Unit *_attacker, int tdX, int tdY, int 
 						if(iSkillLV <= iCropLimit + 10)
 							_attacker->SkillUp(SKILL_FARMING, 1);
 
-						g_game->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
+						g_gameCopy->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
 
 
 						if(probabilityTable(iSkillLV,iCropLimit,2) > 0)
 						{
-							g_game->bCropsItemDrop(_attacker->m_handle,_target->m_handle,TRUE);
+							g_gameCopy->bCropsItemDrop(_attacker->m_handle,_target->m_handle,TRUE);
 						}
-						g_game->DeleteNpc(_target->m_handle);
+						g_gameCopy->DeleteNpc(_target->m_handle);
 
 						break;
 					case 8: 		
@@ -496,14 +496,14 @@ int calculateAttackEffect(Unit *_target, Unit *_attacker, int tdX, int tdY, int 
 						if(iSkillLV <= iCropLimit + 10)
 							_attacker->SkillUp(SKILL_FARMING, 1);
 
-						g_game->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
+						g_gameCopy->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
 
 
 						if(probabilityTable(iSkillLV,iCropLimit,2) > 0)
 						{
 							if(iSkillLV <= iCropLimit + 10)
 								_attacker->SkillUp(SKILL_FARMING, 1);
-							g_game->bCropsItemDrop(_attacker->m_handle,_target->m_handle);
+							g_gameCopy->bCropsItemDrop(_attacker->m_handle,_target->m_handle);
 						}
 						break;
 
@@ -514,14 +514,14 @@ int calculateAttackEffect(Unit *_target, Unit *_attacker, int tdX, int tdY, int 
 						if(iSkillLV <= iCropLimit + 10)
 							_attacker->SkillUp(SKILL_FARMING, 1);
 
-						g_game->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
+						g_gameCopy->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
 
 
 						if(probabilityTable(iSkillLV,iCropLimit,2) > 0)
 						{
 							if(iSkillLV <= iCropLimit + 10)
 								_attacker->SkillUp(SKILL_FARMING, 1);
-							g_game->bCropsItemDrop(_attacker->m_handle,_target->m_handle);
+							g_gameCopy->bCropsItemDrop(_attacker->m_handle,_target->m_handle);
 						}
 						break;
 					}
@@ -547,9 +547,9 @@ int calculateAttackEffect(Unit *_target, Unit *_attacker, int tdX, int tdY, int 
 
 							if (client_attacker->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
 
-								g_game->SendNotifyMsg(NULL, _attacker->m_handle, NOTIFY_ITEMLIFESPANEND, client_attacker->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);
+								g_gameCopy->SendNotifyMsg(NULL, _attacker->m_handle, NOTIFY_ITEMLIFESPANEND, client_attacker->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);
 
-								g_game->ReleaseItemHandler(_attacker->m_handle, iTemp, TRUE);  
+								g_gameCopy->ReleaseItemHandler(_attacker->m_handle, iTemp, TRUE);  
 							}
 						}
 
@@ -619,7 +619,7 @@ TAG_41025:
 			if (client_attacker->m_pItemList[ client_attacker->m_sItemEquipmentStatus[EQUIPPOS_TWOHAND] ] == NULL) {
 
 				client_attacker->m_bIsItemEquipped[client_attacker->m_sItemEquipmentStatus[EQUIPPOS_TWOHAND]] = FALSE;
-				g_game->DeleteClient(_attacker->m_handle, TRUE, TRUE);
+				g_gameCopy->DeleteClient(_attacker->m_handle, TRUE, TRUE);
 				return 0;
 			}
 
@@ -634,13 +634,13 @@ TAG_41025:
 					client_attacker->m_pItemList[ client_attacker->m_cArrowIndex ]->m_dwCount--;
 					if (client_attacker->m_pItemList[ client_attacker->m_cArrowIndex ]->m_dwCount <= 0) {
 
-						g_game->ItemDepleteHandler(_attacker->m_handle, client_attacker->m_cArrowIndex, FALSE);
+						g_gameCopy->ItemDepleteHandler(_attacker->m_handle, client_attacker->m_cArrowIndex, FALSE);
 
-						client_attacker->m_cArrowIndex = g_game->_iGetArrowItemIndex(_attacker->m_handle);
+						client_attacker->m_cArrowIndex = g_gameCopy->_iGetArrowItemIndex(_attacker->m_handle);
 					}
 					else {
-						g_game->SendNotifyMsg(NULL, _attacker->m_handle, NOTIFY_SETITEMCOUNT, client_attacker->m_cArrowIndex, client_attacker->m_pItemList[ client_attacker->m_cArrowIndex ]->m_dwCount, (char)FALSE, NULL);
-						g_game->iCalcTotalWeight(_attacker->m_handle);
+						g_gameCopy->SendNotifyMsg(NULL, _attacker->m_handle, NOTIFY_SETITEMCOUNT, client_attacker->m_cArrowIndex, client_attacker->m_pItemList[ client_attacker->m_cArrowIndex ]->m_dwCount, (char)FALSE, NULL);
+						g_gameCopy->iCalcTotalWeight(_attacker->m_handle);
 					}
 				}
 				if (cProtect == MAGICPROTECT_PFA) return 0;
@@ -718,8 +718,8 @@ TAG_41025:
 		CClient *client_attacker = (CClient*) _attacker;
 		if (client_attacker->m_sItemEquipmentStatus[EQUIPPOS_TWOHAND] != -1 &&
 			client_attacker->m_pItemList[ client_attacker->m_sItemEquipmentStatus[EQUIPPOS_TWOHAND] ] != NULL){
-				if((g_game->m_cDayOrNight == 2 && client_attacker->m_pItemList[ client_attacker->m_sItemEquipmentStatus[EQUIPPOS_TWOHAND] ]->m_sIDnum == ITEM_DARKEXECUTOR) ||
-					(g_game->m_cDayOrNight == 1 && client_attacker->m_pItemList[ client_attacker->m_sItemEquipmentStatus[EQUIPPOS_TWOHAND] ]->m_sIDnum == ITEM_LIGHTINGBLADE)){
+				if((g_gameCopy->m_cDayOrNight == 2 && client_attacker->m_pItemList[ client_attacker->m_sItemEquipmentStatus[EQUIPPOS_TWOHAND] ]->m_sIDnum == ITEM_DARKEXECUTOR) ||
+					(g_gameCopy->m_cDayOrNight == 1 && client_attacker->m_pItemList[ client_attacker->m_sItemEquipmentStatus[EQUIPPOS_TWOHAND] ]->m_sIDnum == ITEM_LIGHTINGBLADE)){
 						iAP_SM += 10;
 						iAP_L  += 10;
 				}
@@ -748,8 +748,8 @@ TAG_41025:
 			if (client_attacker->m_iComboAttackCount < 0) client_attacker->m_iComboAttackCount = 0;
 			if (client_attacker->m_iComboAttackCount > 4) client_attacker->m_iComboAttackCount = 1;
 
-			iWeaponSkill = g_game->_iGetWeaponSkillType(_attacker->m_handle);
-			iComboBonus = g_game->iGetComboAttackBonus(iWeaponSkill, client_attacker->m_iComboAttackCount);
+			iWeaponSkill = g_gameCopy->_iGetWeaponSkillType(_attacker->m_handle);
+			iComboBonus = g_gameCopy->iGetComboAttackBonus(iWeaponSkill, client_attacker->m_iComboAttackCount);
 
 
 			if ((client_attacker->m_iComboAttackCount > 1) && (client_attacker->m_iAddCD != NULL))
@@ -796,7 +796,7 @@ TAG_41025:
 				iAP_L *= 1.3;
 			}
 
-			if ((_target->IsPlayer()) && (g_game->m_bIsCrusadeMode == TRUE)) {
+			if ((_target->IsPlayer()) && (g_gameCopy->m_bIsCrusadeMode == TRUE)) {
 				CClient *client_target = (CClient*) _target;
 				if(client_attacker->m_iCrusadeDuty == 1) {
 
@@ -821,7 +821,7 @@ TAG_41025:
 
 		if(_target->IsPlayer()) {
 			CClient *client_target = (CClient*) _target;
-			g_game->ClearSkillUsingStatus(_target->m_handle);
+			g_gameCopy->ClearSkillUsingStatus(_target->m_handle);
 
 			if ((dwTime - client_target->m_dwTime) > RAGPROTECTIONTIME) {
 
@@ -929,9 +929,9 @@ TAG_41025:
 
 							if (client_target->m_pItemList[iTemp]->m_wCurLifeSpan == 0) {
 
-								g_game->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_ITEMLIFESPANEND, client_target->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);
+								g_gameCopy->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_ITEMLIFESPANEND, client_target->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);
 
-								g_game->ReleaseItemHandler(_target->m_handle, iTemp, TRUE);  
+								g_gameCopy->ReleaseItemHandler(_target->m_handle, iTemp, TRUE);  
 							}
 						}
 					}
@@ -959,7 +959,7 @@ TAG_41025:
 								RegisterDelayEvent(DELAYEVENTTYPE_MAGICRELEASE, MAGICTYPE_ICE, dwTime + (30*1000), 
 									_target, NULL, NULL, NULL, 1, NULL, NULL);
 
-								g_game->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_MAGICEFFECTON, MAGICTYPE_ICE, 1, NULL, NULL);
+								g_gameCopy->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_MAGICEFFECTON, MAGICTYPE_ICE, 1, NULL, NULL);
 							}
 							break;
 
@@ -970,7 +970,7 @@ TAG_41025:
 								RegisterDelayEvent(DELAYEVENTTYPE_MAGICRELEASE, MAGICTYPE_HOLDOBJECT, dwTime + (10*1000), 
 									_target, NULL, NULL, NULL, 10, NULL, NULL);
 
-								g_game->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_MAGICEFFECTON, MAGICTYPE_HOLDOBJECT, 10, NULL, NULL);
+								g_gameCopy->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_MAGICEFFECTON, MAGICTYPE_HOLDOBJECT, 10, NULL, NULL);
 							}
 							break;
 
@@ -982,7 +982,7 @@ TAG_41025:
 							client_attacker->m_iHP += iAP_SM;
 							if (client_attacker->GetMaxHP() < client_attacker->m_iHP) 
 								client_attacker->m_iHP = client_attacker->GetMaxHP();
-							g_game->SendNotifyMsg(NULL, client_attacker->m_handle, NOTIFY_HP, NULL, NULL, NULL, NULL);
+							g_gameCopy->SendNotifyMsg(NULL, client_attacker->m_handle, NOTIFY_HP, NULL, NULL, NULL, NULL);
 							break;
 						}
 					}
@@ -1047,7 +1047,7 @@ TAG_41025:
 
 
 				if (cAttackerSA == 2 && client_target->m_cMagicEffectStatus[MAGICTYPE_PROTECT]) {
-					g_game->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_MAGICEFFECTOFF, MAGICTYPE_PROTECT, _target->m_cMagicEffectStatus[MAGICTYPE_PROTECT], NULL, NULL);
+					g_gameCopy->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_MAGICEFFECTOFF, MAGICTYPE_PROTECT, _target->m_cMagicEffectStatus[MAGICTYPE_PROTECT], NULL, NULL);
 					switch(_target->m_cMagicEffectStatus[MAGICTYPE_PROTECT]) 
 					{
 					case MAGICPROTECT_PFA:
@@ -1079,7 +1079,7 @@ TAG_41025:
 							client_target->m_dwPoisonTime = dwTime;
 
 							client_target->SetStatusFlag(STATUS_POISON, TRUE);
-							g_game->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_MAGICEFFECTON, MAGICTYPE_POISON, client_target->m_iPoisonLevel, NULL, NULL);
+							g_gameCopy->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_MAGICEFFECTON, MAGICTYPE_POISON, client_target->m_iPoisonLevel, NULL, NULL);
 #ifdef TAIWANLOG
 							_bItemLog(ITEMLOG_POISONED,_target->m_handle,(char *) NULL,NULL) ;
 #endif
@@ -1091,7 +1091,7 @@ TAG_41025:
 				if (_target->m_iHP <= 0) {
 
 					if (_attacker->IsPlayer())
-						g_game->bAnalyzeCriminalAction(_attacker->m_handle, _target->m_sX, _target->m_sY);
+						g_gameCopy->bAnalyzeCriminalAction(_attacker->m_handle, _target->m_sX, _target->m_sY);
 
 					client_target->KilledHandler( _attacker->m_handle, _attacker->m_ownerType, iAP_SM);
 					bKilled     = TRUE;
@@ -1118,11 +1118,11 @@ TAG_41025:
 								iMaxSuperAttack = (client_target->m_iLevel / 10);
 								if (client_target->m_iSuperAttackLeft < iMaxSuperAttack) client_target->m_iSuperAttackLeft++;
 
-								g_game->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_SUPERATTACKLEFT, NULL, NULL, NULL, NULL);
+								g_gameCopy->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_SUPERATTACKLEFT, NULL, NULL, NULL, NULL);
 							}
 						}
 
-						g_game->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_HP, NULL, NULL, NULL, NULL);
+						g_gameCopy->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_HP, NULL, NULL, NULL, NULL);
 
 						if (_attacker->IsPlayer()) 
 							sAttackerWeapon = ((((CClient*)_attacker)->m_sAppr2 & 0x0FF0) >> 4);
@@ -1155,7 +1155,7 @@ TAG_41025:
 
 							client_target->m_iLastDamage = iAP_SM;
 
-							g_game->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_DAMAGEMOVE, cDamageMoveDir, iAP_SM, sAttackerWeapon, NULL);
+							g_gameCopy->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_DAMAGEMOVE, cDamageMoveDir, iAP_SM, sAttackerWeapon, NULL);
 						}
 						else {
 CAE_SKIPDAMAGEMOVE:;
@@ -1177,14 +1177,14 @@ CAE_SKIPDAMAGEMOVE:;
 							else iProb = 1;
 
 							if (dice(1,10000) >= iProb) 
-								g_game->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, OBJECTDAMAGE, iAP_SM, sAttackerWeapon, NULL);
+								g_gameCopy->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, OBJECTDAMAGE, iAP_SM, sAttackerWeapon, NULL);
 						}
 
 						if (_target->m_cMagicEffectStatus[ MAGICTYPE_HOLDOBJECT ] == 1) {
 
 							// 1: Hold-Person 
 							// 2: Paralize
-							g_game->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_MAGICEFFECTOFF, MAGICTYPE_HOLDOBJECT, _target->m_cMagicEffectStatus[ MAGICTYPE_HOLDOBJECT ], NULL, NULL);
+							g_gameCopy->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_MAGICEFFECTOFF, MAGICTYPE_HOLDOBJECT, _target->m_cMagicEffectStatus[ MAGICTYPE_HOLDOBJECT ], NULL, NULL);
 
 							_target->m_cMagicEffectStatus[ MAGICTYPE_HOLDOBJECT ] = NULL;
 							RemoveFromDelayEventList(_target, MAGICTYPE_HOLDOBJECT);
@@ -1197,7 +1197,7 @@ CAE_SKIPDAMAGEMOVE:;
 							iMaxSuperAttack = (client_target->m_iLevel / 10);
 							if (client_target->m_iSuperAttackLeft < iMaxSuperAttack) client_target->m_iSuperAttackLeft++;
 
-							g_game->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_SUPERATTACKLEFT, NULL, NULL, NULL, NULL);
+							g_gameCopy->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_SUPERATTACKLEFT, NULL, NULL, NULL, NULL);
 						}
 					}
 				}
@@ -1208,7 +1208,7 @@ CAE_SKIPDAMAGEMOVE:;
 			if (npc_target->m_cBehavior == BEHAVIOR_DEAD) return 0;
 			if (npc_target->m_bIsKilled == TRUE) return 0;
 
-			if (g_game->m_bIsCrusadeMode == TRUE) {
+			if (g_gameCopy->m_bIsCrusadeMode == TRUE) {
 				if (cAttackerSide == _target->m_side) {
 					switch (npc_target->m_sType) {
 					case NPC_ESG:
@@ -1232,10 +1232,10 @@ CAE_SKIPDAMAGEMOVE:;
 							if (npc_target->m_iV1 > 500) {
 
 								npc_target->m_iV1 = 0;
-								g_game->m_mana[npc_target->m_side]--;
-								if (g_game->m_mana[npc_target->m_side] <= 0) g_game->m_mana[npc_target->m_side] = 0;
+								g_gameCopy->m_mana[npc_target->m_side]--;
+								if (g_gameCopy->m_mana[npc_target->m_side] <= 0) g_gameCopy->m_mana[npc_target->m_side] = 0;
 								//testcode
-								wsprintf(g_cTxt, "ManaStock down: %d", g_game->m_mana[npc_target->m_side]);
+								wsprintf(g_cTxt, "ManaStock down: %d", g_gameCopy->m_mana[npc_target->m_side]);
 								PutLogList(g_cTxt);
 							}
 						}
@@ -1297,7 +1297,7 @@ CAE_SKIPDAMAGEMOVE:;
 
 			if (npc_target->m_iHP <= 0) {
 
-				g_game->NpcKilledHandler(_attacker->m_handle, _attacker->m_ownerType, _target->m_handle, iDamage);
+				g_gameCopy->NpcKilledHandler(_attacker->m_handle, _attacker->m_ownerType, _target->m_handle, iDamage);
 
 				bKilled = TRUE;
 				iKilledDice = npc_target->m_iHitDice;
@@ -1412,7 +1412,7 @@ CAE_SKIPCOUNTERATTACK:;
 					_target->m_sY   = dY;
 					_target->m_cDir = cDamageMoveDir;
 
-					g_game->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTMOVE, NULL, NULL, NULL);
+					g_gameCopy->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTMOVE, NULL, NULL, NULL);
 
 					dX = _target->m_sX + _tmp_cTmpDirX[cDamageMoveDir];
 					dY = _target->m_sY + _tmp_cTmpDirY[cDamageMoveDir];
@@ -1433,9 +1433,9 @@ CAE_SKIPCOUNTERATTACK:;
 					_target->m_sY   = dY;
 					_target->m_cDir = cDamageMoveDir;
 
-					g_game->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTMOVE, NULL, NULL, NULL);
+					g_gameCopy->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTMOVE, NULL, NULL, NULL);
 
-					if (g_game->bCheckEnergySphereDestination(_target->m_handle, _attacker->m_handle, _attacker->m_ownerType) == TRUE) {
+					if (g_gameCopy->bCheckEnergySphereDestination(_target->m_handle, _attacker->m_handle, _attacker->m_ownerType) == TRUE) {
 						if (_attacker->m_ownerType == OWNERTYPE_PLAYER) {
 							iExp = (_target->m_iExp/3);
 							if (npc_target->m_iNoDieRemainExp > 0)
@@ -1450,13 +1450,13 @@ CAE_SKIPCOUNTERATTACK:;
 							}
 
 							// Crusade
-							if ((g_game->m_bIsCrusadeMode == TRUE) && (iExp > 10)) iExp = 10;
+							if ((g_gameCopy->m_bIsCrusadeMode == TRUE) && (iExp > 10)) iExp = 10;
 
 							//attacker->m_iExpStock += iExp;
-							g_game->GetExp(_attacker->m_handle, iExp);
+							g_gameCopy->GetExp(_attacker->m_handle, iExp);
 
 
-							g_game->DeleteNpc(_target->m_handle);
+							g_gameCopy->DeleteNpc(_target->m_handle);
 							return FALSE;
 						}
 					}
@@ -1464,7 +1464,7 @@ CAE_SKIPCOUNTERATTACK:;
 CAE_SKIPDAMAGEMOVE2:;
 				}
 				else {
-					g_game->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTDAMAGE, iDamage, sAttackerWeapon, NULL);
+					g_gameCopy->SendEventToNearClient_TypeA(_target->m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTDAMAGE, iDamage, sAttackerWeapon, NULL);
 				}
 
 				if (_target->m_cMagicEffectStatus[ MAGICTYPE_HOLDOBJECT ] == 1) {
@@ -1503,7 +1503,7 @@ CAE_SKIPDAMAGEMOVE2:;
 							iExp += (int)dTmp3;
 						}
 
-						if (g_game->m_bIsCrusadeMode == TRUE) iExp = iExp/3;
+						if (g_gameCopy->m_bIsCrusadeMode == TRUE) iExp = iExp/3;
 
 
 						if ((client_attacker)->m_iLevel > 100 ) {
@@ -1561,9 +1561,9 @@ CAE_SKIPDAMAGEMOVE2:;
 
 					if (client_attacker->m_pItemList[sWeaponIndex]->m_wCurLifeSpan == 0) {
 
-						g_game->SendNotifyMsg(NULL, _attacker->m_handle, NOTIFY_ITEMLIFESPANEND, client_attacker->m_pItemList[sWeaponIndex]->m_cEquipPos, sWeaponIndex, NULL, NULL);
+						g_gameCopy->SendNotifyMsg(NULL, _attacker->m_handle, NOTIFY_ITEMLIFESPANEND, client_attacker->m_pItemList[sWeaponIndex]->m_cEquipPos, sWeaponIndex, NULL, NULL);
 
-						g_game->ReleaseItemHandler(_attacker->m_handle, sWeaponIndex, TRUE);  
+						g_gameCopy->ReleaseItemHandler(_attacker->m_handle, sWeaponIndex, TRUE);  
 					}
 				}
 			}
@@ -1636,8 +1636,8 @@ void EnduStrippingDamage(Unit *_target, Unit *_attacker, int item, int higherStr
 
 	if (client_target->m_pItemList[item]->m_wCurLifeSpan <= 0) {
 		client_target->m_pItemList[item]->m_wCurLifeSpan = 0 ;
-		g_game->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_ITEMLIFESPANEND, client_target->m_pItemList[item]->m_cEquipPos, item, NULL, NULL);
-		g_game->ReleaseItemHandler(_target->m_handle, item, TRUE);  
+		g_gameCopy->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_ITEMLIFESPANEND, client_target->m_pItemList[item]->m_cEquipPos, item, NULL, NULL);
+		g_gameCopy->ReleaseItemHandler(_target->m_handle, item, TRUE);  
 	}
 	else if (stripChance > 0) {
 		switch (client_target->m_pItemList[item]->m_sIDnum) {
@@ -1652,8 +1652,8 @@ void EnduStrippingDamage(Unit *_target, Unit *_attacker, int item, int higherStr
 			stripChance *= dice(4, (client_target->m_pItemList[item]->m_wMaxLifeSpan - client_target->m_pItemList[item]->m_wCurLifeSpan));
 
 		if (stripChance >  client_target->m_pItemList[item]->m_wCurLifeSpan) {
-			g_game->ReleaseItemHandler(_target->m_handle, item, TRUE);  
-			g_game->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_ITEMRELEASED, client_target->m_pItemList[item]->m_cEquipPos, item, NULL, NULL);
+			g_gameCopy->ReleaseItemHandler(_target->m_handle, item, TRUE);  
+			g_gameCopy->SendNotifyMsg(NULL, _target->m_handle, NOTIFY_ITEMRELEASED, client_target->m_pItemList[item]->m_cEquipPos, item, NULL, NULL);
 		}
 	}
 }

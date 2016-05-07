@@ -10,18 +10,11 @@
 void Assertion(const char * assertion, const char * file, const uint32 line);
 #define ASSERT(assertion) { if( !(assertion) ) { Assertion(#assertion, __FILE__, __LINE__); assert( assertion &&0); } }
 
-bool InitApplication( HINSTANCE hInstance);
-bool InitInstance( HINSTANCE hInstance, int nCmdShow );
-LRESULT CALLBACK WndProc( HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam );
 void OnAccept();
-void OnKeyUp(WPARAM wParam, LPARAM lParam);
 void UpdateScreen();
-int  EventLoop();
 void OnPaint();
 void OnDestroy();
-void Initialize();
 void CALLBACK _TimerFunc(UINT wID, UINT wUser, DWORD dwUSer, DWORD dw1, DWORD dw2);
-MMRESULT _StartTimer(DWORD dwTime);
 void _StopTimer(MMRESULT timerid);
 void PutLogFileList(const char * cStr, char *FileName = NULL);
 //void PutLogList(char * cMsg, BYTE MsgLvl = NULL, bool PutOnFile = FALSE, char *FileName = NULL);
@@ -36,6 +29,5 @@ WORD wGetOffsetValue(char * cp, DWORD offset);
 DWORD dwGetOffsetValue(char * cp, DWORD offset);
 uint64 ullGetOffsetValue(char * cp, DWORD offset);
 void PutOffsetValue(char * cp, DWORD offset, BYTE size, uint64 value);
-void parseCommand(char* pMsg);
 
 #endif

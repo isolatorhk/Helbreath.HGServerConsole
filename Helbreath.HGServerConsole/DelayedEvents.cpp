@@ -3,7 +3,7 @@
 #include "char/Unit.h"
 #include "HG.h"
 
-extern class CGame *   g_game;
+extern class CGame *   g_gameCopy;
 #define MAXDELAYEVENTS		60000
 namespace {
 	struct DelayEvent__t
@@ -77,20 +77,20 @@ void DelayEventProcessor()
 					iTemp = 4;
 				}
 
-				g_game->SendNotifyMsg(NULL, DelayEventList[i]->m_pTarget->m_handle, NOTIFY_SLATE_STATUS, iTemp, NULL, NULL, NULL);
-				g_game->SetSlateFlag(DelayEventList[i]->m_pTarget->m_handle, iTemp, FALSE);
+				g_gameCopy->SendNotifyMsg(NULL, DelayEventList[i]->m_pTarget->m_handle, NOTIFY_SLATE_STATUS, iTemp, NULL, NULL, NULL);
+				g_gameCopy->SetSlateFlag(DelayEventList[i]->m_pTarget->m_handle, iTemp, FALSE);
 				break;
 
 			case DELAYEVENTTYPE_CALCMETEORSTRIKEEFFECT:
-				g_game->CalcMeteorStrikeEffectHandler(DelayEventList[i]->m_cMapIndex);
+				g_gameCopy->CalcMeteorStrikeEffectHandler(DelayEventList[i]->m_cMapIndex);
 				break;
 
 			case DELAYEVENTTYPE_DOMETEORSTRIKEDAMAGE:
-				g_game->DoMeteorStrikeDamageHandler(DelayEventList[i]->m_cMapIndex);
+				g_gameCopy->DoMeteorStrikeDamageHandler(DelayEventList[i]->m_cMapIndex);
 				break;
 
 			case DELAYEVENTTYPE_METEORSTRIKE:
-				g_game->MeteorStrikeHandler(DelayEventList[i]->m_cMapIndex);
+				g_gameCopy->MeteorStrikeHandler(DelayEventList[i]->m_cMapIndex);
 				break;
 
 			case DELAYEVENTTYPE_USEITEM_SKILL:
@@ -106,18 +106,18 @@ void DelayEventProcessor()
 						player->m_bSkillUsingStatus[iSkillNum] = FALSE;
 						player->m_iSkillUsingTimeID[iSkillNum] = NULL;
 
-						iResult = g_game->iCalculateUseSkillItemEffect(player->m_handle, OWNERTYPE_PLAYER,
+						iResult = g_gameCopy->iCalculateUseSkillItemEffect(player->m_handle, OWNERTYPE_PLAYER,
 							DelayEventList[i]->m_iV1, iSkillNum, DelayEventList[i]->m_cMapIndex, DelayEventList[i]->m_dX, DelayEventList[i]->m_dY);
 
-						g_game->SendNotifyMsg(NULL, player->m_handle, NOTIFY_SKILLUSINGEND, iResult, NULL, NULL, NULL);
+						g_gameCopy->SendNotifyMsg(NULL, player->m_handle, NOTIFY_SKILLUSINGEND, iResult, NULL, NULL, NULL);
 					}
 				} break;
 		case DELAYEVENTTYPE_KILL_ABADDON:
-			g_game->NpcKilledHandler(DelayEventList[i]->m_pTarget->m_handle, OWNERTYPE_NPC, DelayEventList[i]->m_pTarget->m_handle, 0);
+			g_gameCopy->NpcKilledHandler(DelayEventList[i]->m_pTarget->m_handle, OWNERTYPE_NPC, DelayEventList[i]->m_pTarget->m_handle, 0);
 			break;
 
 		case DELAYEVENTTYPE_END_APOCALYPSE:
-			g_game->GlobalEndApocalypseMode(0);	
+			g_gameCopy->GlobalEndApocalypseMode(0);	
 			break;
 		case DELAYEVENTTYPE_DAMAGEOBJECT:
 			break;

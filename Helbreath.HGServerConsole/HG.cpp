@@ -3887,7 +3887,7 @@ bool CGame::bReadProgramConfigFile(char * cFn)
 
 	pFile = fopen(cFn, "rt");
 	if (pFile == NULL) {
-		//	PutLogList("(!) Cannot open configuration file.");
+		PutLogList("(!) Cannot open configuration file.");
 		return FALSE;
 	}
 	else {
@@ -4056,8 +4056,9 @@ bool CGame::bReadProgramConfigFile(char * cFn)
 
 		delete[] cp;
 	}
-	if (pFile != NULL) fclose(pFile);
-
+	if (pFile != NULL) {
+		fclose(pFile);
+	}
 	return TRUE;
 }
 
@@ -7544,7 +7545,6 @@ void CGame::MsgProcess()
 				break;
 
 			case MSGID_NPCCONFIGURATIONCONTENTS:
-
 				PutLogList("(!) NPC configuration contents received. Now decoding...");
 				m_bIsNpcAvailable = _bDecodeNpcConfigFileContents((char *)(pData + INDEX2_MSGTYPE + 2), dwMsgSize);
 				break;
@@ -29074,7 +29074,7 @@ bool CGame::_bItemLog(int iAction,int iClientH , char * cName, class CItem * pIt
 #else  
 bool CGame::_bItemLog(int iAction,int iGiveH, int iRecvH, class CItem * pItem,bool bForceItemLog)
 {
-	if (!pItem || !m_pClientList[iGiveH]->m_cCharName) 
+	/*if (!pItem || !m_pClientList[iGiveH]->m_cCharName) 
 		return FALSE;
 
 	if (!bForceItemLog) {
@@ -29179,14 +29179,14 @@ bool CGame::_bItemLog(int iAction,int iGiveH, int iRecvH, class CItem * pItem,bo
 		default:
 			return FALSE ;
 	}
-	bSendMsgToLS(MSGID_GAMEITEMLOG, iGiveH, NULL,cTxt);
+	bSendMsgToLS(MSGID_GAMEITEMLOG, iGiveH, NULL,cTxt);*/
 	return TRUE;
 }
 
 
 bool CGame::_bItemLog(int iAction,int iClientH , char * cName, class CItem * pItem)
 {
-	if(!pItem || !pItem->IsLogged()) return FALSE;
+	/*if(!pItem || !pItem->IsLogged()) return FALSE;
 
 	if(iAction != ITEMLOG_NEWGENDROP)
 	{
@@ -29232,7 +29232,7 @@ bool CGame::_bItemLog(int iAction,int iClientH , char * cName, class CItem * pIt
 	default:
 		return FALSE;
 	}
-	bSendMsgToLS(MSGID_GAMEITEMLOG, iClientH, NULL,cTxt);
+	bSendMsgToLS(MSGID_GAMEITEMLOG, iClientH, NULL,cTxt);*/
 	return TRUE ;
 }
 #endif // #ifdef TAIWANLOG
