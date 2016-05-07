@@ -29074,7 +29074,7 @@ bool CGame::_bItemLog(int iAction,int iClientH , char * cName, class CItem * pIt
 #else  
 bool CGame::_bItemLog(int iAction,int iGiveH, int iRecvH, class CItem * pItem,bool bForceItemLog)
 {
-	if (!pItem || !m_pClientList[iGiveH]->m_cCharName) 
+	/*if (!pItem || !m_pClientList[iGiveH]->m_cCharName) 
 		return FALSE;
 
 	if (!bForceItemLog) {
@@ -29179,14 +29179,14 @@ bool CGame::_bItemLog(int iAction,int iGiveH, int iRecvH, class CItem * pItem,bo
 		default:
 			return FALSE ;
 	}
-	bSendMsgToLS(MSGID_GAMEITEMLOG, iGiveH, NULL,cTxt);
+	bSendMsgToLS(MSGID_GAMEITEMLOG, iGiveH, NULL,cTxt);*/
 	return TRUE;
 }
 
 
 bool CGame::_bItemLog(int iAction,int iClientH , char * cName, class CItem * pItem)
 {
-	if(!pItem || !pItem->IsLogged()) return FALSE;
+	/*if(!pItem || !pItem->IsLogged()) return FALSE;
 
 	if(iAction != ITEMLOG_NEWGENDROP)
 	{
@@ -29232,7 +29232,7 @@ bool CGame::_bItemLog(int iAction,int iClientH , char * cName, class CItem * pIt
 	default:
 		return FALSE;
 	}
-	bSendMsgToLS(MSGID_GAMEITEMLOG, iClientH, NULL,cTxt);
+	bSendMsgToLS(MSGID_GAMEITEMLOG, iClientH, NULL,cTxt);*/
 	return TRUE ;
 }
 #endif // #ifdef TAIWANLOG
