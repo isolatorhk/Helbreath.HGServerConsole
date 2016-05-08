@@ -18870,14 +18870,16 @@ void CGame::DeleteNpc(int iNpcH)
 	char cTmp[21], cItemName[21];
 	class CItem * pItem, * pItem2;
 	DWORD dwCount, dwTime;
-   Point * ItemPositions;
+    POINT ItemPositions[MAX_NPCITEMDROP];
 	char cTemp[256];
 	SYSTEMTIME SysTime;
 
 	CNpc *& npc = m_pNpcList[iNpcH];
-	if (!npc) return;
+	if (!npc) {
+		return;
+	}
 
-	ItemPositions = 0;
+	
 
 	dwTime = timeGetTime();
 
@@ -19166,7 +19168,7 @@ void CGame::DeleteNpc(int iNpcH)
 				15,							// ³ª¿Ã¼ö ÀÖ´Â Item ÃÖ´ë °³¼ö
 				m_pNpcList[iNpcH]->m_sX,	// ±âÁØ ÁÂÇ¥ X
 				m_pNpcList[iNpcH]->m_sY,	// ±âÁØ ÁÂÇ¥ Y
-				2,		// ¾ÆÀÌÅÛ »Ñ¸®´Â ¹æ¹ý (RANDOM, FIXED)
+				ITEMSPREAD_FIXED,		// ¾ÆÀÌÅÛ »Ñ¸®´Â ¹æ¹ý (RANDOM, FIXED)
 				4,							// ¾ÆÀÌÅÛ »Ñ¸± ¹üÀ§, ITEMSPREAD_RANDOM ÀÏ¶§¸¸ »ç¿ë
 				iItemIDs,					// ¹Þ¾Æ¿Ã ¾ÆÀÌÅÛ Idµé
 				ItemPositions,				// ¾ÆÀÌÅÛµéÀÇ À§Ä¡
@@ -23515,7 +23517,7 @@ void CGame::ShutUpPlayer(int iClientH, char * pMsg, DWORD dwMsgSize)
 }
 BOOL CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability, int iMin, int iMax, short sBaseX, short sBaseY,
 	int iItemSpreadType, int iSpreadRange,
-	int *iItemIDs, Point *BasePos, int *iNumItem)
+	int *iItemIDs, POINT *BasePos, int *iNumItem)
 {
 	int		iProb = 100;
 	float	fProb, fProbA, fProbB, fProbC;

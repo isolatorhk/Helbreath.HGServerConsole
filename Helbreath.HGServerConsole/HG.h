@@ -702,7 +702,7 @@ public:
 	//=======================================================================================
 	BOOL bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability, int iMin, int iMax, short sBaseX, short sBaseY,
 		int iItemSpreadType, int iSpreadRange,
-		int *iItemIDs, Point *BasePos, int *iNumItem);
+		int *iItemIDs, POINT *BasePos, int *iNumItem);
 	void _AdjustRareItemValue(class CItem * pItem);
 	char CheckHeroItemEquipped(int iClientH);
 
