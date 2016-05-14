@@ -5199,10 +5199,12 @@ bool CGame::_bDecodeItemConfigFileContents(char * pData, DWORD dwMsgSize)
 					break;
 				case 27:
 					// m_isLogged		
-					if( strcmp(token,"FALSE") == 0 )
+					if (strcmp(token, "FALSE") == 0) {
 						m_pItemConfigList[iItemConfigListIndex]->m_isLogged = FALSE;
-					else if( strcmp(token,"TRUE") == 0 )
+					}
+					else if (strcmp(token, "TRUE") == 0) {
 						m_pItemConfigList[iItemConfigListIndex]->m_isLogged = TRUE;
+					}
 					else
 					{
 						PutLogList("(!!!) CRITICAL ERROR! ITEM configuration file error - Is logged");

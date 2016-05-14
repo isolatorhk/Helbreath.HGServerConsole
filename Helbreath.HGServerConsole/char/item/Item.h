@@ -13,7 +13,7 @@
 #pragma once
 #endif // _MSC_VER >= 1000
 
-#define MAXITEMTYPES		1500
+#define MAXITEMTYPES		3000
 
 enum ItemStat{
 	ITEMSTAT_NONE,
