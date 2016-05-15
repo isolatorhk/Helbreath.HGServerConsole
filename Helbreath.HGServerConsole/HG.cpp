@@ -9502,7 +9502,9 @@ void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD 
 	short * sp;
 	int   * ip, iRet, i;
 
-	if (m_pClientList[iToH] == NULL) return;
+	if (m_pClientList[iToH] == NULL) {
+		return;
+	}
 
 	ZeroMemory(cData, sizeof(cData));
 
@@ -9634,6 +9636,7 @@ void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD 
 		iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 34);
 		break;
 
+	case NOTIFY_MONSTERCOUNT:
 	case NOTIFY_SLATE_STATUS:
 		wp  = (WORD *)cp;
 		*wp = (WORD)sV1;
@@ -42355,7 +42358,9 @@ void CGame::Apocalypse_MonsterCount(int iClientH)
 {
 	CClient * player = m_pClientList[iClientH];
 	CMap * map = m_pMapList[player->m_cMapIndex];
-	if (player == NULL) return;
+	if (player == NULL) {
+		return;
+	}
 	SendNotifyMsg(NULL, player->m_handle, NOTIFY_MONSTERCOUNT, map->m_iTotalActiveObject, NULL, NULL, NULL);
 }
 
