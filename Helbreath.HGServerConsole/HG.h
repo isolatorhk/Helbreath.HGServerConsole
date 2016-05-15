@@ -769,8 +769,7 @@ public:
 	int   m_iTotalNoticeMsg, m_iPrevSendNoticeMsg;
 	DWORD m_dwNoticeTime, m_dwSpecialEventTime, m_startTime;
 	bool  m_bIsSpecialEventTime;
-	char  m_cSpecialEventType;
-	uint32 m_onlineCntAdd;
+	char  m_cSpecialEventType;	
 
 	int   m_iLevelExpTable[300];
  	CFish * m_pFish[MAXFISHS];

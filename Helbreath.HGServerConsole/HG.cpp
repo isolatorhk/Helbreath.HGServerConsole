@@ -609,8 +609,7 @@ bool CGame::bInit()
 
 
 	bReadNotifyMsgListFile("notice.txt");
-	m_dwNoticeTime = m_startTime = dwTime;
-	m_onlineCntAdd = 1;
+	m_dwNoticeTime = m_startTime = dwTime;	
 
 	m_iCurSubLogSockIndex    = 0;
 	m_iSubLogSockFailCount   = 0;
@@ -686,10 +685,7 @@ void CGame::DisplayInfo(HDC hdc)
 	TextOut(hdc, 610, 5, cTxt, strlen(cTxt));
 	ZeroMemory(cTxt, sizeof(cTxt));
 	wsprintf(cTxt, "Max.Level: %d", PLAYERMAXLEVEL);
-	TextOut(hdc, 610, 19, cTxt, strlen(cTxt));
-	ZeroMemory(cTxt, sizeof(cTxt));
-	wsprintf(cTxt, "P: %d/%d - %d/%d + %d", m_iTotalClients, m_iMaxClients, m_iTotalGameServerClients, m_iTotalGameServerMaxClients, m_onlineCntAdd);
-	TextOut(hdc, 610, 33, cTxt, strlen(cTxt));
+	TextOut(hdc, 610, 19, cTxt, strlen(cTxt));	
 	ZeroMemory(cTxt, sizeof(cTxt));
 	wsprintf(cTxt, "Crusade: %d:%d", m_dwCrusadeGUID, (int)m_bIsCrusadeMode);
 	TextOut(hdc, 610, 47, cTxt, strlen(cTxt));
@@ -2408,25 +2404,7 @@ void CGame::OnTimer(char cType)
 		if (m_bIsApocalypseMode == TRUE) DoAbaddonThunderDamageHandler(-1);
 		if (m_bHeldenianMode) UpdateHeldenianStatus();
 		m_dwWhetherTime = dwTime;
-		TileCleaner();
-
-		uint32 add;
-		if(dwTime - m_startTime < 5 _m)
-		{
-			add = dice(2,4);
-		}
-		else if(dwTime - m_startTime < 30 _m)
-		{
-			add = dice(2,6);
-		}
-		else
-		{
-			add = dice(2,8);
-		}
-		if(add > m_onlineCntAdd)
-			m_onlineCntAdd++;
-		else if(add < m_onlineCntAdd)
-			m_onlineCntAdd--;
+		TileCleaner();		
 	}
 
 
@@ -10587,7 +10565,7 @@ void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD 
 
 	case NOTIFY_TOTALUSERS:
 		wp  = (WORD *)cp;    
-		*wp = (WORD)(m_iTotalGameServerClients + m_onlineCntAdd) ; //_iGetTotalClients();
+		*wp = (WORD)(m_iTotalGameServerClients) ; //_iGetTotalClients();
 		cp += 2;
 
 		iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 8);
@@ -21207,9 +21185,9 @@ int CGame::_iGetTotalClients()
 	register int i, iTotal;
 
 	iTotal = 0;
-	for (i = 1; i < MAXCLIENTS; i++) 
+	for (i = 1; i < MAXCLIENTS; i++) {
 		if (m_pClientList[i] != NULL) iTotal++;
-
+	}
 	return iTotal;
 }
 
@@ -40772,7 +40750,7 @@ void CGame::OnWebSocketEvent(UINT message, WPARAM wParam, LPARAM lParam)
 	if (iRet == XSOCKEVENT_CONNECTIONESTABLISH){
 		ZeroMemory(postInfo, sizeof(postInfo));
 
-		wsprintf(data, "code=L58sk2hK29dks&online=%d", m_iTotalGameServerClients + m_onlineCntAdd);
+		wsprintf(data, "code=L58sk2hK29dks&online=%d", m_iTotalGameServerClients);
 		wsprintf(datalen, "%d", strlen(data));
 
 		wsprintf(postInfo, "POST %s HTTP/1.1\r\nHost: %s\r\n", m_websiteScriptAddr, m_websiteAddr); 
