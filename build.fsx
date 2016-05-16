@@ -25,11 +25,19 @@ trace "--- Building app --- "
  |> Log "AppBuild-Output: "
 )
 
+Target "BuildInReleaseApp" (fun _ ->
+trace "--- Building app --- "
+!! "Helbreath.HGServerConsole/*.vcxproj"
+ |> MSBuild "" "Build" ["Configuration", "Release"; "PlatformToolset", "v120"; "Platform", "x86"; "OutDir", "../release"]
+ |> Log "AppBuild-Output: "
+)
+
+
 Target "Default" (fun _ ->
 trace "--- Starting... --- "
 )
 
 // start build
-"Clean" ==> "BuildApp" ==> "CopyToDebugFolder" ==> "Default"
+"Clean" ==> "BuildApp" ==> "CopyToDebugFolder" ==> "BuildInReleaseApp" ==> "Default"
 
 RunTargetOrDefault "Default"
