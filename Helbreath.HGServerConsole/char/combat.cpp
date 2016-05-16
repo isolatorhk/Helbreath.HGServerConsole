@@ -1399,7 +1399,7 @@ CAE_SKIPCOUNTERATTACK:;
 					dX = _target->m_sX + _tmp_cTmpDirX[cDamageMoveDir];
 					dY = _target->m_sY + _tmp_cTmpDirY[cDamageMoveDir];
 
-					if (g_mapList[_target->m_cMapIndex]->bGetMoveable(dX, dY, NULL) == FALSE) {
+					if (g_mapList[npc_target->m_cMapIndex]->bGetMoveable(dX, dY, NULL) == FALSE) {
 
 						cDamageMoveDir = dice(1,8);
 						dX = _target->m_sX + _tmp_cTmpDirX[cDamageMoveDir];
