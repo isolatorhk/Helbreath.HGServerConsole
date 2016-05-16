@@ -16886,9 +16886,12 @@ int CGame::iGetLevelExp(int iLevel)
 {
 	int iRet;
 
-	if (iLevel == 0) return 0;
-	iRet = iGetLevelExp(iLevel - 1) + iLevel * ( 50 + (iLevel * (iLevel / 17) * (iLevel / 17) ) );
-
+	if (iLevel == 0) { 
+		iRet = 0;
+	}
+	else {
+		iRet = iGetLevelExp(iLevel - 1) + iLevel * (50 + (iLevel * (iLevel / 17) * (iLevel / 17)));
+	}
 	return iRet;
 }
 

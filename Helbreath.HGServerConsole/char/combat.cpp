@@ -1205,9 +1205,12 @@ CAE_SKIPDAMAGEMOVE:;
 		}			   
 		if(_target->IsNPC()) {
 			CNpc *npc_target = (CNpc*)_target;
-			if (npc_target->m_cBehavior == BEHAVIOR_DEAD) return 0;
-			if (npc_target->m_bIsKilled == TRUE) return 0;
-
+			if (npc_target->m_cBehavior == BEHAVIOR_DEAD) {
+				return 0;
+			}
+			if (npc_target->m_bIsKilled == TRUE) {
+				return 0;
+			}
 			if (g_gameCopy->m_bIsCrusadeMode == TRUE) {
 				if (cAttackerSide == _target->m_side) {
 					switch (npc_target->m_sType) {
@@ -1396,18 +1399,18 @@ CAE_SKIPCOUNTERATTACK:;
 					dX = _target->m_sX + _tmp_cTmpDirX[cDamageMoveDir];
 					dY = _target->m_sY + _tmp_cTmpDirY[cDamageMoveDir];
 
-					if (g_mapList[_target->m_cMapIndex]->bGetMoveable(dX, dY, NULL) == FALSE) {
+					if (g_mapList[npc_target->m_cMapIndex]->bGetMoveable(dX, dY, NULL) == FALSE) {
 
 						cDamageMoveDir = dice(1,8);
 						dX = _target->m_sX + _tmp_cTmpDirX[cDamageMoveDir];
 						dY = _target->m_sY + _tmp_cTmpDirY[cDamageMoveDir];
 
-						if (g_mapList[_target->m_cMapIndex]->bGetMoveable(dX, dY, NULL) == FALSE) goto CAE_SKIPDAMAGEMOVE2;
+						if (g_mapList[npc_target->m_cMapIndex]->bGetMoveable(dX, dY, NULL) == FALSE) goto CAE_SKIPDAMAGEMOVE2;
 					}
 
-					g_mapList[_target->m_cMapIndex]->ClearOwner(/*5,*/ _target->m_handle, OWNERTYPE_NPC, _target->m_sX, _target->m_sY);
+					g_mapList[npc_target->m_cMapIndex]->ClearOwner(/*5,*/ _target->m_handle, OWNERTYPE_NPC, _target->m_sX, _target->m_sY);
 
-					g_mapList[_target->m_cMapIndex]->SetOwner(_target->m_handle, OWNERTYPE_NPC, dX, dY);
+					g_mapList[npc_target->m_cMapIndex]->SetOwner(_target->m_handle, OWNERTYPE_NPC, dX, dY);
 					_target->m_sX   = dX;
 					_target->m_sY   = dY;
 					_target->m_cDir = cDamageMoveDir;
@@ -1417,18 +1420,18 @@ CAE_SKIPCOUNTERATTACK:;
 					dX = _target->m_sX + _tmp_cTmpDirX[cDamageMoveDir];
 					dY = _target->m_sY + _tmp_cTmpDirY[cDamageMoveDir];
 
-					if (g_mapList[_target->m_cMapIndex]->bGetMoveable(dX, dY, NULL) == FALSE) {
+					if (g_mapList[npc_target->m_cMapIndex]->bGetMoveable(dX, dY, NULL) == FALSE) {
 
 						cDamageMoveDir = dice(1,8);
 						dX = _target->m_sX + _tmp_cTmpDirX[cDamageMoveDir];
 						dY = _target->m_sY + _tmp_cTmpDirY[cDamageMoveDir];
 
-						if (g_mapList[_target->m_cMapIndex]->bGetMoveable(dX, dY, NULL) == FALSE) goto CAE_SKIPDAMAGEMOVE2;
+						if (g_mapList[npc_target->m_cMapIndex]->bGetMoveable(dX, dY, NULL) == FALSE) goto CAE_SKIPDAMAGEMOVE2;
 					}
 
-					g_mapList[_target->m_cMapIndex]->ClearOwner(/*5,*/ _target->m_handle, OWNERTYPE_NPC, _target->m_sX, _target->m_sY);
+					g_mapList[npc_target->m_cMapIndex]->ClearOwner(/*5,*/ _target->m_handle, OWNERTYPE_NPC, _target->m_sX, _target->m_sY);
 
-					g_mapList[_target->m_cMapIndex]->SetOwner(_target->m_handle, OWNERTYPE_NPC, dX, dY);
+					g_mapList[npc_target->m_cMapIndex]->SetOwner(_target->m_handle, OWNERTYPE_NPC, dX, dY);
 					_target->m_sX   = dX;
 					_target->m_sY   = dY;
 					_target->m_cDir = cDamageMoveDir;

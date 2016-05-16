@@ -315,16 +315,31 @@ bool CMap::bGetMoveable(short dX, short dY, short * pDOtype, class CItem * pTopI
 {
 	class CTile * pTile;
 
-	if ((dX < 20) || (dX >= m_sSizeX - 20) || (dY < 20) || (dY >= m_sSizeY - 20)) return FALSE;
+	if ((dX < 20) || (dX >= m_sSizeX - 20) || (dY < 20) || (dY >= m_sSizeY - 20)) {
+		return FALSE;
+	}
 
 	pTile = (class CTile *)(m_pTile + dX + dY*m_sSizeY);
 
-	if (pDOtype != NULL) *pDOtype = pTile->m_sDynamicObjectType; 
-	if (pTopItem != NULL) pTopItem = pTile->m_pItem[0]; 
+	if (pDOtype != NULL) {
+		*pDOtype = pTile->m_sDynamicObjectType;
+	}
 
-	if (pTile->m_sOwner != NULL) return FALSE;
-	if (pTile->m_bIsMoveAllowed == FALSE) return FALSE;
-	if (pTile->m_bIsTempMoveAllowed == FALSE) return FALSE;
+	if (pTopItem != NULL) {
+		pTopItem = pTile->m_pItem[0];
+	}
+
+	if (pTile->m_sOwner != NULL) {
+		return FALSE;
+	}
+
+	if (pTile->m_bIsMoveAllowed == FALSE) {
+		return FALSE;
+	}
+
+	if (pTile->m_bIsTempMoveAllowed == FALSE) {
+		return FALSE;
+	}
 
 	return TRUE;
 }
