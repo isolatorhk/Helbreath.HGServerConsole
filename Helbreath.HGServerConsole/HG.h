@@ -430,6 +430,7 @@ public:
 	void SetExchangeItem(int iClientH, int iItemIndex, int iAmount);
 	void ExchangeItemHandler(int iClientH, short sItemIndex, int iAmount, short dX, short dY, WORD wObjectID, char * pItemName);
 
+	void AdminOrder_Kill(int iClientH, char * pData, DWORD dwMsgSize);
 
 	void _Manager_Init(int iClientH, char * pData);
 	void _Manager_Shutdown(int iClientH, char * pData);
@@ -754,7 +755,7 @@ public:
 	CTeleport * m_pTeleportConfigList[MAXTELEPORTLIST];
 
 	HWND  m_hWnd;
-	int   m_iTotalClients, m_iMaxClients, m_iTotalGameServerClients, m_iTotalGameServerMaxClients;
+	int   m_iTotalClients, m_iMaxClients,	m_iTotalGameServerClients, m_iTotalGameServerMaxClients;
 
 	bool  m_bF1pressed, m_bF4pressed, m_bF12pressed;
 	bool  m_bOnExitProcess;
