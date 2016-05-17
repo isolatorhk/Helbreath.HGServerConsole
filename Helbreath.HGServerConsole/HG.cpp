@@ -38329,13 +38329,13 @@ bool CGame::bCheckClientMagicFrequency(int iClientH)
 		dwTimeGap = dwTime - player->m_dwMagicFreqTime;
 		player->m_dwMagicFreqTime = dwTime;
 
-		if (dwTimeGap < 1200) {
+		if (dwTimeGap < 1000) {
 			wsprintf(g_cTxt, "(-~-HACKING-~-) Speed hacker detected(%s) - magic(%i). BI banned", player->m_cCharName, dwTimeGap);
 			PutLogList(g_cTxt);
 			DeleteClient(iClientH, TRUE, TRUE);
 
 			return FALSE;
-		}else if(dwTimeGap < 1950) {
+		}else if(dwTimeGap < 1750) {
 			wsprintf(g_cTxt, "(-~-HACKING-~-) Speed hack suspect(%s) - magic(%i)", player->m_cCharName, dwTimeGap);
 			PutLogList(g_cTxt);
 			return FALSE;
@@ -38344,7 +38344,6 @@ bool CGame::bCheckClientMagicFrequency(int iClientH)
 
 	return TRUE;
 }
-
 
 bool CGame::bCheckClientMoveFrequency(int iClientH, BOOL running)
 {
@@ -38381,13 +38380,13 @@ bool CGame::bCheckClientMoveFrequency(int iClientH, BOOL running)
 				sum += player->m_runTime[i];
 			}
 
-			if (sum > 245 * 7)
+			if (sum < 200 * 7)
 			{
 				wsprintf(g_cTxt, "(-~-HACKING-~-) Speed hacker detected(%s) - run-avg(%i). BI banned", player->m_cCharName, sum / 7);
 				PutLogList(g_cTxt);
 				DeleteClient(iClientH, TRUE, TRUE, TRUE, TRUE);
 			}
-			else if (sum > 285 * 7)
+			else if (sum < 240 * 7)
 			{
 				wsprintf(g_cTxt, "(-~-HACKING-~-) Speed hack suspect(%s) - run-avg(%i)", player->m_cCharName, sum / 7);
 				PutLogList(g_cTxt);
@@ -38403,13 +38402,13 @@ bool CGame::bCheckClientMoveFrequency(int iClientH, BOOL running)
 			for (int i = 0; i < 7; i++)
 				sum += player->m_moveTime[i];
 
-			if (sum < 350 * 7)
+			if (sum < 300 * 7)
 			{
 				wsprintf(g_cTxt, "(-~-HACKING-~-) Speed hacker detected(%s) - move-avg(%i). BI banned", player->m_cCharName, sum / 7);
 				PutLogList(g_cTxt);
 				DeleteClient(iClientH, TRUE, TRUE, TRUE, TRUE);
 			}
-			else if (sum < 510 * 7)
+			else if (sum < 450 * 7)
 			{
 				wsprintf(g_cTxt, "(-~-HACKING-~-) Speed hack suspect(%s) - move-avg(%i)", player->m_cCharName, sum / 7);
 				PutLogList(g_cTxt);
