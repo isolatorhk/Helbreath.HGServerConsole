@@ -18888,7 +18888,11 @@ void CGame::DeleteNpc(int iNpcH)
 
 
 	m_pMapList[npc->m_cMapIndex]->SetNamingValueEmpty(iNamingValue);
-	m_pMapList[npc->m_cMapIndex]->m_iTotalActiveObject--;	
+	m_pMapList[npc->m_cMapIndex]->m_iTotalActiveObject--;
+
+	if (m_pMapList[npc->m_cMapIndex]->m_iTotalActiveObject < 0) {
+		m_pMapList[npc->m_cMapIndex]->m_iTotalActiveObject = 0;
+	}
 
 	if (m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->m_iTotalActiveObject == 0) 
 	{	if (m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->m_iApocalypseMobGenType == 1)
