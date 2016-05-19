@@ -18736,8 +18736,8 @@ void CGame::MobGenerator()
 		}
 		// random mob generator	^
 
-		// spot mob generator 
-		if ( (m_pMapList[i] != NULL) && ((m_pMapList[i]->m_iMaximumObject) > m_pMapList[i]->m_iTotalActiveObject) ) {
+		// spot mob generator
+		if ( (m_pMapList[i] != NULL) && ((m_pMapList[i]->m_iMaximumObject) > m_pMapList[i]->m_iTotalActiveObject)) {			
 			for (j = 1; j < MAXSPOTMOBGENERATOR; j++)
 				if ( (dice(1,3) == 2) && (m_pMapList[i]->m_stSpotMobGenerator[j].bDefined == TRUE) &&
 					(m_pMapList[i]->m_stSpotMobGenerator[j].iMaxMobs > m_pMapList[i]->m_stSpotMobGenerator[j].iCurMobs) ) {
@@ -18888,7 +18888,7 @@ void CGame::DeleteNpc(int iNpcH)
 
 
 	m_pMapList[npc->m_cMapIndex]->SetNamingValueEmpty(iNamingValue);
-	m_pMapList[npc->m_cMapIndex]->m_iTotalActiveObject--;
+	m_pMapList[npc->m_cMapIndex]->m_iTotalActiveObject--;	
 
 	if (m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->m_iTotalActiveObject == 0) 
 	{	if (m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->m_iApocalypseMobGenType == 1)
@@ -24879,7 +24879,7 @@ int CGame::iGetWhetherMagicBonusEffect(short sType, char cWheatherStatus)
 
 int CGame::iGetMapIndex(char * pMapName)
 {
-	int i, iMapIndex;
+	int i, iMapIndex;	
 
 	iMapIndex = -1;
 	for (i = 0; i < MAXMAPS; i++)
@@ -41192,7 +41192,8 @@ void CGame::LocalStartApocalypse()
 	{	if (m_pMapList[i] != NULL) 
 		{	if (m_pMapList[i]->m_iApocalypseMobGenType != 0) 
 			//1 for no respawn, 2 for Boss spawn when map empty
-			{	m_pMapList[i]->m_iMaximumObject = 0;	
+			{	
+				m_pMapList[i]->m_iMaximumObject = 0;	
 	}	}	}
 	for (int i = 1; i < MAXCLIENTS; i++) 
 	{	if (m_pClientList[i] != NULL)
@@ -41206,9 +41207,17 @@ void CGame::LocalStartApocalypse()
 
 
 void CGame::Notify_ApocalypseGateState(int iClientH)
-{	if (m_pClientList[iClientH] == NULL) return;
-	if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;
-	if (!m_bIsApocalypseMode) return;
+{
+	if (m_pClientList[iClientH] == NULL) {
+		return;
+	}
+	if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) {
+		return;
+	}
+	if (!m_bIsApocalypseMode) {
+		return;
+	}
+
 	int iMapIndex = m_pClientList[iClientH]->m_cMapIndex;
 	
 	int gX = (m_pMapList[iMapIndex]->m_sDynamicGateCoordRectX1 + m_pMapList[iMapIndex]->m_sDynamicGateCoordRectX2)/2;
@@ -41235,10 +41244,13 @@ void CGame::Notify_ApocalypseGateState(int iClientH)
 		break;
 	case 2: // Empty maps Dynamic gates (inferniaA, inferniaB, procella...)
 		if (m_pMapList[iMapIndex]->m_iTotalActiveObject == 0)
-		{	SendNotifyMsg(NULL, iClientH, NOTIFY_APOCGATEOPEN, gX, gY, NULL, m_pClientList[iClientH]->m_cMapName);
+		{	
+			SendNotifyMsg(NULL, iClientH, NOTIFY_APOCGATEOPEN, gX, gY, NULL, m_pClientList[iClientH]->m_cMapName);
 			SendNotifyMsg(NULL, iClientH, NOTIFY_APOCGATESTARTMSG, NULL, NULL, NULL, NULL);
-		}else
-		{	SendNotifyMsg(NULL, iClientH, NOTIFY_APOCGATECLOSE, gX, gY , NULL, m_pClientList[iClientH]->m_cMapName);
+		}
+		else
+		{	
+			SendNotifyMsg(NULL, iClientH, NOTIFY_APOCGATECLOSE, gX, gY , NULL, m_pClientList[iClientH]->m_cMapName);
 		}
 		break;
 	case 3: 
@@ -41262,14 +41274,16 @@ void CGame::Use_ApocalypseGate(int iClientH)
 	if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;
 	if (!m_bIsApocalypseMode) return;
 	int iMapIndex = m_pClientList[iClientH]->m_cMapIndex;
-	switch(m_pMapList[iMapIndex]->m_cDynamicGateType) {
+	switch (m_pMapList[iMapIndex]->m_cDynamicGateType) {
 	case 0: // No Dynamic Gate on this map
 		return; break;
 	case 1: // Apocalypse normal gate
-		if (m_bIsApocalypseGateOpen == FALSE)	return; 
+		if (m_bIsApocalypseGateOpen == FALSE)	return;
 		break;
 	case 2: // Apocalypse gate opened when map empty
-		if (m_pMapList[iMapIndex]->m_iTotalActiveObject != 0) return; 
+		if (m_pMapList[iMapIndex]->m_iTotalActiveObject != 0) {
+			return;
+		}
 		break;
 	case 3: // Apocalypse gate still closed
 		break;
@@ -41278,13 +41292,14 @@ void CGame::Use_ApocalypseGate(int iClientH)
 	case 5: // Admin created gate
 		break;
 	}
-	if (   (m_pClientList[iClientH]->m_sX >= m_pMapList[iMapIndex]->m_sDynamicGateCoordRectX1)
+	if ((m_pClientList[iClientH]->m_sX >= m_pMapList[iMapIndex]->m_sDynamicGateCoordRectX1)
 		&& (m_pClientList[iClientH]->m_sX <= m_pMapList[iMapIndex]->m_sDynamicGateCoordRectX2)
 		&& (m_pClientList[iClientH]->m_sY >= m_pMapList[iMapIndex]->m_sDynamicGateCoordRectY1)
 		&& (m_pClientList[iClientH]->m_sY <= m_pMapList[iMapIndex]->m_sDynamicGateCoordRectY2))
-	{	RequestTeleportHandler(iClientH, 2, m_pMapList[iMapIndex]->m_cDynamicGateCoordDestMap
-								, m_pMapList[iMapIndex]->m_sDynamicGateCoordTgtX
-								, m_pMapList[iMapIndex]->m_sDynamicGateCoordTgtY);	
+	{
+		RequestTeleportHandler(iClientH, 2, m_pMapList[iMapIndex]->m_cDynamicGateCoordDestMap
+			, m_pMapList[iMapIndex]->m_sDynamicGateCoordTgtX
+			, m_pMapList[iMapIndex]->m_sDynamicGateCoordTgtY);
 
 	}
 }
@@ -41335,7 +41350,8 @@ void CGame::GlobalEndApocalypseMode(int iClientH)
 		wsprintf(cString, "Apocalypse ending in progress.");
 		SendNotifyMsg(NULL, iClientH, NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cString);
 	}else
-	{	wsprintf(cTxt, "Automated: endapocalypse");
+	{
+		wsprintf(cTxt, "Automated: endapocalypse");
 	}
 	_bCrusadeLog(CRUSADELOG_APOCALYPSE, NULL, 0, "End Apocalypse.");	
 	PutLogList(cTxt);	
@@ -41348,38 +41364,55 @@ void CGame::GlobalEndApocalypseMode(int iClientH)
 }
 
 void CGame::LocalEndApocalypse()
-{	char cTxt[120];
-	if (!m_bIsApocalypseMode) return;
+{
+	char cTxt[120];
+
+	if (!m_bIsApocalypseMode) {
+		return;
+	}
+
 	m_bIsApocalypseMode = FALSE;
-	m_bIsApocalypseGateOpen	= FALSE; 
+	m_bIsApocalypseGateOpen = FALSE;
 
 
-	for (int i = 1; i < MAXCLIENTS; i++) 
-	{	if (m_pClientList[i] != NULL)
-		{	SendNotifyMsg(NULL, i, NOTIFY_APOCGATEENDMSG, NULL, NULL, NULL, NULL);
-			if ((m_pClientList[i]->m_iAdminUserLevel == 0) && (m_pMapList[m_pClientList[i]->m_cMapIndex]->m_bIsApocalypseMap == TRUE)) 
-			{	SendNotifyMsg(NULL, i, NOTIFY_TOBERECALLED, NULL, NULL, NULL, NULL);
+	for (int i = 1; i < MAXCLIENTS; i++)
+	{
+		if (m_pClientList[i] != NULL)
+		{
+			SendNotifyMsg(NULL, i, NOTIFY_APOCGATEENDMSG, NULL, NULL, NULL, NULL);
+			if ((m_pClientList[i]->m_iAdminUserLevel == 0) && (m_pMapList[m_pClientList[i]->m_cMapIndex]->m_bIsApocalypseMap == TRUE))
+			{
+				SendNotifyMsg(NULL, i, NOTIFY_TOBERECALLED, NULL, NULL, NULL, NULL);
 				RequestTeleportHandler(i, 0);
-	}	}	}	
+			}
+		}
+	}
 	// restore normal spawn on apoc maps
 	for (int i = 0; i < MAXMAPS; i++)
-	{	if (m_pMapList[i] != NULL) 
-		{	if (m_pMapList[i]->m_iApocalypseMobGenType != 0) 
-			//1 for not respawn, 2 for Boss spawn.
-			{	m_pMapList[i]->m_iMaximumObject = m_pMapList[i]->m_iMaximumObject;
+	{
+		if (m_pMapList[i] != NULL)
+		{			
+			if (m_pMapList[i]->m_iApocalypseMobGenType != 0)
+				//1 for not respawn, 2 for Boss spawn.
+			{
+				m_pMapList[i]->m_iMaximumObject = 400;				
 			}
-			if (m_pMapList[i]->m_cDynamicGateType == 4 )
-			{	m_pMapList[i]->m_cDynamicGateType = 3;
+			if (m_pMapList[i]->m_cDynamicGateType == 4)
+			{
+				m_pMapList[i]->m_cDynamicGateType = 3;
 			}
 			if (m_pMapList[i]->m_cDynamicGateType == 2)
-			{	GenerateSlime(i);	// to force the gate to close		
+			{
+				GenerateSlime(i);	// to force the gate to close		
 			}
-				for (int i = 1; i < MAXCLIENTS; i++) 
-				{	if (m_pClientList[i] == NULL) return;
-					Notify_ApocalypseGateState(i);		
-				} 
-	}	}
-	wsprintf(cTxt,"(_) Apocalypse Mode OFF.");
+			for (int i = 1; i < MAXCLIENTS; i++)
+			{
+				if (m_pClientList[i] == NULL) return;
+				Notify_ApocalypseGateState(i);
+			}
+		}
+	}
+	wsprintf(cTxt, "(_) Apocalypse Mode OFF.");
 	PutLogList(cTxt);
 }
 void CGame::GenerateApocalypseBoss(int MapIndex)
