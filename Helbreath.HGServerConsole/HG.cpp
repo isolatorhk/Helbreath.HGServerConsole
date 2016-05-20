@@ -41409,10 +41409,11 @@ void CGame::LocalEndApocalypse()
 			{
 				GenerateSlime(i);	// to force the gate to close		
 			}
-			for (int i = 1; i < MAXCLIENTS; i++)
+			for (int j = 1; j < MAXCLIENTS; j++)
 			{
-				if (m_pClientList[i] == NULL) return;
-				Notify_ApocalypseGateState(i);
+				if (m_pClientList[j] != NULL) {
+					Notify_ApocalypseGateState(j);
+				}
 			}
 		}
 	}
