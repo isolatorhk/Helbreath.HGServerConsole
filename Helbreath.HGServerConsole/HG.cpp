@@ -1333,11 +1333,15 @@ void CGame::PlayerMapEntry(int iClientH, bool setRecallTime)
 
 	// Teleport initially to a random position in PvP island.
 	CMap *map = m_pMapList[player->m_cMapIndex];
-	if (map != NULL && strcmp(map->m_cLocationName, "fightzone5") == 0)
+	if (map != NULL && strcmp(map->m_cLocationName, "fightzone5") == 0) {
 		GetMapMovableRandomPoint(player->m_cMapIndex, &player->m_sX, &player->m_sY);
-	else if (player->m_bIsObserverMode == FALSE)
+	}
+	else if (player->m_bIsObserverMode == FALSE) {
 		bGetEmptyPosition(&player->m_sX, &player->m_sY, player->m_cMapIndex);
-	else GetMapInitialPoint(player->m_cMapIndex, &player->m_sX, &player->m_sY);
+	}
+	else {
+		GetMapInitialPoint(player->m_cMapIndex, &player->m_sX, &player->m_sY);
+	}
 
 	// ObjectID
 	wp  = (WORD *)cp;
@@ -28915,7 +28919,9 @@ void CGame::GetMapInitialPoint(int iMapIndex, short *pX, short *pY, char * pPlay
 void CGame::GetMapMovableRandomPoint(int iMapIndex, short *pX, short *pY)
 {
 	CMap *map = m_pMapList[iMapIndex];
-	if (map == NULL) return;
+	if (map == NULL) {
+		return;
+	}
 	int randX = dice(1, map->m_sSizeX) - 1;
 	int randY = dice(1, map->m_sSizeY) - 1;
 	*pX = randX;
