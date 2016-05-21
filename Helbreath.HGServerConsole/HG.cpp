@@ -1567,61 +1567,30 @@ void CGame::PlayerMapEntry(int iClientH, bool setRecallTime)
 	}
 
 	if (m_pMapList[player->m_cMapIndex]->m_bIsFightZone) { //Send all map restrictions
-		if (m_pMapList[player->m_cMapIndex]->m_isPartyDisabled && !player->IsGM()) RequestDismissPartyHandler(iClientH);
+		if (m_pMapList[player->m_cMapIndex]->m_isPartyDisabled && !player->IsGM()) {
+			RequestDismissPartyHandler(iClientH);
+		}
 		if (m_pMapList[player->m_cMapIndex]->m_isShieldDisabled) {
-			if (!m_pClientList[iClientH]->IsGM() && !m_pClientList[iClientH]->IsDead()) {
-				if (m_pClientList[iClientH]->m_sItemEquipmentStatus[EQUIPPOS_LHAND] != -1){
-					SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_LHAND, m_pClientList[iClientH]->m_sItemEquipmentStatus[EQUIPPOS_LHAND], NULL, NULL);
-					ReleaseItemHandler(iClientH, m_pClientList[iClientH]->m_sItemEquipmentStatus[EQUIPPOS_LHAND], FALSE);
-				}
-			}
-			SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTSHIELD, true, NULL, NULL, NULL, NULL);
+			EnforceMapShieldDisabled(iClientH);
 		}
-		if (m_pMapList[player->m_cMapIndex]->m_isArmorDisabled){
-			if (!m_pClientList[iClientH]->IsGM() && !m_pClientList[iClientH]->IsDead()){
-				if ( m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_HEAD ] != -1){
-					SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_HEAD, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_HEAD ], NULL, NULL);
-					ReleaseItemHandler(iClientH, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_HEAD ], FALSE);
-				}
-				if ( m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_BODY ] != -1) {
-					SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_BODY, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_BODY ], NULL, NULL);
-					ReleaseItemHandler(iClientH, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_BODY ], FALSE);
-				}
-				if ( m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_ARMS ] != -1) {
-					SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_ARMS, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_ARMS ], NULL, NULL);
-					ReleaseItemHandler(iClientH, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_ARMS ], FALSE);
-				}
-				if ( m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_LEGGINGS ] != -1) {
-					SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_LEGGINGS, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_LEGGINGS ], NULL, NULL);
-					ReleaseItemHandler(iClientH, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_LEGGINGS ], FALSE);
-				}
-				if ( m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_PANTS ] != -1) {
-					SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_PANTS, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_PANTS ], NULL, NULL);
-					ReleaseItemHandler(iClientH, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_PANTS ], FALSE);
-				}
-				SendEventToNearClient_TypeA(iClientH, OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
-			}
-
-			SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTARMOR, true, NULL, NULL, NULL, NULL);
+		if (m_pMapList[player->m_cMapIndex]->m_isArmorDisabled) {
+			EnforceMapArmorDisabled(iClientH);
 		}
-		if (m_pMapList[player->m_cMapIndex]->m_isPermIllusionOn){
-			if (!player->IsGM() && !player->IsDead()) {
-				SendNotifyMsg(NULL, iClientH, NOTIFY_MAGICEFFECTON, MAGICTYPE_CONFUSE, 3, iClientH, NULL);
-				player->m_cMagicEffectStatus[MAGICTYPE_CONFUSE] = 3;
-				player->SetStatusFlag(STATUS_ILLUSION, TRUE);
-			}
-			SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTILLUSION, TRUE, NULL, NULL, NULL, NULL);
+		if (m_pMapList[player->m_cMapIndex]->m_isPermIllusionOn) {
+			EnforceMapPermIllusionOn(iClientH);
 		}
-
-		if (m_pMapList[player->m_cMapIndex]->m_isChatDisabled)
+		if (m_pMapList[player->m_cMapIndex]->m_isChatDisabled) {
 			SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTCHAT, m_pMapList[player->m_cMapIndex]->m_isChatDisabled, NULL, NULL, NULL, NULL);
+		}
 
-		for (i = 0; i < MAXMAGICTYPE; i++)
-			if (m_pMapList[player->m_cMapIndex]->m_magicLimited[i])
+		for (i = 0; i < MAXMAGICTYPE; i++) {
+			if (m_pMapList[player->m_cMapIndex]->m_magicLimited[i]) {
 				SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTSPELL, true, i, NULL, NULL, NULL);
+			}
+		}
 
 		wsprintf(g_cTxt, "Char(%s)-Enter(%s) Observer(%d)", player->m_cCharName, player->m_cMapName, player->m_bIsObserverMode);
-			PutLogFileList(g_cTxt, EVENT_LOGFILE);
+		PutLogFileList(g_cTxt, EVENT_LOGFILE);
 	}
 
 	if (player->m_iPartyID != NULL){
@@ -42657,4 +42626,66 @@ char CGame::CheckHeroItemEquipped(int iClientH)
 		(sLeggings == ITEM_AHEROLEGGINGS_W)) return 2; //Ares female mage
 
 	return 0;
+}
+
+void CGame::EnforceMapShieldDisabled(int iClientH)
+{
+	CClient * player = m_pClientList[iClientH];
+	if (player == NULL) {
+		return;
+	}
+	if (!player->IsGM() && !player->IsDead()) {
+		if (player->m_sItemEquipmentStatus[EQUIPPOS_LHAND] != -1){
+			SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_LHAND, player->m_sItemEquipmentStatus[EQUIPPOS_LHAND], NULL, NULL);
+			ReleaseItemHandler(iClientH, player->m_sItemEquipmentStatus[EQUIPPOS_LHAND], FALSE);
+		}
+	}
+	SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTSHIELD, true, NULL, NULL, NULL, NULL);
+}
+
+void CGame::EnforceMapArmorDisabled(int iClientH)
+{
+	CClient * player = m_pClientList[iClientH];
+	if (player == NULL) {
+		return;
+	}
+	if (!player->IsGM() && !player->IsDead()){
+		if (player->m_sItemEquipmentStatus[EQUIPPOS_HEAD] != -1){
+			SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_HEAD, player->m_sItemEquipmentStatus[EQUIPPOS_HEAD], NULL, NULL);
+			ReleaseItemHandler(iClientH, player->m_sItemEquipmentStatus[EQUIPPOS_HEAD], FALSE);
+		}
+		if (player->m_sItemEquipmentStatus[EQUIPPOS_BODY] != -1) {
+			SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_BODY, player->m_sItemEquipmentStatus[EQUIPPOS_BODY], NULL, NULL);
+			ReleaseItemHandler(iClientH, player->m_sItemEquipmentStatus[EQUIPPOS_BODY], FALSE);
+		}
+		if (player->m_sItemEquipmentStatus[EQUIPPOS_ARMS] != -1) {
+			SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_ARMS, player->m_sItemEquipmentStatus[EQUIPPOS_ARMS], NULL, NULL);
+			ReleaseItemHandler(iClientH, player->m_sItemEquipmentStatus[EQUIPPOS_ARMS], FALSE);
+		}
+		if (player->m_sItemEquipmentStatus[EQUIPPOS_LEGGINGS] != -1) {
+			SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_LEGGINGS, player->m_sItemEquipmentStatus[EQUIPPOS_LEGGINGS], NULL, NULL);
+			ReleaseItemHandler(iClientH, player->m_sItemEquipmentStatus[EQUIPPOS_LEGGINGS], FALSE);
+		}
+		if (player->m_sItemEquipmentStatus[EQUIPPOS_PANTS] != -1) {
+			SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_PANTS, player->m_sItemEquipmentStatus[EQUIPPOS_PANTS], NULL, NULL);
+			ReleaseItemHandler(iClientH, player->m_sItemEquipmentStatus[EQUIPPOS_PANTS], FALSE);
+		}
+		SendEventToNearClient_TypeA(iClientH, OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
+	}
+
+	SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTARMOR, true, NULL, NULL, NULL, NULL);
+}
+
+void CGame::EnforceMapPermIllusionOn(int iClientH)
+{
+	CClient * player = m_pClientList[iClientH];
+	if (player == NULL) { 
+		return;
+	}
+	if (!player->IsGM() && !player->IsDead()) {
+		SendNotifyMsg(NULL, iClientH, NOTIFY_MAGICEFFECTON, MAGICTYPE_CONFUSE, 3, iClientH, NULL);
+		player->m_cMagicEffectStatus[MAGICTYPE_CONFUSE] = 3;
+		player->SetStatusFlag(STATUS_ILLUSION, TRUE);
+	}
+	SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTILLUSION, TRUE, NULL, NULL, NULL, NULL);
 }
