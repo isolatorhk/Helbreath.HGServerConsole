@@ -89,6 +89,11 @@ bool CNpc::initNpcAttr(char * pNpcName, char cSA)
 	char cTmpName[21];
 	double dV1, dV2, dV3;
 
+	string npcName = pNpcName;
+	if (npcName.length() > 20) {
+		return false;
+	}
+
 	ZeroMemory(cTmpName, sizeof(cTmpName));
 	strcpy(cTmpName, pNpcName);
 
