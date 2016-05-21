@@ -251,6 +251,9 @@
     <ClInclude Include="englishitem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CombatConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\1.ico">

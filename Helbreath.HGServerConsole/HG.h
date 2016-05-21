@@ -54,6 +54,7 @@
 #include "char\Crafting.h"
 #include "astoria.h"
 #include "ini.h"
+#include "CombatConfig.h"
 
 #define SERVERSOCKETBLOCKLIMIT	300
 

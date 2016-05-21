@@ -20687,8 +20687,8 @@ void CGame::Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, 
 
 
 				if ((cAttackerType == OWNERTYPE_PLAYER) && (m_pMapList[m_pClientList[sAttackerH]->m_cMapIndex]->m_bIsFightZone == TRUE)) 
-					iMoveDamage = 80;
-				else iMoveDamage = 50;
+					iMoveDamage = CombatConfig::MOVE_DAMAGE_MAGIC_FIGHTZONE;
+				else iMoveDamage = CombatConfig::MOVE_DAMAGE_MAGIC;
 
 				if (iDamage >= iMoveDamage) {
 

@@ -136,6 +136,7 @@
     <ClInclude Include="char\Skill.h" />
     <ClInclude Include="char\SkillNum.h" />
     <ClInclude Include="char\Unit.h" />
+    <ClInclude Include="CombatConfig.h" />
     <ClInclude Include="DelayedEvents.h" />
     <ClInclude Include="englishitem.h" />
     <ClInclude Include="GlobalDef.h" />
