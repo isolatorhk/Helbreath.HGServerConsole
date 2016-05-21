@@ -1568,8 +1568,15 @@ void CGame::PlayerMapEntry(int iClientH, bool setRecallTime)
 
 	if (m_pMapList[player->m_cMapIndex]->m_bIsFightZone) { //Send all map restrictions
 		if (m_pMapList[player->m_cMapIndex]->m_isPartyDisabled && !player->IsGM()) RequestDismissPartyHandler(iClientH);
-		if (m_pMapList[player->m_cMapIndex]->m_isShieldDisabled)
+		if (m_pMapList[player->m_cMapIndex]->m_isShieldDisabled) {
+			if (!m_pClientList[iClientH]->IsGM() && !m_pClientList[iClientH]->IsDead()) {
+				if (m_pClientList[iClientH]->m_sItemEquipmentStatus[EQUIPPOS_LHAND] != -1){
+					SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_LHAND, m_pClientList[iClientH]->m_sItemEquipmentStatus[EQUIPPOS_LHAND], NULL, NULL);
+					ReleaseItemHandler(iClientH, m_pClientList[iClientH]->m_sItemEquipmentStatus[EQUIPPOS_LHAND], FALSE);
+				}
+			}
 			SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTSHIELD, true, NULL, NULL, NULL, NULL);
+		}
 		if (m_pMapList[player->m_cMapIndex]->m_isArmorDisabled){
 			if (!m_pClientList[iClientH]->IsGM() && !m_pClientList[iClientH]->IsDead()){
 				if ( m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_HEAD ] != -1){
@@ -1598,15 +1605,10 @@ void CGame::PlayerMapEntry(int iClientH, bool setRecallTime)
 			SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTARMOR, true, NULL, NULL, NULL, NULL);
 		}
 		if (m_pMapList[player->m_cMapIndex]->m_isPermIllusionOn){
-			if (!player->IsGM()){
-				for (i = 1; i < MAXCLIENTS; i++)
-					if(m_pClientList[i] != NULL && m_pClientList[i]->IsGM() && m_pClientList[i]->m_cMapIndex == player->m_cMapIndex) break;
-
-				if (i != MAXCLIENTS){
-					SendNotifyMsg(NULL, iClientH, NOTIFY_MAGICEFFECTON, MAGICTYPE_CONFUSE, 3, i, NULL);
-					player->m_cMagicEffectStatus[ MAGICTYPE_CONFUSE ] = 3;
-					player->SetStatusFlag(STATUS_ILLUSION, TRUE);
-				}
+			if (!player->IsGM() && !player->IsDead()) {
+				SendNotifyMsg(NULL, iClientH, NOTIFY_MAGICEFFECTON, MAGICTYPE_CONFUSE, 3, iClientH, NULL);
+				player->m_cMagicEffectStatus[MAGICTYPE_CONFUSE] = 3;
+				player->SetStatusFlag(STATUS_ILLUSION, TRUE);
 			}
 			SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTILLUSION, TRUE, NULL, NULL, NULL, NULL);
 		}
@@ -15077,6 +15079,12 @@ bool CGame::_bReadMapInfoFiles(int iMapIndex)
 
 	if (memcmp(m_pMapList[iMapIndex]->m_cName, "fight", 5) == 0) 
 		m_pMapList[iMapIndex]->m_bIsFightZone = TRUE;
+
+	if (memcmp(m_pMapList[iMapIndex]->m_cName, "fightzone5", 5) == 0) {
+		m_pMapList[iMapIndex]->m_isArmorDisabled = TRUE;
+		m_pMapList[iMapIndex]->m_isPermIllusionOn = TRUE;
+		m_pMapList[iMapIndex]->m_isShieldDisabled = TRUE;
+	}
 
 	if (memcmp(m_pMapList[iMapIndex]->m_cName, "icebound", 8) == 0) 
 		m_pMapList[iMapIndex]->m_bIsFixedSnowMode = TRUE;
