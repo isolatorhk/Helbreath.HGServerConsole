@@ -433,6 +433,7 @@ public:
 	void ExchangeItemHandler(int iClientH, short sItemIndex, int iAmount, short dX, short dY, WORD wObjectID, char * pItemName);
 
 	void AdminOrder_Kill(int iClientH, char * pData, DWORD dwMsgSize);
+	void AdminOrder_Revive(int iClientH, char * pData, DWORD dwMsgSize);
 
 	void _Manager_Init(int iClientH, char * pData);
 	void _Manager_Shutdown(int iClientH, char * pData);
