@@ -55,6 +55,7 @@
 #include "astoria.h"
 #include "ini.h"
 #include "CombatConfig.h"
+#include "DropConfig.h"
 
 #define SERVERSOCKETBLOCKLIMIT	300
 

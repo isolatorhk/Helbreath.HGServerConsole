@@ -101,6 +101,7 @@
     <ClCompile Include="char\Skill.cpp" />
     <ClCompile Include="char\Unit.cpp" />
     <ClCompile Include="DelayedEvents.cpp" />
+    <ClCompile Include="DropConfig.cpp" />
     <ClCompile Include="HG.cpp" />
     <ClCompile Include="Ini.cpp" />
     <ClCompile Include="main.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="char\Unit.h" />
     <ClInclude Include="CombatConfig.h" />
     <ClInclude Include="DelayedEvents.h" />
+    <ClInclude Include="DropConfig.h" />
     <ClInclude Include="englishitem.h" />
     <ClInclude Include="GlobalDef.h" />
     <ClInclude Include="HG.h" />

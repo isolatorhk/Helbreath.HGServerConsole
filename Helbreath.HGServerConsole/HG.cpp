@@ -31141,24 +31141,29 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 		return;
 	}
 
+	// Default drop rate: 55%
 	int iItemprobability = 5500;
 
+	// Party drop rate bonus: 15%
 	if ((m_pClientList[sAttackerH] != NULL) && (m_pClientList[sAttackerH]->m_iPartyStatus != PARTYSTATUS_PROCESSING))
 	{
 		iItemprobability += 1500;
 	}
 
+	// Heldenian drop rate bonous: 15%
 	if (m_pClientList[sAttackerH]->IsHeldWinner())
 	{
 		iItemprobability += 1500;
 	}
 
+	// IsoHB drop rate modifier
+	iItemprobability = 10000 - (10000 - iItemprobability) * (1 - DropConfig::DROP_RATE_BONUS_MULTIPLIER);
 
 	// 6500 default; the lower the greater the Weapon/Armor/Wand Drop
-	if (dice(1, 10000) >= iItemprobability) {
+	if (dice(1, 10000) <= iItemprobability) {
 		// 35% Drop 60% of that is gold
 		// 35% Chance of drop (35/100)
-		if (dice(1, 10000) <= 6000) {
+		if (dice(1, 10000) <= DropConfig::GOLD_DROP_CHANCE_MODIFIER) {
 			iItemID = 90; // Gold: (35/100) * (60/100) = 21%
 			// If a non-existing itemID is given create no item
 			pItem = new class CItem;
@@ -31201,7 +31206,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 			dTmp1 = m_pClientList[sAttackerH]->m_reputation;
 			if (dTmp1 > 3000) dTmp1 = 3000;
 			if (dTmp1 < -3000) dTmp1 = -3000;
-			dTmp2 = (7500 - (dTmp1));
+			dTmp2 = (DropConfig::NORMAL_ITEM_DROP_CHANCE_MODIFIER - (dTmp1));
 			if (dice(1, 10000) <= dTmp2) {
 				// 40% Drop 90% of that is a standard drop
 				// Standard Drop Calculation: (35/100) * (40/100) * (90/100) = 12.6%

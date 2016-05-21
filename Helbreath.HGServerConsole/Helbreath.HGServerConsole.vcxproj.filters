@@ -126,6 +126,9 @@
     <ClCompile Include="ui\Wmain.cpp">
       <Filter>ui</Filter>
     </ClCompile>
+    <ClCompile Include="DropConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cApplicationStartup.h">
@@ -252,6 +255,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CombatConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DropConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
