@@ -77,6 +77,11 @@
 #define MSGQUENESIZE		100000
 #define AUTOEXPTIME			6 _m
 
+// IsoHB - Knockback
+#define MOVE_DAMAGE_PLAYER			40
+#define MOVE_DAMAGE_NPC				40
+#define MOVE_DAMAGE_FIGHTZONE		40
+
 
 
 #define TOTALLEVELUPPOINT	3
