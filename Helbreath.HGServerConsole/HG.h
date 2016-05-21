@@ -412,6 +412,7 @@ public:
 	void OnSubLogSocketEvent(UINT message, WPARAM wParam, LPARAM lParam);
 	void _CheckStrategicPointOccupyStatus(char cMapIndex);
 	void GetMapInitialPoint(int iMapIndex, short * pX, short * pY, char * pPlayerLocation = NULL);
+	void GetMapMovableRandomPoint(int iMapIndex, short *pX, short *pY);
 	void _ClearQuestStatus(int iClientH);
 	bool _bCheckItemReceiveCondition(int iClientH, CItem * pItem);
 	void SendItemNotifyMsg(int iClientH, WORD wMsgType, CItem * pItem, int iV1, bool deleteOnError);
