@@ -1130,11 +1130,11 @@ TAG_41025:
 
 						if (_attacker->IsPlayer()) {
 							if ((g_mapList[((CClient*)_attacker)->m_cMapIndex]->m_bIsFightZone == TRUE)) 
-								iMoveDamage = MOVE_DAMAGE_FIGHTZONE;
-							else iMoveDamage = MOVE_DAMAGE_PLAYER;
+								iMoveDamage = CombatConfig::MOVE_DAMAGE_PLAYER;
+							else iMoveDamage = CombatConfig::MOVE_DAMAGE_PLAYER;
 						}
 						else {
-							iMoveDamage = MOVE_DAMAGE_NPC;
+							iMoveDamage = CombatConfig::MOVE_DAMAGE_NPC;
 						}
 
 						if (iAP_SM >= iMoveDamage) {

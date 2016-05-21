@@ -54,6 +54,8 @@
 #include "char\Crafting.h"
 #include "astoria.h"
 #include "ini.h"
+#include "CombatConfig.h"
+#include "DropConfig.h"
 
 #define SERVERSOCKETBLOCKLIMIT	300
 
@@ -76,11 +78,6 @@
 #define EXPSTOCKTIME		10 _s
 #define MSGQUENESIZE		100000
 #define AUTOEXPTIME			6 _m
-
-// IsoHB - Knockback
-#define MOVE_DAMAGE_PLAYER			40
-#define MOVE_DAMAGE_NPC				40
-#define MOVE_DAMAGE_FIGHTZONE		40
 
 
 
@@ -436,6 +433,7 @@ public:
 	void ExchangeItemHandler(int iClientH, short sItemIndex, int iAmount, short dX, short dY, WORD wObjectID, char * pItemName);
 
 	void AdminOrder_Kill(int iClientH, char * pData, DWORD dwMsgSize);
+	void AdminOrder_Revive(int iClientH, char * pData, DWORD dwMsgSize);
 
 	void _Manager_Init(int iClientH, char * pData);
 	void _Manager_Shutdown(int iClientH, char * pData);
