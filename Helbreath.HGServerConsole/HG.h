@@ -961,6 +961,9 @@ public:
 	void GetDKItemHandler(int iClientH, char * pData, DWORD dwMsgSize);
 	void AdminOrder_GoTo(int iClientH, char* pData, DWORD dwMsgSize);
 	void AdminOrder_Pushplayer(int iClientH, char * pData, DWORD dwMsgSize);
+	void EnforceMapShieldDisabled(int iClientH);
+	void EnforceMapArmorDisabled(int iClientH);
+	void EnforceMapPermIllusionOn(int iClientH);
 
 private:
 	int __iSearchForQuest(int iClientH, int iWho, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, int * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange);
