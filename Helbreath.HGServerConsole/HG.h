@@ -18,6 +18,7 @@
 #include <time.h>
 #include <direct.h>
 #include <list>
+#include <vector>
 
 #include "..\shared\common.h"
 #include "..\shared\NetMessages.h"

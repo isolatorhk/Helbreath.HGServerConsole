@@ -28922,11 +28922,29 @@ void CGame::GetMapMovableRandomPoint(int iMapIndex, short *pX, short *pY)
 	if (map == NULL) {
 		return;
 	}
-	int randX = dice(1, map->m_sSizeX) - 1;
-	int randY = dice(1, map->m_sSizeY) - 1;
-	*pX = randX;
-	*pY = randY;
-	bGetEmptyPosition(pX, pY, iMapIndex);
+
+	std::vector<Point> movablePoints;
+	for (int i = 20; i < map->m_sSizeX - 50; i++) {
+		for (int j = 20; j < map->m_sSizeY - 50; j++) {
+			if ((map->bGetMoveable(i, j) == TRUE) &&
+				(map->bGetIsTeleport(i, j) == FALSE)) {
+				Point point;
+				point.x = i;
+				point.y = j;
+				movablePoints.push_back(point);
+			}
+		}
+	}
+
+	if (!movablePoints.empty()) {
+		int rand = dice(1, movablePoints.size()) - 1;
+		Point point = movablePoints.at(rand);
+		*pX = point.x;
+		*pY = point.y;
+	}
+	else {
+		bGetEmptyPosition(pX, pY, iMapIndex);
+	}
 }
 
 void CGame::_CheckStrategicPointOccupyStatus(char cMapIndex)
