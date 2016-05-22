@@ -56,6 +56,7 @@
 #include "ini.h"
 #include "CombatConfig.h"
 #include "DropConfig.h"
+#include "ClientEventSender.h"
 
 #define SERVERSOCKETBLOCKLIMIT	300
 

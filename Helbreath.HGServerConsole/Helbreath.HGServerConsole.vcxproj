@@ -100,6 +100,7 @@
     <ClCompile Include="char\Quest.cpp" />
     <ClCompile Include="char\Skill.cpp" />
     <ClCompile Include="char\Unit.cpp" />
+    <ClCompile Include="ClientEventSender.cpp" />
     <ClCompile Include="DelayedEvents.cpp" />
     <ClCompile Include="DropConfig.cpp" />
     <ClCompile Include="HG.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="char\Skill.h" />
     <ClInclude Include="char\SkillNum.h" />
     <ClInclude Include="char\Unit.h" />
+    <ClInclude Include="ClientEventSender.h" />
     <ClInclude Include="CombatConfig.h" />
     <ClInclude Include="DelayedEvents.h" />
     <ClInclude Include="DropConfig.h" />
