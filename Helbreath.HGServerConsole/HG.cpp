@@ -185,6 +185,8 @@ CGame::CGame(HWND hWnd) : m_hWnd(hWnd)
 
 		// 2002-09-09 #1
 		m_bReceivedItemList = false;
+		clientEventSender = new ClientEventSender();
+		playerHelpers = new PlayerHelpers();
 }
 
 CGame::~CGame()
@@ -1575,59 +1577,30 @@ void CGame::PlayerMapEntry(int iClientH, bool setRecallTime)
 	}
 
 	if (m_pMapList[player->m_cMapIndex]->m_bIsFightZone) { //Send all map restrictions
-		if (m_pMapList[player->m_cMapIndex]->m_isPartyDisabled && !player->IsGM()) RequestDismissPartyHandler(iClientH);
-		if (m_pMapList[player->m_cMapIndex]->m_isShieldDisabled)
-			SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTSHIELD, true, NULL, NULL, NULL, NULL);
-		if (m_pMapList[player->m_cMapIndex]->m_isArmorDisabled){
-			if (!m_pClientList[iClientH]->IsGM() && !m_pClientList[iClientH]->IsDead()){
-				if ( m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_HEAD ] != -1){
-					SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_HEAD, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_HEAD ], NULL, NULL);
-					ReleaseItemHandler(iClientH, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_HEAD ], FALSE);
-				}
-				if ( m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_BODY ] != -1) {
-					SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_BODY, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_BODY ], NULL, NULL);
-					ReleaseItemHandler(iClientH, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_BODY ], FALSE);
-				}
-				if ( m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_ARMS ] != -1) {
-					SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_ARMS, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_ARMS ], NULL, NULL);
-					ReleaseItemHandler(iClientH, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_ARMS ], FALSE);
-				}
-				if ( m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_LEGGINGS ] != -1) {
-					SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_LEGGINGS, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_LEGGINGS ], NULL, NULL);
-					ReleaseItemHandler(iClientH, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_LEGGINGS ], FALSE);
-				}
-				if ( m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_PANTS ] != -1) {
-					SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_PANTS, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_PANTS ], NULL, NULL);
-					ReleaseItemHandler(iClientH, m_pClientList[iClientH]->m_sItemEquipmentStatus[ EQUIPPOS_PANTS ], FALSE);
-				}
-				SendEventToNearClient_TypeA(iClientH, OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
-			}
-
-			SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTARMOR, true, NULL, NULL, NULL, NULL);
+		if (m_pMapList[player->m_cMapIndex]->m_isPartyDisabled && !player->IsGM()) {
+			RequestDismissPartyHandler(iClientH);
 		}
-		if (m_pMapList[player->m_cMapIndex]->m_isPermIllusionOn){
-			if (!player->IsGM()){
-				for (i = 1; i < MAXCLIENTS; i++)
-					if(m_pClientList[i] != NULL && m_pClientList[i]->IsGM() && m_pClientList[i]->m_cMapIndex == player->m_cMapIndex) break;
-
-				if (i != MAXCLIENTS){
-					SendNotifyMsg(NULL, iClientH, NOTIFY_MAGICEFFECTON, MAGICTYPE_CONFUSE, 3, i, NULL);
-					player->m_cMagicEffectStatus[ MAGICTYPE_CONFUSE ] = 3;
-					player->SetStatusFlag(STATUS_ILLUSION, TRUE);
-				}
-			}
-			SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTILLUSION, TRUE, NULL, NULL, NULL, NULL);
+		if (m_pMapList[player->m_cMapIndex]->m_isShieldDisabled) {
+			EnforceMapShieldDisabled(iClientH);
 		}
-
-		if (m_pMapList[player->m_cMapIndex]->m_isChatDisabled)
+		if (m_pMapList[player->m_cMapIndex]->m_isArmorDisabled) {
+			EnforceMapArmorDisabled(iClientH);
+		}
+		if (m_pMapList[player->m_cMapIndex]->m_isPermIllusionOn) {
+			EnforceMapPermIllusionOn(iClientH);
+		}
+		if (m_pMapList[player->m_cMapIndex]->m_isChatDisabled) {
 			SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTCHAT, m_pMapList[player->m_cMapIndex]->m_isChatDisabled, NULL, NULL, NULL, NULL);
+		}
 
-		for (i = 0; i < MAXMAGICTYPE; i++)
-			if (m_pMapList[player->m_cMapIndex]->m_magicLimited[i])
+		for (i = 0; i < MAXMAGICTYPE; i++) {
+			if (m_pMapList[player->m_cMapIndex]->m_magicLimited[i]) {
 				SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTSPELL, true, i, NULL, NULL, NULL);
+			}
+		}
 
 		wsprintf(g_cTxt, "Char(%s)-Enter(%s) Observer(%d)", player->m_cCharName, player->m_cMapName, player->m_bIsObserverMode);
-			PutLogFileList(g_cTxt, EVENT_LOGFILE);
+		PutLogFileList(g_cTxt, EVENT_LOGFILE);
 	}
 
 	if (player->m_iPartyID != NULL){
@@ -1980,270 +1953,8 @@ void CGame::DeleteClient(int iClientH, bool bSave, bool bNotify, bool bCountLogo
 
 
 void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dwMsgID, WORD wMsgType, short sV1, short sV2, short sV3)
-{
-	int * ip, i, iRet, iShortCutIndex, iStatus, * ipStatus, iDumm, dataLength;
-	char  * cp, cKey, data[200];
-	DWORD * dwp;
-	WORD  * wp;
-	short * sp;
-	bool    bOwnerSend;
-	CClient * pClient;
-
-	ZeroMemory(data, sizeof(data));
-	ipStatus = (int *)&iDumm;
-	cKey = (char)(rand() % 255) +1; 
-
-	dwp = (DWORD *)(data + INDEX4_MSGID);
-	*dwp = dwMsgID;
-	wp	= (WORD *)(data + INDEX2_MSGTYPE);
-	*wp  = wMsgType;
-
-	cp  = (char *)(data + INDEX2_MSGTYPE + 2);
-
-	if (cOwnerType == OWNERTYPE_PLAYER) {
-		pClient = m_pClientList[sOwnerH];
-		if (pClient == NULL) return;
-
-		switch (wMsgType) {
-		case OBJECTNULLACTION:
-		case OBJECTDAMAGE:
-		case OBJECTDYING:
-			bOwnerSend = TRUE;
-			break;
-		default:
-			bOwnerSend = FALSE;
-			break;
-		}
-
-		switch (wMsgType) 
-		{
-		case OBJECTMAGIC:
-		case OBJECTDAMAGE:
-		case OBJECTDAMAGEMOVE:
-		case OBJECTDYING:
-			dataLength = 11;
-
-			wp  = (WORD *)cp;
-			*wp = sOwnerH + 30000;
-			cp += 2;
-			*cp = pClient->m_cDir;
-			cp++;
-			*cp = (unsigned char)sV1;
-			cp++;
-			*cp = (unsigned char)sV2;
-			cp++;
-
-			if(wMsgType == OBJECTDYING){
-				dataLength = 15;
-
-				sp  = (short *)cp;
-				*sp = pClient->m_sX;
-				cp += 2;
-				sp  = (short *)cp;
-				*sp = pClient->m_sY;
-				cp += 2;
-			}
-			break;
-
-		case OBJECTATTACK:
-		case OBJECTATTACKMOVE:
-			dataLength = 13;
-
-			wp  = (WORD *)cp;
-			*wp = sOwnerH + 30000;
-			cp += 2;
-			*cp = pClient->m_cDir;
-			cp++;
-			*cp = sV1 - pClient->m_sX;
-			cp++;
-			*cp = sV2 - pClient->m_sY;
-			cp++;
-			sp  = (short *)cp;
-			*sp = sV3;
-			cp += 2;
-			break;
-
-		case MSGTYPE_CONFIRM:
-		case MSGTYPE_REJECT:
-		case OBJECTNULLACTION:
-		default:
-			dataLength = 43;
-
-			wp  = (WORD *)cp;
-			*wp = sOwnerH;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pClient->m_sX;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pClient->m_sY;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pClient->m_sType;
-			cp += 2;
-			*cp = pClient->m_cDir;
-			cp++;
-			memcpy(cp, pClient->m_cCharName, 10);
-			cp += 10;
-			sp  = (short *)cp;
-			*sp = pClient->m_sAppr1;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pClient->m_sAppr2;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pClient->m_sAppr3;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pClient->m_sAppr4;
-			cp += 2;
-			ip = (int *)cp;
-			*ip = pClient->m_iApprColor;
-			cp += 4;
-
-			ip  = (int *)cp;
-			ipStatus = ip;
-			iStatus = *ip = pClient->m_iStatus;
-			cp += 4;
-
-			if (wMsgType != OBJECTNULLACTION || pClient->m_bIsKilled == FALSE) {
-				*cp = 0; 
-			}
-			else *cp = 1;
-			cp++;
-			break;
-		}
-
-		iShortCutIndex = 0;
-
-		CClient * ipClient;
-		while(i = m_iClientShortCut[iShortCutIndex++])
-		{
-			if ((ipClient = m_pClientList[i]) && m_pClientList[i]->m_bIsInitComplete)
-				if ((ipClient->m_cMapIndex == pClient->m_cMapIndex) &&
-					(ipClient->m_sX >= pClient->m_sX - 11) &&
-					(ipClient->m_sX <= pClient->m_sX + 11) &&
-					(ipClient->m_sY >= pClient->m_sY - 9) &&
-					(ipClient->m_sY <= pClient->m_sY + 9) ) {
-
-						if (bOwnerSend == TRUE || i != sOwnerH) {
-							if(_bGetIsPlayerHostile(i,sOwnerH) && sOwnerH != i && m_pClientList[i]->m_iAdminUserLevel == 0)
-								*ipStatus = iStatus & STATUS_ENEMYFLAGS;
-							else
-								*ipStatus = iStatus;
-
-							iRet = ipClient->m_pXSock->iSendMsg(data, dataLength, cKey);
-						}
-				}
-		}
-	}
-	else {
-
-		CNpc * pNpc = m_pNpcList[sOwnerH];
-		if (pNpc == NULL) return;
-
-		switch (wMsgType) 
-		{
-		case OBJECTDAMAGE:
-		case OBJECTDAMAGEMOVE:
-		case OBJECTDYING:
-			dataLength = 11;
-
-			wp  = (WORD *)cp;
-			*wp = sOwnerH + 40000;
-			cp += 2;
-			*cp = pNpc->m_cDir;
-			cp++;
-			*cp = (unsigned char)sV1;
-			cp++;
-			*cp = (unsigned char)sV2;
-			cp++;
-
-			if (wMsgType == OBJECTDYING){
-				dataLength = 15;
-
-				sp  = (short *)cp;
-				*sp = pNpc->m_sX;
-				cp += 2;
-				sp  = (short *)cp;
-				*sp = pNpc->m_sY;
-				cp += 2;
-			}
-			break;
-
-		case OBJECTATTACK:
-		case OBJECTATTACKMOVE:
-			dataLength = 13;
-			
-			wp  = (WORD *)cp;
-			*wp = sOwnerH + 40000;
-			cp += 2;
-			*cp = pNpc->m_cDir;
-			cp++;
-			*cp = sV1 - pNpc->m_sX;
-			cp++;
-			*cp = sV2 - pNpc->m_sY;
-			cp++;
-			sp  = (short *)cp;
-			*sp = sV3;
-			cp += 2;
-			break;
-
-		case MSGTYPE_CONFIRM:
-		case MSGTYPE_REJECT:
-		case OBJECTNULLACTION:
-		default:
-			dataLength = 27;
-
-			wp  = (WORD *)cp;
-			*wp = sOwnerH + 10000;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pNpc->m_sX;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pNpc->m_sY;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pNpc->m_sType;
-			cp += 2;
-			*cp = pNpc->m_cDir;
-			cp++;
-			memcpy(cp, pNpc->m_cName, 5);
-			cp += 5;
-			sp  = (short *)cp;
-			*sp = pNpc->m_sAppr2;
-			cp += 2;
-
-			ip  = (int *)cp;
-			ipStatus = ip;
-			*ip = pNpc->m_iStatus;
-			cp += 4;
-			if (wMsgType != OBJECTNULLACTION || pNpc->m_bIsKilled == FALSE) {
-				*cp = 0; 
-			}
-			else *cp = 1;
-			cp++;
-			break;
-		}
-
-		iShortCutIndex = 0;
-
-		CClient * pClient;
-		while (i = m_iClientShortCut[iShortCutIndex++]) 
-		{
-			if ((pClient = m_pClientList[i]) && pClient->m_bIsInitComplete) {
-				if ( (pClient->m_cMapIndex == pNpc->m_cMapIndex) &&
-					(pClient->m_sX >= pNpc->m_sX - 11) &&
-					(pClient->m_sX <= pNpc->m_sX + 11) &&
-					(pClient->m_sY >= pNpc->m_sY - 9) &&
-					(pClient->m_sY <= pNpc->m_sY + 9) ) 
-				{
-					iRet = pClient->m_pXSock->iSendMsg(data, dataLength, cKey);  
-				}
-			}
-		}
-	}
+{	
+	clientEventSender->SendEventToNearClientA(m_pClientList, m_pNpcList, sOwnerH, cOwnerType, dwMsgID, wMsgType, sV1, sV2, sV3);
 }
 
 
@@ -8585,74 +8296,8 @@ bool CGame::bEquipItemHandler(int iClientH, short sItemIndex, bool bNotify)
 
 
 void CGame::SendEventToNearClient_TypeB(DWORD dwMsgID, WORD wMsgType, char cMapIndex, short sX, short sY, short sV1, short sV2, short sV3, short sV4)
-{
-	int i, iRet, iShortCutIndex;
-	char  * cp, cData[100];
-	DWORD * dwp, dwTime;
-	WORD * wp;
-	short * sp;
-	bool bFlag;
-	char  cKey ;
-
-	cKey = (char)(rand() % 255) +1; 
-
-	ZeroMemory(cData, sizeof(cData));
-
-	dwp  = (DWORD *)(cData + INDEX4_MSGID);
-	*dwp = dwMsgID;
-	wp   = (WORD *)(cData + INDEX2_MSGTYPE);
-	*wp  = wMsgType;
-
-	cp = (char *)(cData + INDEX2_MSGTYPE + 2);
-
-	sp  = (short *)cp;
-	*sp = sX;
-	cp += 2;
-
-	sp  = (short *)cp;
-	*sp = sY;
-	cp += 2;
-
-	sp  = (short *)cp;
-	*sp = sV1;
-	cp += 2;
-
-	sp  = (short *)cp;
-	*sp = sV2;
-	cp += 2;
-
-	sp  = (short *)cp;
-	*sp = sV3;
-	cp += 2;
-
-	sp  = (short *)cp;
-	*sp = sV4;
-	cp += 2;
-
-	dwTime = timeGetTime();
-
-	bFlag = TRUE;
-	iShortCutIndex = 0;
-
-	CClient * pClient;
-	while (bFlag == TRUE) {
-
-		i = m_iClientShortCut[iShortCutIndex];
-		iShortCutIndex++;
-		if (i == 0) bFlag = FALSE;
-
-		pClient = m_pClientList[i];
-		if ((bFlag == TRUE) && (pClient != NULL)) {
-			if ( (pClient->m_cMapIndex == cMapIndex) &&
-				(pClient->m_sX >= sX - 10) &&
-				(pClient->m_sX <= sX + 10) &&
-				(pClient->m_sY >= sY - 8 ) &&
-				(pClient->m_sY <= sY + 8 ) ) {
-
-					iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData, 18,cKey);
-			}
-		}
-	}
+{	
+	clientEventSender->SendEventToNearClientB(m_pClientList, dwMsgID, wMsgType, cMapIndex, sX, sY, sV1, sV2, sV3, sV4);
 }
 
 int CGame::iClientMotion_Stop_Handler(int iClientH, short sX, short sY, char cDir)
@@ -15085,6 +14730,12 @@ bool CGame::_bReadMapInfoFiles(int iMapIndex)
 
 	if (memcmp(m_pMapList[iMapIndex]->m_cName, "fight", 5) == 0) 
 		m_pMapList[iMapIndex]->m_bIsFightZone = TRUE;
+
+	if (memcmp(m_pMapList[iMapIndex]->m_cName, "fightzone5", 5) == 0) {
+		m_pMapList[iMapIndex]->m_isArmorDisabled = TRUE;
+		m_pMapList[iMapIndex]->m_isPermIllusionOn = TRUE;
+		m_pMapList[iMapIndex]->m_isShieldDisabled = TRUE;
+	}
 
 	if (memcmp(m_pMapList[iMapIndex]->m_cName, "icebound", 8) == 0) 
 		m_pMapList[iMapIndex]->m_bIsFixedSnowMode = TRUE;
@@ -23313,29 +22964,8 @@ bool CGame::bAnalyzeCriminalAction(int iClientH, short dX, short dY, bool bIsChe
 }
 
 bool CGame::_bGetIsPlayerHostile(int iClientH, int sOwnerH)
-{
-	if (m_pClientList[iClientH] == NULL) return FALSE;
-	if (m_pClientList[sOwnerH]  == NULL) return FALSE;
-
-	if (iClientH == sOwnerH) return TRUE;
-
-	if (m_pClientList[iClientH]->IsNeutral()) {
-		if (m_pClientList[sOwnerH]->m_iPKCount != 0) 
-			return TRUE;
-		else return FALSE;
-	}
-	else {
-		if (m_pClientList[iClientH]->m_side != m_pClientList[sOwnerH]->m_side) {
-			return TRUE;
-		}
-		else {
-			if (m_pClientList[sOwnerH]->m_iPKCount != 0) 
-				return TRUE;
-			else return FALSE;
-		}
-	}
-
-	return FALSE;
+{	
+	return playerHelpers->IsPlayerHostile(iClientH, sOwnerH, m_pClientList);
 }
 
 void CGame::bSetNpcAttackMode(char * cName, int iTargetH, char cTargetType, bool bIsPermAttack)
@@ -42686,4 +42316,66 @@ char CGame::CheckHeroItemEquipped(int iClientH)
 		(sLeggings == ITEM_AHEROLEGGINGS_W)) return 2; //Ares female mage
 
 	return 0;
+}
+
+void CGame::EnforceMapShieldDisabled(int iClientH)
+{
+	CClient * player = m_pClientList[iClientH];
+	if (player == NULL) {
+		return;
+	}
+	if (!player->IsGM() && !player->IsDead()) {
+		if (player->m_sItemEquipmentStatus[EQUIPPOS_LHAND] != -1){
+			SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_LHAND, player->m_sItemEquipmentStatus[EQUIPPOS_LHAND], NULL, NULL);
+			ReleaseItemHandler(iClientH, player->m_sItemEquipmentStatus[EQUIPPOS_LHAND], FALSE);
+		}
+	}
+	SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTSHIELD, true, NULL, NULL, NULL, NULL);
+}
+
+void CGame::EnforceMapArmorDisabled(int iClientH)
+{
+	CClient * player = m_pClientList[iClientH];
+	if (player == NULL) {
+		return;
+	}
+	if (!player->IsGM() && !player->IsDead()){
+		if (player->m_sItemEquipmentStatus[EQUIPPOS_HEAD] != -1){
+			SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_HEAD, player->m_sItemEquipmentStatus[EQUIPPOS_HEAD], NULL, NULL);
+			ReleaseItemHandler(iClientH, player->m_sItemEquipmentStatus[EQUIPPOS_HEAD], FALSE);
+		}
+		if (player->m_sItemEquipmentStatus[EQUIPPOS_BODY] != -1) {
+			SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_BODY, player->m_sItemEquipmentStatus[EQUIPPOS_BODY], NULL, NULL);
+			ReleaseItemHandler(iClientH, player->m_sItemEquipmentStatus[EQUIPPOS_BODY], FALSE);
+		}
+		if (player->m_sItemEquipmentStatus[EQUIPPOS_ARMS] != -1) {
+			SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_ARMS, player->m_sItemEquipmentStatus[EQUIPPOS_ARMS], NULL, NULL);
+			ReleaseItemHandler(iClientH, player->m_sItemEquipmentStatus[EQUIPPOS_ARMS], FALSE);
+		}
+		if (player->m_sItemEquipmentStatus[EQUIPPOS_LEGGINGS] != -1) {
+			SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_LEGGINGS, player->m_sItemEquipmentStatus[EQUIPPOS_LEGGINGS], NULL, NULL);
+			ReleaseItemHandler(iClientH, player->m_sItemEquipmentStatus[EQUIPPOS_LEGGINGS], FALSE);
+		}
+		if (player->m_sItemEquipmentStatus[EQUIPPOS_PANTS] != -1) {
+			SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMRELEASED, EQUIPPOS_PANTS, player->m_sItemEquipmentStatus[EQUIPPOS_PANTS], NULL, NULL);
+			ReleaseItemHandler(iClientH, player->m_sItemEquipmentStatus[EQUIPPOS_PANTS], FALSE);
+		}
+		SendEventToNearClient_TypeA(iClientH, OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, OBJECTNULLACTION, NULL, NULL, NULL);
+	}
+
+	SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTARMOR, true, NULL, NULL, NULL, NULL);
+}
+
+void CGame::EnforceMapPermIllusionOn(int iClientH)
+{
+	CClient * player = m_pClientList[iClientH];
+	if (player == NULL) { 
+		return;
+	}
+	if (!player->IsGM() && !player->IsDead()) {
+		SendNotifyMsg(NULL, iClientH, NOTIFY_MAGICEFFECTON, MAGICTYPE_CONFUSE, 3, iClientH, NULL);
+		player->m_cMagicEffectStatus[MAGICTYPE_CONFUSE] = 3;
+		player->SetStatusFlag(STATUS_ILLUSION, TRUE);
+	}
+	SendNotifyMsg(NULL, iClientH, NOTIFY_EVENTILLUSION, TRUE, NULL, NULL, NULL, NULL);
 }
