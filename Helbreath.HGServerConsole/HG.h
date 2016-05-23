@@ -765,6 +765,8 @@ public:
 	bool  m_bF1pressed, m_bF4pressed, m_bF12pressed;
 	bool  m_bOnExitProcess;
 	DWORD m_dwExitProcessTime;
+	ClientEventSender *clientEventSender;
+	PlayerHelpers *playerHelpers;
 
 	DWORD m_dwWhetherTime, m_dwGameTime1, m_dwGameTime2, m_dwGameTime3, m_dwGameTime4, m_dwGameTime5, m_dwGameTime6, m_dwFishTime;
 

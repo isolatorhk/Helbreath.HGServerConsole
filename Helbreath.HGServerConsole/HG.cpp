@@ -185,6 +185,8 @@ CGame::CGame(HWND hWnd) : m_hWnd(hWnd)
 
 		// 2002-09-09 #1
 		m_bReceivedItemList = false;
+		clientEventSender = new ClientEventSender();
+		playerHelpers = new PlayerHelpers();
 }
 
 CGame::~CGame()
@@ -1951,270 +1953,8 @@ void CGame::DeleteClient(int iClientH, bool bSave, bool bNotify, bool bCountLogo
 
 
 void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dwMsgID, WORD wMsgType, short sV1, short sV2, short sV3)
-{
-	int * ip, i, iRet, iShortCutIndex, iStatus, * ipStatus, iDumm, dataLength;
-	char  * cp, cKey, data[200];
-	DWORD * dwp;
-	WORD  * wp;
-	short * sp;
-	bool    bOwnerSend;
-	CClient * pClient;
-
-	ZeroMemory(data, sizeof(data));
-	ipStatus = (int *)&iDumm;
-	cKey = (char)(rand() % 255) +1; 
-
-	dwp = (DWORD *)(data + INDEX4_MSGID);
-	*dwp = dwMsgID;
-	wp	= (WORD *)(data + INDEX2_MSGTYPE);
-	*wp  = wMsgType;
-
-	cp  = (char *)(data + INDEX2_MSGTYPE + 2);
-
-	if (cOwnerType == OWNERTYPE_PLAYER) {
-		pClient = m_pClientList[sOwnerH];
-		if (pClient == NULL) return;
-
-		switch (wMsgType) {
-		case OBJECTNULLACTION:
-		case OBJECTDAMAGE:
-		case OBJECTDYING:
-			bOwnerSend = TRUE;
-			break;
-		default:
-			bOwnerSend = FALSE;
-			break;
-		}
-
-		switch (wMsgType) 
-		{
-		case OBJECTMAGIC:
-		case OBJECTDAMAGE:
-		case OBJECTDAMAGEMOVE:
-		case OBJECTDYING:
-			dataLength = 11;
-
-			wp  = (WORD *)cp;
-			*wp = sOwnerH + 30000;
-			cp += 2;
-			*cp = pClient->m_cDir;
-			cp++;
-			*cp = (unsigned char)sV1;
-			cp++;
-			*cp = (unsigned char)sV2;
-			cp++;
-
-			if(wMsgType == OBJECTDYING){
-				dataLength = 15;
-
-				sp  = (short *)cp;
-				*sp = pClient->m_sX;
-				cp += 2;
-				sp  = (short *)cp;
-				*sp = pClient->m_sY;
-				cp += 2;
-			}
-			break;
-
-		case OBJECTATTACK:
-		case OBJECTATTACKMOVE:
-			dataLength = 13;
-
-			wp  = (WORD *)cp;
-			*wp = sOwnerH + 30000;
-			cp += 2;
-			*cp = pClient->m_cDir;
-			cp++;
-			*cp = sV1 - pClient->m_sX;
-			cp++;
-			*cp = sV2 - pClient->m_sY;
-			cp++;
-			sp  = (short *)cp;
-			*sp = sV3;
-			cp += 2;
-			break;
-
-		case MSGTYPE_CONFIRM:
-		case MSGTYPE_REJECT:
-		case OBJECTNULLACTION:
-		default:
-			dataLength = 43;
-
-			wp  = (WORD *)cp;
-			*wp = sOwnerH;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pClient->m_sX;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pClient->m_sY;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pClient->m_sType;
-			cp += 2;
-			*cp = pClient->m_cDir;
-			cp++;
-			memcpy(cp, pClient->m_cCharName, 10);
-			cp += 10;
-			sp  = (short *)cp;
-			*sp = pClient->m_sAppr1;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pClient->m_sAppr2;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pClient->m_sAppr3;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pClient->m_sAppr4;
-			cp += 2;
-			ip = (int *)cp;
-			*ip = pClient->m_iApprColor;
-			cp += 4;
-
-			ip  = (int *)cp;
-			ipStatus = ip;
-			iStatus = *ip = pClient->m_iStatus;
-			cp += 4;
-
-			if (wMsgType != OBJECTNULLACTION || pClient->m_bIsKilled == FALSE) {
-				*cp = 0; 
-			}
-			else *cp = 1;
-			cp++;
-			break;
-		}
-
-		iShortCutIndex = 0;
-
-		CClient * ipClient;
-		while(i = m_iClientShortCut[iShortCutIndex++])
-		{
-			if ((ipClient = m_pClientList[i]) && m_pClientList[i]->m_bIsInitComplete)
-				if ((ipClient->m_cMapIndex == pClient->m_cMapIndex) &&
-					(ipClient->m_sX >= pClient->m_sX - 11) &&
-					(ipClient->m_sX <= pClient->m_sX + 11) &&
-					(ipClient->m_sY >= pClient->m_sY - 9) &&
-					(ipClient->m_sY <= pClient->m_sY + 9) ) {
-
-						if (bOwnerSend == TRUE || i != sOwnerH) {
-							if(_bGetIsPlayerHostile(i,sOwnerH) && sOwnerH != i && m_pClientList[i]->m_iAdminUserLevel == 0)
-								*ipStatus = iStatus & STATUS_ENEMYFLAGS;
-							else
-								*ipStatus = iStatus;
-
-							iRet = ipClient->m_pXSock->iSendMsg(data, dataLength, cKey);
-						}
-				}
-		}
-	}
-	else {
-
-		CNpc * pNpc = m_pNpcList[sOwnerH];
-		if (pNpc == NULL) return;
-
-		switch (wMsgType) 
-		{
-		case OBJECTDAMAGE:
-		case OBJECTDAMAGEMOVE:
-		case OBJECTDYING:
-			dataLength = 11;
-
-			wp  = (WORD *)cp;
-			*wp = sOwnerH + 40000;
-			cp += 2;
-			*cp = pNpc->m_cDir;
-			cp++;
-			*cp = (unsigned char)sV1;
-			cp++;
-			*cp = (unsigned char)sV2;
-			cp++;
-
-			if (wMsgType == OBJECTDYING){
-				dataLength = 15;
-
-				sp  = (short *)cp;
-				*sp = pNpc->m_sX;
-				cp += 2;
-				sp  = (short *)cp;
-				*sp = pNpc->m_sY;
-				cp += 2;
-			}
-			break;
-
-		case OBJECTATTACK:
-		case OBJECTATTACKMOVE:
-			dataLength = 13;
-			
-			wp  = (WORD *)cp;
-			*wp = sOwnerH + 40000;
-			cp += 2;
-			*cp = pNpc->m_cDir;
-			cp++;
-			*cp = sV1 - pNpc->m_sX;
-			cp++;
-			*cp = sV2 - pNpc->m_sY;
-			cp++;
-			sp  = (short *)cp;
-			*sp = sV3;
-			cp += 2;
-			break;
-
-		case MSGTYPE_CONFIRM:
-		case MSGTYPE_REJECT:
-		case OBJECTNULLACTION:
-		default:
-			dataLength = 27;
-
-			wp  = (WORD *)cp;
-			*wp = sOwnerH + 10000;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pNpc->m_sX;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pNpc->m_sY;
-			cp += 2;
-			sp  = (short *)cp;
-			*sp = pNpc->m_sType;
-			cp += 2;
-			*cp = pNpc->m_cDir;
-			cp++;
-			memcpy(cp, pNpc->m_cName, 5);
-			cp += 5;
-			sp  = (short *)cp;
-			*sp = pNpc->m_sAppr2;
-			cp += 2;
-
-			ip  = (int *)cp;
-			ipStatus = ip;
-			*ip = pNpc->m_iStatus;
-			cp += 4;
-			if (wMsgType != OBJECTNULLACTION || pNpc->m_bIsKilled == FALSE) {
-				*cp = 0; 
-			}
-			else *cp = 1;
-			cp++;
-			break;
-		}
-
-		iShortCutIndex = 0;
-
-		CClient * pClient;
-		while (i = m_iClientShortCut[iShortCutIndex++]) 
-		{
-			if ((pClient = m_pClientList[i]) && pClient->m_bIsInitComplete) {
-				if ( (pClient->m_cMapIndex == pNpc->m_cMapIndex) &&
-					(pClient->m_sX >= pNpc->m_sX - 11) &&
-					(pClient->m_sX <= pNpc->m_sX + 11) &&
-					(pClient->m_sY >= pNpc->m_sY - 9) &&
-					(pClient->m_sY <= pNpc->m_sY + 9) ) 
-				{
-					iRet = pClient->m_pXSock->iSendMsg(data, dataLength, cKey);  
-				}
-			}
-		}
-	}
+{	
+	clientEventSender->SendEventToNearClientA(m_pClientList, m_pNpcList, sOwnerH, cOwnerType, dwMsgID, wMsgType, sV1, sV2, sV3);
 }
 
 
@@ -8556,9 +8296,8 @@ bool CGame::bEquipItemHandler(int iClientH, short sItemIndex, bool bNotify)
 
 
 void CGame::SendEventToNearClient_TypeB(DWORD dwMsgID, WORD wMsgType, char cMapIndex, short sX, short sY, short sV1, short sV2, short sV3, short sV4)
-{
-	ClientEventSender *clientEventSender = new ClientEventSender();
-	clientEventSender->SendEventToNearClient(m_pClientList, dwMsgID, wMsgType, cMapIndex, sX, sY, sV1, sV2, sV3, sV4);
+{	
+	clientEventSender->SendEventToNearClientB(m_pClientList, dwMsgID, wMsgType, cMapIndex, sX, sY, sV1, sV2, sV3, sV4);
 }
 
 int CGame::iClientMotion_Stop_Handler(int iClientH, short sX, short sY, char cDir)
@@ -23225,29 +22964,8 @@ bool CGame::bAnalyzeCriminalAction(int iClientH, short dX, short dY, bool bIsChe
 }
 
 bool CGame::_bGetIsPlayerHostile(int iClientH, int sOwnerH)
-{
-	if (m_pClientList[iClientH] == NULL) return FALSE;
-	if (m_pClientList[sOwnerH]  == NULL) return FALSE;
-
-	if (iClientH == sOwnerH) return TRUE;
-
-	if (m_pClientList[iClientH]->IsNeutral()) {
-		if (m_pClientList[sOwnerH]->m_iPKCount != 0) 
-			return TRUE;
-		else return FALSE;
-	}
-	else {
-		if (m_pClientList[iClientH]->m_side != m_pClientList[sOwnerH]->m_side) {
-			return TRUE;
-		}
-		else {
-			if (m_pClientList[sOwnerH]->m_iPKCount != 0) 
-				return TRUE;
-			else return FALSE;
-		}
-	}
-
-	return FALSE;
+{	
+	return playerHelpers->IsPlayerHostile(iClientH, sOwnerH, m_pClientList);
 }
 
 void CGame::bSetNpcAttackMode(char * cName, int iTargetH, char cTargetType, bool bIsPermAttack)
