@@ -29447,11 +29447,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 				case 2: iItemID = 650; break; // Zemstone of Sacrifice
 				case 3: iItemID = 656; break; // Xelima Stone
 				case 4: iItemID = 657; break; // Merien Stone
-				case 5: iItemID = 95;  break; // Green Potion
-						{
-						break;
-				}
-						break;
+				case 5: iItemID = 95;  break; // Green Potion				
 				}
 						break;
 
@@ -29603,13 +29599,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 							switch (dice(1, 3)) {
 							case 1: iItemID = 31;  break; // Esterk
 							case 2: iItemID = 34;  break; // Rapier
-							case 3: iItemID = 71;  break; // WarAxe
-							case 4: iItemID = 454; break; // Hauberk(M)
-						    case 5: iItemID = 472; break; // Hauberk(W)
-						    case 6: iItemID = 461; break; // ChainHose(M)
-						    case 7: iItemID = 482; break; // ChainHose(W)
-					     	case 8: iItemID = 601; break; // Full-Helm(M)
-					     	case 9: iItemID = 603; break; // Full-Helm(M)
+							case 3: iItemID = 71;  break; // WarAxe							
 							}
 							break;
 
@@ -29714,10 +29704,16 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						break;
 
 					case 5: // Cyclops, Troll, Beholder, Cannibal-Plant, DireBoar
-						switch (dice(1, 3)) {
+						switch (dice(1, 9)) {
 						case 1: iItemID = 455; break; // LeatherArmor(M)
 						case 2: iItemID = 475; break; // LeatherArmor(W)
 						case 3: iItemID = 84;  break; // IronShield
+						case 4: iItemID = 454; break; // Hauberk(M)
+						case 5: iItemID = 472; break; // Hauberk(W)
+						case 6: iItemID = 461; break; // ChainHose(M)
+						case 7: iItemID = 482; break; // ChainHose(W)
+						case 8: iItemID = 601; break; // Full-Helm(M)
+						case 9: iItemID = 603; break; // Full-Helm(W)
 						}
 						break;
 
@@ -31507,12 +31503,12 @@ BOOL CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType)
 
 	case 50: // Tigerworm
 		iResult = dice(1, 10000);
-		if ((iResult >= 1) && (iResult <= 4999)) {
+		if ((iResult >= 1) && (iResult <= 7349)) {
 			if (dice(1, 2) == 1)
 				iItemID = 311;  // MagicNecklace(DF+10)
 			else iItemID = 305;  // MagicNecklace(DM+1)
 		}
-		else if ((iResult > 5000) && (iResult <= 7499))  iItemID = 614;  // SwordofIceElemental	
+		else if ((iResult > 7350) && (iResult <= 7499))  iItemID = 614;  // SwordofIceElemental	
 		else if ((iResult > 7500) && (iResult <= 8749))  iItemID = 290;  // Flameberge+3(LLF)
 		else if ((iResult > 8750) && (iResult <= 9374))  iItemID = 633;  // RingofDemonpower
 		else if ((iResult > 9375) && (iResult <= 9687))  iItemID = 492;  // BloodRapier		
