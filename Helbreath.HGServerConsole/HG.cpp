@@ -21678,7 +21678,14 @@ BOOL CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability,
 			case 3: if (dice(1, (100 * fProbA)) == 3) iItemID = 860; break; // NecklaceOfXelima
 			case 4: if (dice(1, (100 * fProbA)) == 3) iItemID = 865; break; // ResurWand(MS.20)
 			case 5: if (dice(1, (100 * fProbA)) == 2) iItemID = 631; break; // RingoftheAbaddon        	
-			case 6: if (dice(1, (100 * fProbA)) == 2) iItemID = 866; break; // BerserkWand(MS.10)
+			case 6: if (dice(1, (100 * fProbA)) == 2) iItemID = 866; break; // ResurWand (MS.10)
+			case 7: if (dice(1, (100 * fProbA)) == 2) iItemID = 862; break; // BerserkWand(MS.20)
+			case 8: if (dice(1, (100 * fProbA)) == 2) iItemID = 861; break; // BerserkWand(MS.10)
+			case 9: if (dice(1, (100 * fProbA)) == 2) iItemID = 863; break; // KlonessWand(MS.20)
+		   case 10: if (dice(1, (100 * fProbA)) == 2) iItemID = 864; break; // KlonessWand(MS.10)
+           case 11: if (dice(1, (100 * fProbA)) == 2) iItemID = 734; break; // RingofArchMage
+		   case 12: if (dice(1, (100 * fProbA)) == 2) iItemID = 853; break; // E.S.W.Manual
+		   case 13: if (dice(1, (100 * fProbA)) == 2) iItemID = 852; break; // CancelManual
 			}
 
 			// »ó±Þ
@@ -21698,6 +21705,13 @@ BOOL CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability,
 				case 13: if (dice(1, (4 * fProbB)) == 3) iItemID = 381; break; // MassFireStrikeManual  
 				case 14: if (dice(1, (4 * fProbB)) == 3) iItemID = 259; break; // MagicWand(M.Shield)
 				case 15: if (dice(1, (4 * fProbB)) == 3) iItemID = 291; break; // MagicWand(MS30-LLF)
+				case 16: if (dice(1, (4 * fProbB)) == 3) iItemID = 849; break; // Kloness Blade
+                case 17: if (dice(1, (4 * fProbB)) == 3) iItemID = 850; break; // Kloness Axe
+				case 18: if (dice(1, (4 * fProbB)) == 3) iItemID = 851; break; // Kloness Esterk
+				case 19: if  (dice(1, (4 * fProbB)) == 3) iItemID =859; break; // Kloness Neck
+				case 20: if (dice(1, (4 * fProbB)) == 3) iItemID = 854; break; // I.M.C.Manual
+
+
 				}
 			}
 			break;
@@ -29436,23 +29450,6 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 				case 3: iItemID = 656; break; // Xelima Stone
 				case 4: iItemID = 657; break; // Merien Stone
 				case 5: iItemID = 95;  break; // Green Potion
-				case 6: switch (dice(1, 5)) {
-				case 1: iItemID = 651; break; // GreenBall
-				case 2: iItemID = 652; break; // RedBall
-				case 3: iItemID = 653; break; // YellowBall
-				case 4: iItemID = 654; break; // BlueBall
-				case 5: switch (dice(1, 11)) {
-				case 1: iItemID = 881; break; // ArmorDye(Indigo)
-				case 2: iItemID = 882; break; // ArmorDye(Crimson-Red)
-				case 3: iItemID = 883; break; // ArmorDye(Gold)
-				case 4: iItemID = 884; break; // ArmorDye(Aqua)
-				case 5: iItemID = 885; break; // ArmorDye(Pink)
-				case 6: iItemID = 886; break; // ArmorDye(Violet)
-				case 7: iItemID = 887; break; // ArmorDye(Blue)
-				case 8: iItemID = 888; break; // ArmorDye(Khaki)
-				case 9: iItemID = 889; break; // ArmorDye(Yellow)
-				case 10: iItemID = 890; break; // ArmorDye(Red)
-				case 11: iItemID = 655; break; // PearlBall
 				}
 						break;
 				}
@@ -29619,7 +29616,6 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 							case 3: iItemID = 46;  break; // Claymore
 							case 4: iItemID = 31;  break; // Esterk
 							case 5: iItemID = 34;  break; // Rapier
-							case 6: iItemID = 617; break; // CompositeBow
 							}
 							break;
 
@@ -29718,6 +29714,12 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						case 1: iItemID = 455; break; // LeatherArmor(M)
 						case 2: iItemID = 475; break; // LeatherArmor(W)
 						case 3: iItemID = 84;  break; // IronShield
+						case 4: iItemID = 454; break; // Hauberk(M)
+						case 5: iItemID = 472; break; // Hauberk(W)
+						case 6: iItemID = 461; break; // ChainHose(M)
+						case 7: iItemID = 482; break; // ChainHose(W)
+						case 8: iItemID = 601; break; // Full-Helm(M)
+						case 9: iItemID = 603; break; // Full-Helm(M)
 						}
 						break;
 
@@ -29775,12 +29777,12 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						case 4: iItemID = 87; break; // TowerShield
 						case 5: switch (dice(1, 2)) {
 						case 1: iItemID = 600; break; // Helm(M)
-						case 2: iItemID = 602; break; // Helm(M)
+						case 2: iItemID = 602; break; // Helm(W)
 						}
 								break;
 						case 6: switch (dice(1, 2)) {
 						case 1: iItemID = 601; break; // Full-Helm(M)
-						case 2: iItemID = 603; break; // Full-Helm(M)
+						case 2: iItemID = 603; break; // Full-Helm(W)
 						}
 								break;
 						}
@@ -31507,12 +31509,12 @@ BOOL CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType)
 
 	case 50: // Tigerworm
 		iResult = dice(1, 10000);
-		if ((iResult >= 1) && (iResult <= 4999)) {
+		if ((iResult >= 1) && (iResult <= 6499)) {
 			if (dice(1, 2) == 1)
 				iItemID = 311;  // MagicNecklace(DF+10)
 			else iItemID = 305;  // MagicNecklace(DM+1)
 		}
-		else if ((iResult > 5000) && (iResult <= 7499))  iItemID = 614;  // SwordofIceElemental	
+		else if ((iResult > 6500) && (iResult <= 7499))  iItemID = 614;  // SwordofIceElemental	
 		else if ((iResult > 7500) && (iResult <= 8749))  iItemID = 290;  // Flameberge+3(LLF)
 		else if ((iResult > 8750) && (iResult <= 9374))  iItemID = 633;  // RingofDemonpower
 		else if ((iResult > 9375) && (iResult <= 9687))  iItemID = 492;  // BloodRapier		
@@ -31638,6 +31640,8 @@ BOOL CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType)
 		switch (dice(1, 2)) {
 		case 1: if (dice(1, 30) == 3) iItemID = 290; break; // Flameberge+3(LLF)
 		case 2: iItemID = 292; break; // GoldenAxe(LLF)
+		case 3: if (dice(1, 40) == 13) iItemID = 621; break; // MerienPlateMail(M)
+		case 4: if (dice(1, 40) == 13) iItemID = 622; break; // MerienPlateMail(W)
 		}
 		break;
 
@@ -31690,22 +31694,39 @@ BOOL CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType)
 
 	case 54: // Dark-Elf
 		if (dice(1, 20) == 11) iItemID = 618; break; // DarkElfBow
+		if (dice(1, 40) == 3)  iItemID = 630; break; // RingoftheXelima
+		if (dice(1, 30) == 3) iItemID = 633; break; // RingofDemonpower
 		break;
 
 	case 63: // Frost
-		if (dice(1, 40) == 11) iItemID = 845; break; // StormBringer	
+		switch (dice(1, 11)) {
+	case 1 : if (dice(1, 40) == 11) iItemID = 845; break; // StormBringer
+	case 2: if (dice(1, 10) == 3) iItemID = 642; break; // KnecklaceOfIcePro
+	case 3: if (dice(1, 15) == 3) iItemID = 643; break; // KnecklaceOfIceEle	
+	case 4: if (dice(1, 30) == 3) iItemID = 636; break; // RingofGrandMage
+	case 5: if (dice(1, 30) == 3) iItemID = 734; break; // RingOfArcmage
+	case 6:	if (dice(1, 10) == 3) iItemID = 380; break; // IceStormManual
+		}
 		break;
 
 	case 79: // Nizie
-		if (dice(1, 20) == 11) iItemID = 845; break; // StormBringer	
+		if (dice(1, 20) == 11) iItemID = 845; break; // StormBringer
+		if (dice(1, 30) == 3) iItemID = 636; break; // RingofGrandMage
+	    if (dice(1, 30) == 3) iItemID = 734; break; // RingOfArcmage
+		if (dice(1, 10) == 3) iItemID = 380; break; // IceStormManual
 		break;
 
 	case 70: // Barlog
 		if (dice(1, 40) == 11) iItemID = 846; break; // The_Devastator
+		if (dice(1, 20) == 3) iItemID = 735; break; // RingOfDragonpower
+		if (dice(1, 30) == 13) iItemID = 638; break; // KnecklaceOfFirePro
 		break;
 
 	case 71: // Centaurus
 		if (dice(1, 20) == 11) iItemID = 848; break; // Lighting Blade
+		if (dice(1, 20) == 3) iItemID = 735; break; // RingOfDragonpower
+	    if (dice(1, 40) == 3) iItemID = 20; break; // Excalibur
+		
 		break;
 
 	}
