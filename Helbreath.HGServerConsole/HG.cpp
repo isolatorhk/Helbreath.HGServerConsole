@@ -29447,11 +29447,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 				case 2: iItemID = 650; break; // Zemstone of Sacrifice
 				case 3: iItemID = 656; break; // Xelima Stone
 				case 4: iItemID = 657; break; // Merien Stone
-				case 5: iItemID = 95;  break; // Green Potion
-						{
-						break;
-				}
-						break;
+				case 5: iItemID = 95;  break; // Green Potion				
 				}
 						break;
 
@@ -31507,12 +31503,12 @@ BOOL CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType)
 
 	case 50: // Tigerworm
 		iResult = dice(1, 10000);
-		if ((iResult >= 1) && (iResult <= 4999)) {
+		if ((iResult >= 1) && (iResult <= 6499)) {
 			if (dice(1, 2) == 1)
 				iItemID = 311;  // MagicNecklace(DF+10)
 			else iItemID = 305;  // MagicNecklace(DM+1)
 		}
-		else if ((iResult > 5000) && (iResult <= 7499))  iItemID = 614;  // SwordofIceElemental	
+		else if ((iResult > 6500) && (iResult <= 7499))  iItemID = 614;  // SwordofIceElemental	
 		else if ((iResult > 7500) && (iResult <= 8749))  iItemID = 290;  // Flameberge+3(LLF)
 		else if ((iResult > 8750) && (iResult <= 9374))  iItemID = 633;  // RingofDemonpower
 		else if ((iResult > 9375) && (iResult <= 9687))  iItemID = 492;  // BloodRapier		
