@@ -18,6 +18,7 @@
 #include <time.h>
 #include <direct.h>
 #include <list>
+#include <vector>
 
 #include "..\shared\common.h"
 #include "..\shared\NetMessages.h"
@@ -56,6 +57,7 @@
 #include "ini.h"
 #include "CombatConfig.h"
 #include "DropConfig.h"
+#include "ClientEventSender.h"
 
 #define SERVERSOCKETBLOCKLIMIT	300
 
@@ -764,6 +766,8 @@ public:
 	bool  m_bF1pressed, m_bF4pressed, m_bF12pressed;
 	bool  m_bOnExitProcess;
 	DWORD m_dwExitProcessTime;
+	ClientEventSender *clientEventSender;
+	PlayerHelpers *playerHelpers;
 
 	DWORD m_dwWhetherTime, m_dwGameTime1, m_dwGameTime2, m_dwGameTime3, m_dwGameTime4, m_dwGameTime5, m_dwGameTime6, m_dwFishTime;
 
@@ -960,6 +964,9 @@ public:
 	void GetDKItemHandler(int iClientH, char * pData, DWORD dwMsgSize);
 	void AdminOrder_GoTo(int iClientH, char* pData, DWORD dwMsgSize);
 	void AdminOrder_Pushplayer(int iClientH, char * pData, DWORD dwMsgSize);
+	void EnforceMapShieldDisabled(int iClientH);
+	void EnforceMapArmorDisabled(int iClientH);
+	void EnforceMapPermIllusionOn(int iClientH);
 
 private:
 	int __iSearchForQuest(int iClientH, int iWho, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, int * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange);
