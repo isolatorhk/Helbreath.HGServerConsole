@@ -323,7 +323,6 @@ public:
 	void RequestHelpHandler(int iClientH);
 	
 	void ReqCreateCraftingHandler(int iClientH, char *pData);
-	void GetGMCrits(int iClientH)
 	BOOL _bDecodeCraftingConfigFileContents(char * pData, DWORD dwMsgSize);
 
 	void _SendMapStatus(int iClientH);
