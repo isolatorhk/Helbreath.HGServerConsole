@@ -29691,6 +29691,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 
 					case 3: // Stone-Golem, Clay-Golem
 						iItemID = 81; // TargeShield
+						iItemID = 79; // TargeShield
 						break;
 
 					case 4: // Hellbound, Rudolph
@@ -31549,6 +31550,7 @@ BOOL CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType)
 		case 54: if (dice(1, 200) != 11) return FALSE; break;	  // Dark-Elf
 		case 57: if (dice(1, 400) != 11) return FALSE; break;	  // Giant-Frog
 		case 63: if (dice(1, 300) != 11) return FALSE; break;	  // Frost
+		case 65: if (dice(1, 100) != 11) return FALSE; break;	  // Ice Golem
 		case 79: if (dice(1, 200) != 11) return FALSE; break;	  // Nizie
 		case 70: if (dice(1, 200) != 11) return FALSE; break;	  // Barlog
 		case 71: if (dice(1, 200) != 11) return FALSE; break;	  // Centaurus
@@ -31557,22 +31559,16 @@ BOOL CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType)
 	}
 	else return FALSE;
 
-	//http://www.helbreath.com/down/d_patch_v2.htm
-
 	switch (sNpcType) {
 	case 11: // Skeleton
 	case 17: // Scorpoin
 	case 14: // Orc
 	case 28: // Troll
 	case 57: // Giant-Frog
-		switch (dice(1, 7)) {
-		case 1: iItemID = 334; break; // LuckyGoldRing
-		case 2: iItemID = 336; break; // SapphireRing
-		case 3: if (dice(1, 15) == 3) iItemID = 335; break; // EmeraldRing
-		case 4: iItemID = 337; break; // RubyRing
-		case 5: iItemID = 333; break; // PlatinumRing
-		case 6: if (dice(1, 15) == 3) iItemID = 634; break; // RingofWizard
-		case 7: if (dice(1, 25) == 3) iItemID = 635; break; // RingofMage
+		switch (dice(1, 3)) {
+		case 1: if (dice(1, 10) == 3) iItemID = 334; break;  // LuckyGoldRing
+		case 2: if (dice(1, 15) == 3) iItemID = 337; break;  // RubyRing
+		case 3: if (dice(1, 40) == 3) iItemID = 634; break;  // RingOfWizard
 		}
 		break;
 
@@ -31601,21 +31597,17 @@ BOOL CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType)
 		break;
 
 	case 12: // Stone-Golem
-		switch (dice(1, 5)) {
-		case 1: if (dice(1, 40) == 13) iItemID = 620; break; // MerienShield
-		case 2: if (dice(1, 40) == 13) iItemID = 621; break; // MerienPlateMail(M)
-		case 3: if (dice(1, 40) == 13) iItemID = 622; break; // MerienPlateMail(W)
-		case 4: if (dice(1, 20) == 11) iItemID = 644; break; // KnecklaceOfAirEle
-		case 5: if (dice(1, 20) == 11) iItemID = 647; break; // KnecklaceOfStoneGolem
+		switch (dice(1, 3)) {		
+		case 1: if (dice(1, 140) == 5) iItemID = 647; break; // KnecklaceOfStoneGolem
+		case 2: if (dice(1, 10) == 5)  iItemID = 259; break;  // M.Shield Wand
+		case 3: if (dice(1, 20) == 5) iItemID = 311; break;   // MagicNecklace(DF+10)
 		}
 		break;
 
 	case 23: // Clay-Golem
-		switch (dice(1, 4)) {
-		case 1: if (dice(1, 40) == 13) iItemID = 620; break; // MerienShield	
-		case 2: if (dice(1, 40) == 13) iItemID = 621; break; // MerienPlateMail(M)
-		case 3: if (dice(1, 40) == 13) iItemID = 622; break; // MerienPlateMail(W)
-		case 4: if (dice(1, 20) == 11) iItemID = 644; break; // KnecklaceOfAirEle
+		switch (dice(1, 2)) {
+		case 1: if (dice(1, 15) == 5) iItemID = 311; break;   // DF10 Neck
+		case 2: if (dice(1, 10) == 5) iItemID = 259; break;   // M.Shield Wand
 		}
 		break;
 
@@ -31631,11 +31623,12 @@ BOOL CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType)
 
 	case 33: // WereWolf
 	case 48: // Stalker
-		switch (dice(1, 4)) {
+		switch (dice(1, 5)) {
 		case 1: if (dice(1, 30) == 3) iItemID = 290; break; // Flameberge+3(LLF)
 		case 2: iItemID = 292; break; // GoldenAxe(LLF)
-		case 3: if (dice(1, 40) == 13) iItemID = 621; break; // MerienPlateMail(M)
-		case 4: if (dice(1, 40) == 13) iItemID = 622; break; // MerienPlateMail(W)
+		case 3: if (dice(1, 5) == 3) iItemID = 305; break;  // MagicNecklace(DM+1) 1/ 31,85k ww, 1/ 32,5k stalk i direboar
+		case 4: if (dice(1, 40) == 13) iItemID = 621; break; // MerienPlateMail(M)
+		case 5: if (dice(1, 40) == 13) iItemID = 622; break; // MerienPlateMail(W)
 		}
 		break;
 
@@ -31697,6 +31690,17 @@ BOOL CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType)
  	    if (dice(1, 30) == 3) iItemID = 636; break; // RingofGrandMage
  	    if (dice(1, 30) == 3) iItemID = 734; break; // RingOfArcmage
  		if (dice(1, 10) == 3) iItemID = 380; break; // IceStormManual		  		
+		break;
+
+	case 65: // Ice-Golem  65*100 = 6500
+		switch (dice(1, 6)) {
+		case 1: if (dice(1, 125) == 3) iItemID = 380; break; // Ice-Storm Manual	1/812,5k	
+		case 2: if (dice(1, 20) == 3) iItemID = 636; break;  // RingofGrandMage	       	1/130k 
+		case 3: if (dice(1, 150) == 3) iItemID = 642; break; // KnecklaceOfIcePro	1/975k
+		case 4: if (dice(1, 15) == 3) iItemID = 311; break;  // MagicNecklace(DF+10)    1/ 97,5k
+		case 5: if (dice(1, 30) == 3) iItemID = 335; break;  // EmeraldRing	        1/195k
+		case 6: if (dice(1, 15) == 2) iItemID = 302; break;  // MagicDMGNeck(MDMG+1)	1/ 97,5k
+		}
 		break;
 		
 
