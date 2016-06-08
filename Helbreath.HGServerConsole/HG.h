@@ -712,6 +712,7 @@ public:
 		int *iItemIDs, POINT *BasePos, int *iNumItem);
 	void _AdjustRareItemValue(class CItem * pItem);
 	char CheckHeroItemEquipped(int iClientH);
+	void CreateDKItem(int iClientH, char *cItemName);
 
 	CGame(HWND hWnd);
 	~CGame();
@@ -972,6 +973,8 @@ private:
 	int __iSearchForQuest(int iClientH, int iWho, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, int * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange);
 	int _iTalkToNpcResult_Cityhall(int iClientH, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, int * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange);
 	int _iGetItemSpaceLeft(int iClientH);
+	void RequestForWarriorDKSet(int iClientH);
+	void RequestForMageDKSet(int iClientH);
 
 };
 

@@ -37328,76 +37328,130 @@ void CGame::GetAngelHandler(int iClientH, char * pData, DWORD dwMsgSize)
 	} 
 } 
 
-// Jehovah - Coded a DK item handler for cityhall from snoopys function.
 void CGame::GetDKItemHandler(int iClientH, char * pData, DWORD dwMsgSize)
 {
 	char  *cp, cTmpName[21];
-	int   iAngel;
-	int   iEraseReq;
+	int   setType;	
 	char  cItemName[21];
 	int   * ip;
-	if (m_pClientList[iClientH] == NULL) return;
-	if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;
-	if (_iGetItemSpaceLeft(iClientH) == 0) 
-	{
+
+	if (m_pClientList[iClientH] == NULL) {
+		return;
+	}
+	if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) {
+		return;
+	}
+
+	if (_iGetItemSpaceLeft(iClientH) == 0){
 		SendItemNotifyMsg(iClientH, NOTIFY_CANNOTCARRYMOREITEM, NULL, NULL, false);
 		return;
 	}
+
 	cp = (char *)(pData + INDEX2_MSGTYPE + 2);
 	ZeroMemory(cTmpName, sizeof(cTmpName));
 	strcpy(cTmpName, cp);
 	cp += 20;
 	ip = (int *)cp;
-	iAngel = (int) *ip;
-	cp += 2;
-	switch (iAngel) 
-	{
-	case 10:
-		wsprintf(cItemName, "DMMagicStaff");
-		break;
-	case 11:
-		wsprintf(cItemName, "DKRapier");
-		break;
-	case 12:
-		wsprintf(cItemName, "DKGreatSword");
-		break;
-	case 13:
-		wsprintf(cItemName, "DKFlameberg");
-		break;
+	setType = (int) *ip;
+	cp += 2;	
 
+	switch (setType)
+	{
+	case 10:		
+		RequestForMageDKSet(iClientH);
+		break;
+	case 11:		
+		RequestForWarriorDKSet(iClientH);
+		break;
 	default:
-		PutLogList("Cityhall officer asked to create a wrong item!");
+		PutLogList("Cityhall officer asked to create a wrong set!");
+		return;
+	}
+}
+
+void CGame::RequestForWarriorDKSet(int iClientH)
+{
+	std::string logMessage = "Player :";
+	logMessage += m_pClientList[iClientH]->m_cCharName;
+	PutLogList(logMessage + " asked for Warrior DKSet");
+
+	char *DKWarriorSetMale[5] = { "DarkKnightHauberk(M)","DarkKnightFullHelm(M)","DarkKnightLeggings(M)", "DarkKnightPlateMail(M)", "DarkKnightFlameberge" };
+	char *DKWarriorSetFemale[5] = { "DarkKnightHauberk(W)","DarkKnightFullHelm(W)","DarkKnightLeggings(W)", "DarkKnightPlateMail(W)", "DarkKnightFlameberge" };
+
+	int playerSex = m_pClientList[iClientH]->m_cSex;
+	if (playerSex == 1) {
+		for (int i = 0; i < 5; i++)
+		{
+			CreateDKItem(iClientH, DKWarriorSetMale[i]);
+		}		
+	}
+	else if (playerSex == 2) {
+		for (int i = 0; i < 5; i++)
+		{
+			CreateDKItem(iClientH, DKWarriorSetFemale[i]);
+		}
+	}
+}
+
+void CGame::RequestForMageDKSet(int iClientH)
+{
+	std::string logMessage = "Player :";
+	logMessage += m_pClientList[iClientH]->m_cCharName;
+	PutLogList(logMessage + " asked for Mage DKSet");
+
+	char *DKMageSetMale[5] = { "DarkMageHauberk(M)","DarkMageChainMail(M)","DarkMageLeggings(M)", "DarkMageHat(M)", "DarkMageMagicStaff" };
+	char *DKMageSetFemale[5] = { "DarkMageHauberk(W)","DarkMageChainMail(W)","DarkMageLeggings(W)", "DarkMageHat(W)", "DarkMageMagicStaff" };
+
+	int playerSex = m_pClientList[iClientH]->m_cSex;
+	if (playerSex == 1) {
+		for (int i = 0; i < 5; i++)
+		{
+			CreateDKItem(iClientH, DKMageSetMale[i]);
+		}
+	}
+	else if (playerSex == 2) {
+		for (int i = 0; i < 5; i++)
+		{
+			CreateDKItem(iClientH, DKMageSetFemale[i]);
+		}
+	}
+}
+
+void CGame::CreateDKItem(int iClientH, char *cItemName)
+{
+	int   iEraseReq;
+
+	if (m_pClientList[iClientH]->HasItem(cItemName) != ITEM_NONE) {
 		return;
 	}
 
-	if(m_pClientList[iClientH]->HasItem(cItemName) != ITEM_NONE)
-		return;
-
 	CItem * pItem = new class CItem;
-	if (pItem == NULL) return;
-	if ((_bInitItemAttr(pItem, cItemName) == TRUE)) 
+	if (pItem == NULL) {
+		return;
+	}
+	if ((_bInitItemAttr(pItem, cItemName) == TRUE))
 	{
 		pItem->m_sTouchEffectType = ITET_UNIQUE_OWNER;
 		pItem->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1;
 		pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;
 		pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;
-		if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) 
+		if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE)
 		{
 			SendItemNotifyMsg(iClientH, NOTIFY_ITEMOBTAINED, pItem, NULL, true);
 
 			if (iEraseReq == 1) delete pItem;
-			
-			/*	m_pClientList[iClientH]->m_iGizonItemUpgradeLeft -= iRequiredMagesty; 
+
+			/*	m_pClientList[iClientH]->m_iGizonItemUpgradeLeft -= iRequiredMagesty;
 			SendNotifyMsg(NULL, iClientH, NOTIFY_GIZONITEMUPGRADELEFT, m_pClientList[iClientH]->m_iGizonItemUpgradeLeft, NULL, NULL, NULL); */
 		}
-		else 
+		else
 		{
-			m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->bSetItem(m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, pItem);
+			m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->bSetItem(m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, pItem);
 			SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor);
 			SendItemNotifyMsg(iClientH, NOTIFY_CANNOTCARRYMOREITEM, NULL, NULL, true);
 		}
 	}
-	else 
+	else
 	{
 		delete pItem;
 		pItem = NULL;
