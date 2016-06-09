@@ -35447,11 +35447,6 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex)
 		return;
 	}
 
-	/*wsprintf(g_cTxt, "value (%d)", iValue);
-	PutLogList(g_cTxt);
-	wsprintf(g_cTxt, "Weapon (%d)", m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum);
-	PutLogList(g_cTxt);*/
-
 	switch (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cCategory) 
 	{
 	case 46: // Pendants
@@ -35480,7 +35475,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex)
 				SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMUPGRADEFAIL, 3, NULL, NULL, NULL);
 				return;
 			}
-			if(iValue >= 15) {
+			if(iValue >= 10) {
 				SendNotifyMsg(NULL, iClientH, NOTIFY_ITEMUPGRADEFAIL, 3, NULL, NULL, NULL);
 				return;
 			}
