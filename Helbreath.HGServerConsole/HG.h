@@ -702,6 +702,8 @@ public:
 	void CreateAstoriaFlags();
 	void UpdateRelicPos(int iClientH = NULL);
 
+	void CleanMaps();
+
 	void UpdateWebsiteStats();
 	void OnWebSocketEvent(UINT message, WPARAM wParam, LPARAM lParam);
 	//=======================================================================================

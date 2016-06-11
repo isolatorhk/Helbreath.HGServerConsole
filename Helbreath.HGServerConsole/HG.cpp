@@ -2117,6 +2117,16 @@ void CGame::OnTimer(char cType)
 		m_dwFishTime = dwTime;
 	}
 
+	if ((dwTime - m_dwWhetherTime) > 40 _m) {
+		SYSTEMTIME SysTime;
+		GetLocalTime(&SysTime);
+
+		if (SysTime.wHour == 23) {
+			CleanMaps();
+		}
+		m_dwWhetherTime = dwTime;
+	}
+
 	if ((dwTime - m_dwWhetherTime) > 1 _m) {
 		UpdateWebsiteStats();
 		WhetherProcessor();
@@ -5743,7 +5753,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize)
 		else if (memcmp(cp, "/revive", 7) == 0) {
 			AdminOrder_Revive(iClientH, cp, dwMsgSize - 21);
 			return;
-		}
+		}		
 		else if (memcmp(cp, "/mcount", 8) == 0) {
 			Apocalypse_MonsterCount(iClientH);
 		} else if (memcmp(cp, "/send ", 5) == 0) {
@@ -11610,17 +11620,17 @@ void CGame::RequestTeleportHandler(int iClientH, char teleportType, char * cMapN
 	BOOL    bRet, bIsLockedMapNotify;
 	bool setRecallTime = TRUE;
 
-	CClient * player = m_pClientList[iClientH];
+	CClient *player = m_pClientList[iClientH];
 
 	if (!player) return;
 	if (player->m_bIsInitComplete == FALSE) return;
 	if (player->m_bIsKilled == TRUE) return;
 	if (player->m_bIsOnWaitingProcess == TRUE) return;
 
-	if((teleportType == 1 || teleportType == 3) &&
+	if ((teleportType == 1 || teleportType == 3) &&
 		player->m_iAdminUserLevel == 0 &&
 		player->IsInFoeMap())
-			return;
+		return;
 
 	sX = player->m_sX;
 	sY = player->m_sY;
@@ -11628,16 +11638,16 @@ void CGame::RequestTeleportHandler(int iClientH, char teleportType, char * cMapN
 	ZeroMemory(cDestMapName, sizeof(cDestMapName));
 	bRet = m_pMapList[player->m_cMapIndex]->bSearchTeleportDest(sX, sY, cDestMapName, &iDestX, &iDestY, &cDir);
 
-	if(!bRet && teleportType == 4){
+	if (!bRet && teleportType == 4) {
 		/*SendObjectMotionRejectMsg(iClientH);
 		SendNotifyMsg(NULL, iClientH, NOTIFY_TELEPORT_REJECTED,sX,sY,NULL,NULL);
 		return;*/ //Leave commented out till next client
 	}
-	
-	if(player->m_cMapIndex == m_iAstoriaMapIndex	&& m_astoria.get())
+
+	if (player->m_cMapIndex == m_iAstoriaMapIndex	&& m_astoria.get())
 	{
 		int index = player->HasItem(ITEM_RELIC);
-		if(index != ITEM_NONE)
+		if (index != ITEM_NONE)
 		{
 			DropItemHandler(player->m_handle, index, 1, player->m_pItemList[index]->m_cName, FALSE);
 		}
@@ -11661,7 +11671,7 @@ void CGame::RequestTeleportHandler(int iClientH, char teleportType, char * cMapN
 	if ((strcmp(player->m_cLockedMapName, "NONE") != 0) && (player->m_iLockedMapTime > 0)) {
 
 		int tmp_mapSide = iMapSide;
-		if (tmp_mapSide >= 11) tmp_mapSide -= 10 ;
+		if (tmp_mapSide >= 11) tmp_mapSide -= 10;
 
 		if (tmp_mapSide == 0 || player->m_side != tmp_mapSide) {
 			iDestX = -1;
@@ -11672,11 +11682,11 @@ void CGame::RequestTeleportHandler(int iClientH, char teleportType, char * cMapN
 		}
 	}
 
-	if(player->IsNeutral() && memcmp(player->m_cMapName, "default2", 8) == 0)
+	if (player->IsNeutral() && memcmp(player->m_cMapName, "default2", 8) == 0)
 	{
 		int tmp_mapSide = iMapSide;
-		if (tmp_mapSide >= 11) tmp_mapSide -= 10 ;
-		if((Side)tmp_mapSide != NEUTRAL)
+		if (tmp_mapSide >= 11) tmp_mapSide -= 10;
+		if ((Side)tmp_mapSide != NEUTRAL)
 		{
 			ChangeNation(player->m_handle, (Side)tmp_mapSide);
 			wsprintf(g_cTxt, "Istrian %s chose %s!", player->m_cCharName, sideName[tmp_mapSide]);
@@ -11692,15 +11702,16 @@ void CGame::RequestTeleportHandler(int iClientH, char teleportType, char * cMapN
 	}
 
 	cMapIndex = iGetMapIndex(cDestMapName);
-	
-	if(player->m_cMapIndex == m_iAstoriaMapIndex && memcmp(cDestMapName, "astoria", 7) == 0)
+
+	if (player->m_cMapIndex == m_iAstoriaMapIndex && memcmp(cDestMapName, "astoria", 7) == 0)
 	{
 		uint32 baseNumber = cDestMapName[7] - '0';;
-		if(player->m_side == m_astoriaBasePos[baseNumber])
+		if (player->m_side == m_astoriaBasePos[baseNumber])
 		{
 			ZeroMemory(cDestMapName, sizeof(cDestMapName));
-			strcpy(cDestMapName, sideMap[ m_astoriaBasePos[baseNumber] ]);
-		}else
+			strcpy(cDestMapName, sideMap[m_astoriaBasePos[baseNumber]]);
+		}
+		else
 		{
 			ZeroMemory(cDestMapName, sizeof(cDestMapName));
 			strcpy(cDestMapName, player->m_cMapName);
@@ -11710,9 +11721,9 @@ void CGame::RequestTeleportHandler(int iClientH, char teleportType, char * cMapN
 		}
 	}
 
-	if(bRet && iMapSide && iMapSide <= 10 &&
+	if (bRet && iMapSide && iMapSide <= 10 &&
 		strcmp(m_pMapList[cMapIndex]->m_cLocationName, player->m_cLocation) != 0 &&
-		!player->IsGM() && !player->IsNeutral() )
+		!player->IsGM() && !player->IsNeutral())
 	{
 		ZeroMemory(cDestMapName, sizeof(cDestMapName));
 		strcpy(cDestMapName, player->m_cMapName);
@@ -11726,29 +11737,29 @@ void CGame::RequestTeleportHandler(int iClientH, char teleportType, char * cMapN
 		{
 			if (m_pMapList[i] != NULL) {
 				if (memcmp(m_pMapList[i]->m_cName, cDestMapName, 10) == 0) {
-					player->m_sX   = iDestX;	  
-					player->m_sY   = iDestY;
+					player->m_sX = iDestX;
+					player->m_sY = iDestY;
 					player->m_cDir = cDir;
-					player->m_cMapIndex = i; 
+					player->m_cMapIndex = i;
 					ZeroMemory(player->m_cMapName, sizeof(player->m_cMapName));
-					memcpy(player->m_cMapName, m_pMapList[i]->m_cName, 10);  
+					memcpy(player->m_cMapName, m_pMapList[i]->m_cName, 10);
 					goto RTH_NEXTSTEP;
 				}
 			}
 		}
 
-		player->m_sX   = iDestX;	  
-		player->m_sY   = iDestY;
+		player->m_sX = iDestX;
+		player->m_sY = iDestY;
 		player->m_cDir = cDir;
 		ZeroMemory(player->m_cMapName, sizeof(player->m_cMapName));
 		memcpy(player->m_cMapName, cDestMapName, 10);
 
 		// Slate
 		SendNotifyMsg(NULL, iClientH, NOTIFY_MAGICEFFECTOFF, MAGICTYPE_CONFUSE,
-			player->m_cMagicEffectStatus[ MAGICTYPE_CONFUSE ], NULL, NULL);
+			player->m_cMagicEffectStatus[MAGICTYPE_CONFUSE], NULL, NULL);
 		SetSlateFlag(iClientH, NOTIFY_SLATECLEAR, FALSE);
 
-		bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA_REPLY, iClientH, FALSE);  
+		bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA_REPLY, iClientH, FALSE);
 
 		player->m_bIsOnServerChange = TRUE;
 		player->m_bIsOnWaitingProcess = TRUE;
@@ -11762,9 +11773,9 @@ void CGame::RequestTeleportHandler(int iClientH, char teleportType, char * cMapN
 			ZeroMemory(cTempMapName, sizeof(cTempMapName));
 
 			if (player->m_iLevel > 80)
-				strcpy(cTempMapName, sideMap[ player->m_side ]);
+				strcpy(cTempMapName, sideMap[player->m_side]);
 			else
-				strcpy(cTempMapName, sideMapFarm[ player->m_side ]);
+				strcpy(cTempMapName, sideMapFarm[player->m_side]);
 
 			// Crusade
 			if ((strcmp(player->m_cLockedMapName, "NONE") != 0) && (player->m_iLockedMapTime > 0)) {
@@ -11773,7 +11784,7 @@ void CGame::RequestTeleportHandler(int iClientH, char teleportType, char * cMapN
 				ZeroMemory(cTempMapName, sizeof(cTempMapName));
 				strcpy(cTempMapName, player->m_cLockedMapName);
 			}
-			
+
 			for (i = 0; i < MAXMAPS; i++)
 			{
 				if (m_pMapList[i] != NULL) {
@@ -11781,27 +11792,27 @@ void CGame::RequestTeleportHandler(int iClientH, char teleportType, char * cMapN
 
 						GetMapInitialPoint(i, &player->m_sX, &player->m_sY, player->m_cLocation);
 
-						player->m_cMapIndex = i; 
+						player->m_cMapIndex = i;
 						ZeroMemory(player->m_cMapName, sizeof(player->m_cMapName));
-						memcpy(player->m_cMapName, m_pMapList[i]->m_cName, 10);  
+						memcpy(player->m_cMapName, m_pMapList[i]->m_cName, 10);
 						goto RTH_NEXTSTEP;
 					}
 				}
 			}
 
-			player->m_sX   = -1;	  
-			player->m_sY   = -1;	  
+			player->m_sX = -1;
+			player->m_sY = -1;
 
 			ZeroMemory(player->m_cMapName, sizeof(player->m_cMapName));
-			memcpy(player->m_cMapName, cTempMapName, 10);  
+			memcpy(player->m_cMapName, cTempMapName, 10);
 			// Slate
 			SendNotifyMsg(NULL, iClientH, NOTIFY_MAGICEFFECTOFF, MAGICTYPE_CONFUSE,
-				player->m_cMagicEffectStatus[ MAGICTYPE_CONFUSE ], NULL, NULL);
+				player->m_cMagicEffectStatus[MAGICTYPE_CONFUSE], NULL, NULL);
 			SetSlateFlag(iClientH, NOTIFY_SLATECLEAR, FALSE);
 
-			bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA_REPLY, iClientH, FALSE); 
+			bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA_REPLY, iClientH, FALSE);
 
-			player->m_bIsOnServerChange   = TRUE;
+			player->m_bIsOnServerChange = TRUE;
 			player->m_bIsOnWaitingProcess = TRUE;
 			return;
 
@@ -11821,19 +11832,19 @@ void CGame::RequestTeleportHandler(int iClientH, char teleportType, char * cMapN
 
 			cMapIndex = iGetMapIndex(cTempMapName);
 			if (cMapIndex == -1) {
-				player->m_sX   = dX; //-1;	  			
-				player->m_sY   = dY; //-1;	  
+				player->m_sX = dX; //-1;	  			
+				player->m_sY = dY; //-1;	  
 
 				ZeroMemory(player->m_cMapName, sizeof(player->m_cMapName));
-				memcpy(player->m_cMapName, cTempMapName, 10);  
+				memcpy(player->m_cMapName, cTempMapName, 10);
 				// Slate
 				SendNotifyMsg(NULL, iClientH, NOTIFY_MAGICEFFECTOFF, MAGICTYPE_CONFUSE,
-					player->m_cMagicEffectStatus[ MAGICTYPE_CONFUSE ], NULL, NULL);
+					player->m_cMagicEffectStatus[MAGICTYPE_CONFUSE], NULL, NULL);
 				SetSlateFlag(iClientH, NOTIFY_SLATECLEAR, FALSE);
 
-				bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA_REPLY, iClientH, FALSE); 
+				bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA_REPLY, iClientH, FALSE);
 
-				player->m_bIsOnServerChange   = TRUE;
+				player->m_bIsOnServerChange = TRUE;
 				player->m_bIsOnWaitingProcess = TRUE;
 				return;
 			}
@@ -11842,14 +11853,14 @@ void CGame::RequestTeleportHandler(int iClientH, char teleportType, char * cMapN
 
 			if (dX == -1 || dY == -1)
 				GetMapInitialPoint(cMapIndex, &player->m_sX, &player->m_sY, player->m_cLocation);
-			else 
+			else
 			{
-				player->m_sX   = dX;
-				player->m_sY   = dY;
+				player->m_sX = dX;
+				player->m_sY = dY;
 			}
 
-				ZeroMemory(player->m_cMapName, sizeof(player->m_cMapName));
-			memcpy(player->m_cMapName, m_pMapList[cMapIndex]->m_cName, 10);  
+			ZeroMemory(player->m_cMapName, sizeof(player->m_cMapName));
+			memcpy(player->m_cMapName, m_pMapList[cMapIndex]->m_cName, 10);
 			break;
 		}
 	}
@@ -11858,11 +11869,11 @@ RTH_NEXTSTEP:;
 
 
 	PlayerMapEntry(iClientH, setRecallTime);
-	Notify_ApocalypseGateState(iClientH);	
+	Notify_ApocalypseGateState(iClientH);
 	if (m_bHeldenianMode) UpdateHeldenianStatus();
 	if (bIsLockedMapNotify == TRUE) SendNotifyMsg(NULL, iClientH, NOTIFY_LOCKEDMAP, player->m_iLockedMapTime, NULL, NULL, player->m_cLockedMapName);
 
-	}
+}
 
 
 void CGame::RequestTeleportListHandler(int iClientH, char * pData, DWORD dwMsgSize)
@@ -29244,8 +29255,47 @@ void CGame::AdminOrder_SummonPlayer(int iClientH, char *pData, DWORD dwMsgSize)
 
 }
 
+void CGame::CleanMaps() {
+	PutLogFileList("Clean maps invoked \n");
+	char cMapName[11];
+	short sRemainItemSprite, sRemainItemSpriteFrame, dX, dY;
+	char cRemainItemColor;
+	CItem *pItem;
+
+	for (int i = 1; i < MAXMAPS; i++) {	//Enum all maps
+		if (m_pMapList[i] != NULL) {	//Is allocated map			
+			int m_x = m_pMapList[i]->m_sSizeX;
+			int m_y = m_pMapList[i]->m_sSizeY;
+			for (int j = 1; j < m_x; j++) {
+				for (int k = 1; k < m_y; k++) {
+					do {	//Delete all items on current tile
+						pItem = m_pMapList[i]->pGetItem(j, k, &sRemainItemSprite, &sRemainItemSpriteFrame, &cRemainItemColor); // v1.4
+						if (pItem != NULL) {							
+							delete pItem;	//Delete item;
+						}
+					} while (pItem != NULL);
+				}				
+			}
+		}
+	}
+
+		//Notify GM that all items have been cleared
+	for (int i = 1; i < MAXCLIENTS; i++) {
+		if (m_pClientList[i] != NULL) {
+			dX = m_pClientList[i]->m_sX;
+			dY = m_pClientList[i]->m_sY;
+			ZeroMemory(cMapName, sizeof(cMapName));
+			strcpy(cMapName, m_pClientList[i]->m_cMapName);
+			RequestTeleportHandler(i, 2, cMapName, dX, dY);
+		}
+	}
+
+	return;
+}
+
 void CGame::AdminOrder_CleanMap(int iClientH, char * pData, DWORD dwMsgSize)
 {
+	PutLogFileList("Admin has been invoked clean map \n");
 	char   seps[] = "= \t\n";
 	char   * token, cMapName[11], cBuff[256];
 	BOOL bFlag = FALSE;	//Used to check if we are on the map we wanna clear
@@ -29272,23 +29322,23 @@ void CGame::AdminOrder_CleanMap(int iClientH, char * pData, DWORD dwMsgSize)
 
 	if (token != NULL) {
 		ZeroMemory(cMapName, sizeof(cMapName));
-		strcpy(cMapName, token);
+		memcpy(cMapName, token, 10);
 
 		for (i = 0; i < MAXMAPS; i++)	//Enum all maps
 			if (m_pMapList[i] != NULL) {	//Is allocated map
 				if (memcmp(m_pMapList[i]->m_cName, cMapName, 10) == 0) {	//is map same name
 					bFlag = TRUE; //Set flag
-					//Get X and Y coords
+								  //Get X and Y coords
 					int m_x = m_pMapList[i]->m_sSizeX;
 					int m_y = m_pMapList[i]->m_sSizeY;
-					for(int j = 1; j < m_x; j++)
-						for(int k = 1; k < m_y; k++){
+					for (int j = 1; j < m_x; j++)
+						for (int k = 1; k < m_y; k++) {
 							do {	//Delete all items on current tile
 								pItem = m_pMapList[i]->pGetItem(j, k, &sRemainItemSprite, &sRemainItemSpriteFrame, &cRemainItemColor); // v1.4
 								if (pItem != NULL) {
 									delete pItem;	//Delete item;
 								}
-							} while(pItem != NULL);
+							} while (pItem != NULL);
 						}
 					break;	//Break outo f loop
 				}
@@ -29296,22 +29346,21 @@ void CGame::AdminOrder_CleanMap(int iClientH, char * pData, DWORD dwMsgSize)
 
 		if (!bFlag) {	//Notify GM he has to be on the map he clears
 		}
-		else{	//Notify GM that all items have been cleared
-			for(int i = 1; i < MAXCLIENTS; i++){
+		else {	//Notify GM that all items have been cleared
+			for (int i = 1; i < MAXCLIENTS; i++) {
 				if (m_pClientList[i] != NULL) {
-				len = strlen(cMapName);
-				if(len > 10) len = 10;
-				if (memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, cMapName, len) != 0) return;
-				dX = m_pClientList[i]->m_sX;
-				dY = m_pClientList[i]->m_sY;
-				ZeroMemory(cMapName,sizeof(cMapName));
-				strcpy(cMapName, m_pClientList[i]->m_cMapName);
-				RequestTeleportHandler(i, 2, cMapName, dX, dY);
+					len = strlen(cMapName);
+					if (len > 10) len = 10;
+					if (memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, cMapName, len) != 0) return;
+					dX = m_pClientList[i]->m_sX;
+					dY = m_pClientList[i]->m_sY;
+					ZeroMemory(cMapName, sizeof(cMapName));
+					strcpy(cMapName, m_pClientList[i]->m_cMapName);
+					RequestTeleportHandler(i, 2, cMapName, dX, dY);
 				}
 			}
 		}
 	}
-
 	return;
 }
 
@@ -38600,16 +38649,18 @@ void CGame::TileCleaner()
 		{
 			pItem[j] = m_pMapList[m_stGroundNpcItem[i].cMapIndex]->pGetItem(m_stGroundNpcItem[i].sx, m_stGroundNpcItem[i].sy, &sNextItemSprite, &sNextItemSpriteFrame, &cNextItemColor);
 
-			if(!pItem[j]) 
+			if (!pItem[j]) {
 				continue;
+			}
 			else if(pItem[j] == m_stGroundNpcItem[i].item)
 			{
 				delete pItem[j];
 				pItem[j] = NULL;
 				continue;
 			}
-			else if(bReplaceSprite)
+			else if (bReplaceSprite) {
 				bReplaceSprite = FALSE;
+			}
 		}
 
 		for(int j=ITEMS_PER_TILE; j; j--)
