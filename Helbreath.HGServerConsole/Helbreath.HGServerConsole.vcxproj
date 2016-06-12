@@ -85,6 +85,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Astoria.cpp" />
+    <ClCompile Include="BossDropConfiguration.cpp" />
     <ClCompile Include="cApplicationStartup.cpp" />
     <ClCompile Include="char\Client.cpp" />
     <ClCompile Include="char\combat.cpp" />
@@ -121,6 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Astoria.h" />
+    <ClInclude Include="BossDropConfiguration.h" />
     <ClInclude Include="cApplicationStartup.h" />
     <ClInclude Include="char\ActionID.h" />
     <ClInclude Include="char\Client.h" />

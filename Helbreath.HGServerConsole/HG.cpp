@@ -4250,7 +4250,7 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 			{
 				iNotUsedItemPrice += item->m_wPrice;
 				SAFEDELETE(m_pClientList[iClientH]->m_pItemList[b]);
-			}
+			}	
 			else if(_bCheckDupItemID(item) == TRUE)
 			{
 				_bItemLog(ITEMLOG_DUPITEMID, iClientH, NULL, item);
@@ -6547,17 +6547,26 @@ void CGame::RemoveFromTarget(Unit * target, int iCode)
 
 void CGame::NpcKilledHandler(short sAttackerH, char cAttackerType, int iNpcH, short sDamage)
 {
+
+#ifdef _DEBUG
+	printf("Entering to NpcKilledHandler method \n");
+#endif
+
 	short  sAttackerWeapon;
 	int    * ip, i, iQuestIndex, iExp, iConstructionPoint, iWarContribution;
 	double dTmp1, dTmp2, dTmp3;
 	char   * cp, cData[120], cQuestRemain, cTxt[120];
 
-	if (m_pNpcList[iNpcH] == NULL) return;
-	if (m_pNpcList[iNpcH]->m_bIsKilled == TRUE) return;
+	if (m_pNpcList[iNpcH] == NULL) {
+		return;
+	}
+	if (m_pNpcList[iNpcH]->m_bIsKilled == TRUE) {
+		return;
+	}
 
-	if(cAttackerType == OWNERTYPE_PLAYER)
+	if (cAttackerType == OWNERTYPE_PLAYER) {
 		m_pNpcList[iNpcH]->m_killerh = sAttackerH;
-
+	}
 
 	m_pNpcList[iNpcH]->m_bIsKilled = TRUE;
 	m_pNpcList[iNpcH]->m_iHP = 0;
@@ -16969,6 +16978,11 @@ void CGame::MobGenerator()
 
 void CGame::DeleteNpc(int iNpcH)
 {
+
+#ifdef _DEBUG
+	printf("Entering to DeleteNpc method \n");
+#endif
+
 	int  i, iNamingValue, iNumItem, iItemID, iItemIDs[MAX_NPCITEMDROP], iSlateID;
 	char cTmp[21], cItemName[21];
 	class CItem * pItem, * pItem2;
@@ -17069,6 +17083,7 @@ void CGame::DeleteNpc(int iNpcH)
 	if (m_pNpcList[iNpcH]->m_bIsSummoned == FALSE) {
 		pItem = new class CItem;
 		ZeroMemory(cItemName, sizeof(cItemName));
+
 		switch (m_pNpcList[iNpcH]->m_sType) {
 
 		case 10: // Slime
@@ -27364,9 +27379,9 @@ bool CGame::_bItemLog(int iAction,int iClientH , char * cName, class CItem * pIt
 
 
 #else  
-bool CGame::_bItemLog(int iAction,int iGiveH, int iRecvH, class CItem * pItem,bool bForceItemLog)
+bool CGame::_bItemLog(int iAction,int iGiveH, int iRecvH, class CItem * pItem, bool bForceItemLog)
 {
-	/*if (!pItem || !m_pClientList[iGiveH]->m_cCharName) 
+	if (!pItem || !m_pClientList[iGiveH]->m_cCharName) 
 		return FALSE;
 
 	if (!bForceItemLog) {
@@ -27471,7 +27486,7 @@ bool CGame::_bItemLog(int iAction,int iGiveH, int iRecvH, class CItem * pItem,bo
 		default:
 			return FALSE ;
 	}
-	bSendMsgToLS(MSGID_GAMEITEMLOG, iGiveH, NULL,cTxt);*/
+	bSendMsgToLS(MSGID_GAMEITEMLOG, iGiveH, NULL,cTxt);
 	return TRUE;
 }
 
@@ -29375,12 +29390,25 @@ void CGame::AdminOrder_DisconnectAll(int iClientH)
 }
 void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType)
 {
+
+#ifdef _DEBUG
+	printf("Entering to NpcDeadItemGenerator \n");
+#endif
+
 	class CItem * pItem;
 	char  cColor, cItemName[21];
 	BOOL  bIsGold;
 	int   iGenLevel, iResult, iItemID;
 	DWORD dwType, dwValue;
 	double dTmp1, dTmp2, dTmp3;
+
+	iItemID = 0;
+	iGenLevel = 0;
+	iResult = 0;
+
+#ifdef _DEBUG
+	printf("initialization... iItemID : %d, iGenLevel : %d, iResult : %d, \n", iItemID, iGenLevel, iResult);
+#endif
 
 	CNpc *& npc = m_pNpcList[iNpcH];
 	if (!npc) return;
@@ -29401,22 +29429,19 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 
 	// Default drop rate: 55%
 	int iItemprobability = 5500;
-
-	// Party drop rate bonus: 15%
+	
 	if ((m_pClientList[sAttackerH] != NULL) && (m_pClientList[sAttackerH]->m_iPartyStatus != PARTYSTATUS_PROCESSING))
 	{
-		iItemprobability += 1500;
+		iItemprobability += 500;
 	}
-
-	// Heldenian drop rate bonous: 15%
+	
 	if (m_pClientList[sAttackerH]->IsHeldWinner())
 	{
-		iItemprobability += 1500;
+		iItemprobability += 500;
 	}
 
-	// IsoHB drop rate modifier
 	iItemprobability = 10000 - (10000 - iItemprobability) * (1 - DropConfig::DROP_RATE_BONUS_MULTIPLIER);
-
+	
 	// 6500 default; the lower the greater the Weapon/Armor/Wand Drop
 	if (dice(1, 10000) <= iItemprobability) {
 		// 35% Drop 60% of that is gold
@@ -29448,7 +29473,9 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 			}
 
 			//if npc had an attribute, double gold
-			if (npc->m_cSpecialAbility != NULL) pItem->m_dwCount *= 2;
+			if (npc->m_cSpecialAbility != NULL) {
+				pItem->m_dwCount *= 2;
+			}
 
 			// check for items that give +gold%
 			if ((cAttackerType == OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH]->m_iAddGold != NULL)) {
@@ -29462,8 +29489,12 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 			// 9000 default; the lower the greater the Weapon/Armor/Wand Drop
 			// 35% Drop 40% of that is an Item 
 			dTmp1 = m_pClientList[sAttackerH]->m_reputation;
-			if (dTmp1 > 3000) dTmp1 = 3000;
-			if (dTmp1 < -3000) dTmp1 = -3000;
+			if (dTmp1 > 3000) {
+				dTmp1 = 3000;
+			}
+			if (dTmp1 < -3000) {
+				dTmp1 = -3000;
+			}
 			dTmp2 = (DropConfig::NORMAL_ITEM_DROP_CHANCE_MODIFIER - (dTmp1));
 			if (dice(1, 10000) <= dTmp2) {
 				// 40% Drop 90% of that is a standard drop
@@ -29486,20 +29517,19 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 				case 4: iItemID = 96; break; // Big Green Potion
 				case 5: iItemID = 92; break; // Big Red Potion
 				case 6: iItemID = 94; break; // Big Blue Potion
-				case 7: switch (dice(1, 2)) {
-				case 1: iItemID = 390; break; // Power Green Potion
-				case 2: iItemID = 95;  break; // Green Potion
-				}
-						break;
-				case 8: switch (dice(1, 6)) {
-				case 1: iItemID = 391; break; // Super Power Green Potion
-				case 2: iItemID = 650; break; // Zemstone of Sacrifice
-				case 3: iItemID = 656; break; // Xelima Stone
-				case 4: iItemID = 657; break; // Merien Stone
-				case 5: iItemID = 95;  break; // Green Potion				
-				}
-						break;
-
+				case 7:
+					switch (dice(1, 2)) {
+					case 1: iItemID = 390; break; // Power Green Potion
+					case 2: iItemID = 95;  break; // Green Potion					
+					} break;
+				case 8:
+					switch (dice(1, 6)) {
+					case 1: iItemID = 391; break; // Super Power Green Potion
+					case 2: iItemID = 650; break; // Zemstone of Sacrifice
+					case 3: iItemID = 656; break; // Xelima Stone
+					case 4: iItemID = 657; break; // Merien Stone
+					case 5: iItemID = 95;  break; // Green Potion				
+					} break;
 				case 9:
 					SYSTEMTIME SysTime;
 					GetLocalTime(&SysTime);
@@ -29513,6 +29543,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					}
 					break;
 				}
+
 				// If a non-existing item is created then delete the item
 				pItem = new class CItem;
 				if (_bInitItemAttr(pItem, iItemID) == FALSE) {
@@ -29597,7 +29628,14 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					break;
 				}
 
-				if (iGenLevel == 0) return;
+#ifdef _DEBUG
+				printf("iGenLevel %d \n", iGenLevel);
+				printf("Pre roll item id %d \n", iItemID);
+#endif
+
+				if (iGenLevel == 0) {
+					return;
+				}
 
 				// Weapon Drop: 
 				// 1.4% chance Valuable Drop 60% that it is a Weapon
@@ -29605,10 +29643,12 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					if (dice(1, 10000) <= 8000) {
 						// 70% the Weapon is Melee
 						switch (iGenLevel) {
-
-						case 1: // Slime, Giant-Ant, Amphis, Rabbit, Cat
+						case 1: // Slime, Giant-Ant, Amphis, Rabbit, Cat							
 							switch (dice(1, 3)) {
-							case 1: iItemID = 1;  break; // Dagger
+							case 1: {
+								iItemID = 1;// Dagger
+							}
+									break;
 							case 2: iItemID = 8;  break; // ShortSword
 							case 3: iItemID = 59; break; // LightAxe
 							}
@@ -29841,19 +29881,14 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						break;
 					}
 				}
-				// 0-None 1-í•„ì‚´ê¸°ëŒ€ë¯¸ì§€ì¶”ê°€ 2-ì¤‘ë…íš¨ê³¼ 3-ì •ì˜ì˜  
-				// 5-ë¯¼ì²©ì˜ 6-ê°€ë²¼ìš´ 7-ì˜ˆë¦¬í•œ 8-ê°•í™”ëœ 9-ê³ ëŒ€ë¬¸ëª…ì˜ 10-ë§ˆë²• ì„±ê³µì˜
-				// ì•„ì´í…œì„ ë§Œë“¤ê³  
-				pItem = new class CItem;
-				// ê¸°ë³¸ íŠ¹ì„±ìœ¼ë¡œ ì•„ì´í…œ ìƒì„± 
+				
+				pItem = new class CItem;				
 				if (_bInitItemAttr(pItem, iItemID) == FALSE) {
 					delete pItem;
 					return;
 				}
 
-				if (pItem->m_sItemEffectType == ITEMEFFECTTYPE_ATTACK) {
-					// °ø°Ý ¹«±â·ù¿¡ ºÙÀ» ¼ö ÀÖ´Â Á¢µÎ»ç¸¦ ¼±ÅÃ 
-					// °¡º­¿î(3%) °­È­µÈ(7%) ÇÊ»ìÀÇ(15%) ¹ÎÃ¸ÀÇ(20%) Á¤ÀÇÀÇ(20%) Áßµ¶ÀÇ(16%) ¿¹¸®ÇÑ(16%) °í´ë¹®¸íÀÇ(3%)
+				if (pItem->m_sItemEffectType == ITEMEFFECTTYPE_ATTACK) {					
 					iResult = dice(1, 10000);
 					if ((iResult >= 1) && (iResult <= 299)) {
 						dwType = 6;
@@ -30224,7 +30259,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 			pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor); //v1.4 color
 
 		// ë¡œê·¸ ë‚¨ê¸´ë‹¤.
-		_bItemLog(ITEMLOG_NEWGENDROP, NULL, NULL, pItem);
+		_bItemLog(ITEMLOG_NEWGENDROP, sAttackerH, NULL, pItem);
 	}
 }
 
@@ -31528,50 +31563,21 @@ int CGame::iGetItemWeight(CItem *pItem, int iCount)
 BOOL CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType)
 {
 	int iResult;
-	// NPC를 삭제할때 특수 아이템을 발생시킬 것인지의 여부를 계산한다. 
 
 	switch (sNpcType) {
-	case 49: // Hellclaw 
-		iResult = dice(1, 20000);
-		if ((iResult >= 1) && (iResult <= 5000)) iItemID = 308;		    // MagicNecklace(MS10)
-		else if ((iResult > 5000) && (iResult <= 10000)) iItemID = 259;	// MagicWand(M.Shield)
-		else if ((iResult > 10000) && (iResult <= 13000))  iItemID = 337;  // RubyRing
-		else if ((iResult > 13000) && (iResult <= 15000))  iItemID = 335;  // EmeraldRing
-		else if ((iResult > 15000) && (iResult <= 17500))  iItemID = 300;  // MagicNecklace(RM10)
-		else if ((iResult > 17500) && (iResult <= 18750))  iItemID = 311;  // MagicNecklace(DF+10)
-		else if ((iResult > 18750) && (iResult <= 19000))  iItemID = 305;  // MagicNecklace(DM+1)
-		else if ((iResult > 19000) && (iResult <= 19700))  iItemID = 634;  // RingofWizard
-		else if ((iResult > 19700) && (iResult <= 19844))  iItemID = 635;  // RingofMage
-		else if ((iResult > 19844) && (iResult <= 19922))  iItemID = 643;  // KnecklaceOfIceEle	
-		else if ((iResult > 19922) && (iResult <= 19961))  iItemID = 640;  // KnecklaceOfSufferent
-		else if ((iResult > 19961) && (iResult <= 19981))  iItemID = 637;  // KnecklaceOfLightPro
-		else if ((iResult > 19981) && (iResult <= 19991))  iItemID = 620;  // MerienShield	
-		else if ((iResult > 19991) && (iResult <= 19996))  iItemID = 644;  // KnecklaceOfAirEle	
-		else if ((iResult > 19996) && (iResult <= 19999))  iItemID = 614;  // SwordofIceElemental	
-		else if ((iResult > 19999) && (iResult <= 20000))  iItemID = 636;	// RingofGrandMage
+	case 49: { // Hellclaw 
+		BossDropConfiguration *configuration = new BossDropConfiguration();
+		iItemID = configuration->GetHellclawRareDrop();		
+		delete configuration;
 		return TRUE;
+	}break;
 
-	case 50: // Tigerworm
-		iResult = dice(1, 10000);
-		if ((iResult >= 1) && (iResult <= 7349)) {
-			if (dice(1, 2) == 1)
-				iItemID = 311;  // MagicNecklace(DF+10)
-			else iItemID = 305;  // MagicNecklace(DM+1)
-		}
-		else if ((iResult > 7350) && (iResult <= 7499))  iItemID = 614;  // SwordofIceElemental	
-		else if ((iResult > 7500) && (iResult <= 8749))  iItemID = 290;  // Flameberge+3(LLF)
-		else if ((iResult > 8750) && (iResult <= 9374))  iItemID = 633;  // RingofDemonpower
-		else if ((iResult > 9375) && (iResult <= 9687))  iItemID = 492;  // BloodRapier		
-		else if ((iResult > 9688) && (iResult <= 9843))  iItemID = 490;  // BloodSword		
-		else if ((iResult > 9844) && (iResult <= 9921))  iItemID = 491;  // BloodAxe		
-		else if ((iResult > 9922) && (iResult <= 9960))  iItemID = 291;  // MagicWand(MS30-LLF)	
-		else if ((iResult > 9961) && (iResult <= 9980))  iItemID = 630;  // RingoftheXelima	
-		else if ((iResult > 9981) && (iResult <= 9990))  iItemID = 612;  // XelimaRapier	
-		else if ((iResult > 9991) && (iResult <= 9996))  iItemID = 610;  // XelimaBlade	
-		else if ((iResult > 9996) && (iResult <= 9998))  iItemID = 611;  // XelimaAxe	
-		else if ((iResult > 9999) && (iResult <= 10000)) iItemID = 631;  // RingoftheAbaddon
+	case 50: { // Tigerworm
+		BossDropConfiguration *configuration = new BossDropConfiguration();
+		iItemID = configuration->GetTigerwormRareDrop();		
+		delete configuration;
 		return TRUE;
-
+	}break;
 	default:
 		break;
 	}
@@ -31773,9 +31779,12 @@ BOOL CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType)
 
 	}
 
-	if (iItemID == 0)
+	if (iItemID == 0) {
 		return FALSE;
-	else return TRUE;
+	}
+	else {
+		return TRUE;
+	}
 }
 
 void CGame::UpdateMapSectorInfo()
@@ -35365,11 +35374,32 @@ void CGame::RequestAcceptJoinPartyHandler(int iClientH, int iResult)
 void CGame::GetExp(int iClientH, int iExp, bool bIsAttackerOwn)
 {
 	double dV1, dV2, dV3;
+	double tempExp;
 	int i, iH, iUnitValue, iPartyTotalMember = 0, slateMulti = 1;
 	DWORD dwTime = timeGetTime();
 
-	if (m_pClientList[iClientH] == NULL) return;
-	if (iExp <= 0) return;
+	if (m_pClientList[iClientH] == NULL) {
+		return;
+	}
+	if (iExp <= 0) {
+		return;
+	}
+
+	if (m_pClientList[iClientH]->m_iLevel <= 100) {		
+		iExp = iExp * 40;
+	}
+	else if (m_pClientList[iClientH]->m_iLevel > 100 && m_pClientList[iClientH]->m_iLevel <= 120) {
+		iExp = iExp * 30;
+	}
+	else if (m_pClientList[iClientH]->m_iLevel > 120 && m_pClientList[iClientH]->m_iLevel <= 140) {
+		iExp = iExp * 15;
+	}
+	else if (m_pClientList[iClientH]->m_iLevel > 140 && m_pClientList[iClientH]->m_iLevel <= 160) {
+		iExp = iExp * 10;
+	}	
+	else if (m_pClientList[iClientH]->m_iLevel > 160 && m_pClientList[iClientH]->m_iLevel <= 180) {
+		iExp = iExp * 5;
+	}
 
 	if (m_pClientList[iClientH]->m_iLevel <= 80) {
 		dV1 = (double)(80 - m_pClientList[iClientH]->m_iLevel);

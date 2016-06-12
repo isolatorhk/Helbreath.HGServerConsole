@@ -58,6 +58,7 @@
 #include "CombatConfig.h"
 #include "DropConfig.h"
 #include "ClientEventSender.h"
+#include "BossDropConfiguration.h"
 
 #define SERVERSOCKETBLOCKLIMIT	300
 

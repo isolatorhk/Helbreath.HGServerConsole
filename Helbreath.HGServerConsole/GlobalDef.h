@@ -73,8 +73,8 @@ enum Sex{
 #define RAIDTIME				60
 
 //=============================================================================
-#define GOLDDROPMULTIPLIER			100
-#define EXPMULTIPLIER				150
+#define GOLDDROPMULTIPLIER			2
+#define EXPMULTIPLIER				1
 //=============================================================================
 //#define WEAPONSPEEDLIMIT
 #define MAXCRUSADESTRUCTURES		300
