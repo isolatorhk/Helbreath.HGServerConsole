@@ -143,16 +143,29 @@ int BossDropConfiguration::GetTigerwormRareDrop()
 
 	diceResult = dice(1, 10000);
 	if ((diceResult >= 1) && (diceResult <= 7349)) {
-		if (dice(1, 2) == 1) {
+		int result = dice(1, 5);
+		if (result == 1) {
 			itemId = 311; // MagicNecklace(DF+10)
 		}
-		else {
+		else if (result == 2) {
 			itemId = 305; // MagicNecklace(DM+1)
 		}
+		else if (result == 3) {
+			itemId = 308; // MagicNecklace(MS10)
+		}
+		else if (result == 4) {
+			itemId = 300; //MagicNecklace(RM10)
+		}		
+		else {
+			itemId = 337; //RubyRing
+		}
 	}
-	else if ((diceResult > 7350) && (diceResult <= 7499))  itemId = 614;  // SwordofIceElemental	
-	else if ((diceResult > 7500) && (diceResult <= 8749))  itemId = 290;  // Flameberge+3(LLF)
-	else if ((diceResult > 8750) && (diceResult <= 9374))  itemId = 633;  // RingofDemonpower
+	else if ((diceResult > 7350) && (diceResult <= 7500))  itemId = 20;  // Excalibur
+	else if ((diceResult > 7500) && (diceResult <= 8750))  itemId = 290;  // Flameberge+3(LLF)
+	else if ((diceResult > 8750) && (diceResult <= 9000))  itemId = 633;  // RingofDemonpower
+	else if ((diceResult > 9000) && (diceResult <= 9100))  itemId = 644;  // neck of air elemental
+	else if ((diceResult > 9101) && (diceResult <= 9249))  itemId = 642;  // neck of ice protection
+	else if ((diceResult > 9250) && (diceResult <= 9374))  itemId = 645;  // neck of efreet
 	else if ((diceResult > 9375) && (diceResult <= 9687))  itemId = 492;  // BloodRapier		
 	else if ((diceResult > 9688) && (diceResult <= 9843))  itemId = 490;  // BloodSword		
 	else if ((diceResult > 9844) && (diceResult <= 9921))  itemId = 491;  // BloodAxe		
@@ -161,8 +174,7 @@ int BossDropConfiguration::GetTigerwormRareDrop()
 	else if ((diceResult > 9981) && (diceResult <= 9990))  itemId = 612;  // XelimaRapier	
 	else if ((diceResult > 9991) && (diceResult <= 9996))  itemId = 610;  // XelimaBlade	
 	else if ((diceResult > 9996) && (diceResult <= 9998))  itemId = 611;  // XelimaAxe	
-	else if ((diceResult > 9999) && (diceResult <= 10000)) itemId = 631;  // RingoftheAbaddon
-
+	else if ((diceResult > 9999) && (diceResult <= 10000))  itemId = 614;  // SwordofIceElemental	
 	return itemId;
 }
 
@@ -173,10 +185,28 @@ int BossDropConfiguration::GetHellclawRareDrop()
 
 	diceResult = dice(1, 20000);
 
-	if ((diceResult >= 1) && (diceResult <= 5000)) itemId = 308;		    // MagicNecklace(MS10)
+	if ((diceResult >= 1) && (diceResult <= 7349)) {
+		int result = dice(1, 5);
+		if (result == 1) {
+			itemId = 311; // MagicNecklace(DF+10)
+		}
+		else if (result == 2) {
+			itemId = 305; // MagicNecklace(DM+1)
+		}
+		else if (result == 3) {
+			itemId = 308; // MagicNecklace(MS10)
+		}
+		else if (result == 4) {
+			itemId = 300; //MagicNecklace(RM10)
+		}
+		else {
+			itemId = 337; //RubyRing
+		}
+	}
 	else if ((diceResult > 5000) && (diceResult <= 10000)) itemId = 259;	// MagicWand(M.Shield)
 	else if ((diceResult > 10000) && (diceResult <= 13000))  itemId = 337;  // RubyRing
-	else if ((diceResult > 13000) && (diceResult <= 15000))  itemId = 335;  // EmeraldRing
+	else if ((diceResult > 13000) && (diceResult <= 14000))  itemId = 1138;  // Scan
+	else if ((diceResult > 14000) && (diceResult <= 15000))  itemId = 335;  // EmeraldRing
 	else if ((diceResult > 15000) && (diceResult <= 17500))  itemId = 300;  // MagicNecklace(RM10)
 	else if ((diceResult > 17500) && (diceResult <= 18750))  itemId = 311;  // MagicNecklace(DF+10)
 	else if ((diceResult > 18750) && (diceResult <= 19000))  itemId = 305;  // MagicNecklace(DM+1)

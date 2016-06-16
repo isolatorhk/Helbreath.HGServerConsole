@@ -17213,6 +17213,9 @@ void CGame::DeleteNpc(int iNpcH)
 			bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType); break;
 			break;
 
+		case 78: // Minotaurs
+			bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType); break;
+
 		case 31: //Demon
 			switch (dice(1, 5)){
 			case 1:	if (dice(1, 400) == 123) iItemID = 541; break; // DemonHeart
@@ -21642,6 +21645,7 @@ BOOL CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability,
 
 		switch (sNpcType)
 		{
+
 		case 69: { // Wyvern
 			BossDropConfiguration *configuration = new BossDropConfiguration();
 			iItemID = configuration->GetWyvernRareDrop(fProbA, fProbB);
@@ -21664,11 +21668,12 @@ BOOL CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability,
 				 break;
 		}
 
+
 		if (iItemID == 0) {
 			BossDropConfiguration *configuration = new BossDropConfiguration();
 			iItemID = configuration->GetThirdRareDrop(fProbC);
 			delete configuration;
-		}
+		}		
 
 		if (iItemID == 0 && iProb == 100) iItemID = 90; // Gold
 
@@ -29743,37 +29748,206 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 
 					case 7: // Liche, Frost
 						switch (dice(1, 6)) {
-						case 1: switch (dice(1, 2)) {
-						case 1: iItemID = 457; break; // ScaleMail(M)
-						case 2: iItemID = 477; break; // ScaleMail(W)
-						}
-								break;
-						case 2: switch (dice(1, 2)) {
-						case 1: iItemID = 458; break; // PlateMail(M)
-						case 2: iItemID = 478; break; // PlateMail(W)
-						}
-								break;
+						case 1:
+							switch (dice(1, 2)) {
+							case 1: iItemID = 457; break; // ScaleMail(M)
+							case 2: iItemID = 477; break; // ScaleMail(W)
+							}
+							break;
+						case 2:
+							switch (dice(1, 2)) {
+							case 1: iItemID = 458; break; // PlateMail(M)
+							case 2: iItemID = 478; break; // PlateMail(W)
+							}
+							break;
 						case 3: iItemID = 86; break; // KnightShield
 						case 4: iItemID = 87; break; // TowerShield
-						case 5: switch (dice(1, 2)) {
-						case 1: iItemID = 600; break; // Helm(M)
-						case 2: iItemID = 602; break; // Helm(M)
-						}
-								break;
-						case 6: switch (dice(1, 2)) {
-						case 1: iItemID = 601; break; // Full-Helm(M)
-						case 2: iItemID = 603; break; // Full-Helm(M)
-						}
-								break;
+						case 5:
+							switch (dice(1, 2)) {
+							case 1: iItemID = 600; break; // Helm(M)
+							case 2: iItemID = 602; break; // Helm(M)
+							}
+							break;
+						case 6:
+							switch (dice(1, 2)) {
+							case 1: iItemID = 601; break; // Full-Helm(M)
+							case 2: iItemID = 603; break; // Full-Helm(M)
+							}
+							break;
 						}
 						break;
 
 					case 8: // Demon, Unicorn, Hellclaw, Tigerworm, Gagoyle
-						iItemID = 402; // Cape
+						switch (dice(1, 6)) {
+						case 1:
+							switch (dice(1, 3)) {
+							case 1: iItemID = 85; break;    // LagiShield
+							case 2: iItemID = 86; break;    // KnightShield
+							case 3: iItemID = 87; break;    // TowerShield
+							}
+							break;
+						case 2:
+							switch (dice(1, 3)) {
+							case 1: iItemID = 402; break;   // Cape
+							case 2: if (dice(1, 10) == 3) iItemID = 462; break;  // PlateLeggings(M)
+							case 3: if (dice(1, 10) == 3) iItemID = 483; break;  // PlateLeggings(W)
+							}
+							break;
+						case 3:
+							switch (dice(1, 4)) {
+							case 1: iItemID = 454; break;  // Hauberk(M)
+							case 2: iItemID = 472; break;  // Hauberk(W)
+							case 3: iItemID = 461; break;  // ChainHose(M)
+							case 4: iItemID = 482; break;  // ChainHose(W)
+							}
+							break;
+						case 4:
+							switch (dice(1, 4)) {
+							case 1: iItemID = 750; break;   // Horned-Helm(M)								
+							case 2: iItemID = 754; break;   // Horned-Helm(W)
+							case 3: iItemID = 751; break;   // Wings-Helm(M)
+							case 4: iItemID = 755; break;   // Wings-Helm(W)
+							}
+							break;
+						case 5:
+							switch (dice(1, 10)) {
+							case 1: iItemID = 752; break;   // Wizard-Cap(M)	
+							case 2: iItemID = 756; break;   // Wizard-Cap(W)
+							case 3: iItemID = 753; break;   // Wizard-Hat(M)
+							case 4: iItemID = 757; break;   // Wizard-Hat(W)
+							case 5: iItemID = 685; break;   // WizardRobe(M)
+							case 6: iItemID = 686; break;   // WizardRobe(W)
+							case 7: iItemID = 601; break;   // Full-Helm(M)
+							case 8: iItemID = 603; break;   // Full-Helm(W)
+							case 9: iItemID = 600; break;   // Helm(M)
+							case 10: iItemID = 602; break;  // Helm(W)
+							}
+							break;
+						case 6:
+							switch (dice(1, 5)) {
+							case 1: iItemID = 458; break;  // PlateMail(M)
+							case 2: iItemID = 478; break;  // PlateMail(W)
+							case 3: iItemID = 456; break;  // ChainMail(M)
+							case 4: iItemID = 476; break;  // ChainMail(W)
+							case 5: iItemID = 402; break;  // Cape
+							}
+							break;
+						}
 						break;
 
-					case 9:
-					case 10:
+					case 9: // Mount-Giant
+						switch (dice(1, 6)) {
+						case 1:
+							switch (dice(1, 3)) {
+							case 1: iItemID = 85; break;    // LagiShield
+							case 2: iItemID = 86; break;    // KnightShield
+							case 3: iItemID = 87; break;    // TowerShield
+							}
+							break;
+						case 2:
+							switch (dice(1, 3)) {
+							case 1: iItemID = 402; break;   // Cape
+							case 2: if (dice(1, 10) == 3) iItemID = 462; break;  // PlateLeggings(M)
+							case 3: if (dice(1, 10) == 3) iItemID = 483; break;  // PlateLeggings(W)
+							}
+							break;
+						case 3:
+							switch (dice(1, 4)) {
+							case 1: iItemID = 454; break;  // Hauberk(M)
+							case 2: iItemID = 472; break;  // Hauberk(W)
+							case 3: iItemID = 461; break;  // ChainHose(M)
+							case 4: iItemID = 482; break;  // ChainHose(W)
+							}
+							break;
+						case 4:
+							switch (dice(1, 4)) {
+							case 1: iItemID = 750; break;   // Horned-Helm(M)								
+							case 2: iItemID = 754; break;   // Horned-Helm(W)
+							case 3: iItemID = 751; break;   // Wings-Helm(M)
+							case 4: iItemID = 755; break;   // Wings-Helm(W)
+							}
+							break;
+						case 5:
+							switch (dice(1, 10)) {
+							case 1: iItemID = 752; break;   // Wizard-Cap(M)	
+							case 2: iItemID = 756; break;   // Wizard-Cap(W)
+							case 3: iItemID = 753; break;   // Wizard-Hat(M)
+							case 4: iItemID = 757; break;   // Wizard-Hat(W)
+							case 5: iItemID = 685; break;   // WizardRobe(M)
+							case 6: iItemID = 686; break;   // WizardRobe(W)
+							case 7: iItemID = 601; break;   // Full-Helm(M)
+							case 8: iItemID = 603; break;   // Full-Helm(W)
+							case 9: iItemID = 600; break;   // Helm(M)
+							case 10: iItemID = 602; break;  // Helm(W)
+							}
+							break;
+						case 6:
+							switch (dice(1, 5)) {
+							case 1: iItemID = 458; break;  // PlateMail(M)
+							case 2: iItemID = 478; break;  // PlateMail(W)
+							case 3: iItemID = 456; break;  // ChainMail(M)
+							case 4: iItemID = 476; break;  // ChainMail(W)
+							case 5: iItemID = 402; break;  // Cape
+							}
+							break;
+						}
+						break;
+					case 10:  //MasterMage-Orc, Ettin, Lizzard
+						switch (dice(1, 6)) {
+						case 1:
+							switch (dice(1, 3)) {
+							case 1: iItemID = 85; break;    // LagiShield
+							case 2: iItemID = 86; break;    // KnightShield
+							case 3: iItemID = 87; break;    // TowerShield
+							}
+							break;
+						case 2:
+							switch (dice(1, 3)) {
+							case 1: iItemID = 402; break;   // Cape
+							case 2: if (dice(1, 10) == 3) iItemID = 462; break;  // PlateLeggings(M)
+							case 3: if (dice(1, 10) == 3) iItemID = 483; break;  // PlateLeggings(W)
+							}
+							break;
+						case 3:
+							switch (dice(1, 4)) {
+							case 1: iItemID = 454; break;  // Hauberk(M)
+							case 2: iItemID = 472; break;  // Hauberk(W)
+							case 3: iItemID = 461; break;  // ChainHose(M)
+							case 4: iItemID = 482; break;  // ChainHose(W)
+							}
+							break;
+						case 4:
+							switch (dice(1, 4)) {
+							case 1: iItemID = 750; break;   // Horned-Helm(M)								
+							case 2: iItemID = 754; break;   // Horned-Helm(W)
+							case 3: iItemID = 751; break;   // Wings-Helm(M)
+							case 4: iItemID = 755; break;   // Wings-Helm(W)
+							}
+							break;
+						case 5:
+							switch (dice(1, 10)) {
+							case 1: iItemID = 752; break;   // Wizard-Cap(M)	
+							case 2: iItemID = 756; break;   // Wizard-Cap(W)
+							case 3: iItemID = 753; break;   // Wizard-Hat(M)
+							case 4: iItemID = 757; break;   // Wizard-Hat(W)
+							case 5: iItemID = 685; break;   // WizardRobe(M)
+							case 6: iItemID = 686; break;   // WizardRobe(W)
+							case 7: iItemID = 601; break;   // Full-Helm(M)
+							case 8: iItemID = 603; break;   // Full-Helm(W)
+							case 9: iItemID = 600; break;   // Helm(M)
+							case 10: iItemID = 602; break;  // Helm(W)
+							}
+							break;
+						case 6:
+							switch (dice(1, 5)) {
+							case 1: iItemID = 458; break;  // PlateMail(M)
+							case 2: iItemID = 478; break;  // PlateMail(W)
+							case 3: iItemID = 456; break;  // ChainMail(M)
+							case 4: iItemID = 476; break;  // ChainMail(W)
+							case 5: iItemID = 402; break;  // Cape
+							}
+							break;
+						}
 						break;
 					}
 				}
@@ -31531,9 +31705,10 @@ BOOL CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType)
 		case 2: if (dice(1, 20) == 13) iItemID = 308; break; // MagicNecklace(MS10)
 		case 3: if (dice(1, 10) == 13) iItemID = 305; break; // MagicNecklace(DM+1)
 		case 4: iItemID = 300; break; // MagicNecklace(RM10)
-		case 5: if (dice(1, 30) == 13) iItemID = 632; break; // RingofOgrepower
-		case 6: if (dice(1, 30) == 13) iItemID = 637; break; // KnecklaceOfLightPro
-		case 7: if (dice(1, 30) == 13) iItemID = 638; break; // KnecklaceOfFirePro
+		case 5: iItemID = 1137; break; // MIM.Manual
+		case 6: if (dice(1, 30) == 13) iItemID = 632; break; // RingofOgrepower
+		case 7: if (dice(1, 30) == 13) iItemID = 637; break; // KnecklaceOfLightPro
+		case 8: if (dice(1, 30) == 13) iItemID = 638; break; // KnecklaceOfFirePro
 		}
 		break;
 
@@ -31584,7 +31759,7 @@ BOOL CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType)
 		break;
 
 	case 30: // Liche
-		switch (dice(1, 8)) {
+		switch (dice(1, 9)) {
 		case 1: if (dice(1, 10) == 3) iItemID = 380; break; // IceStormManual
 		case 2: iItemID = 259; break; // MagicWand(M.Shield)
 		case 3: if (dice(1, 30) == 3) iItemID = 291; break; // MagicWand(MS30-LLF)
@@ -31593,6 +31768,7 @@ BOOL CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType)
 		case 6: if (dice(1, 15) == 3) iItemID = 643; break; // KnecklaceOfIceEle	
 		case 7: if (dice(1, 30) == 3) iItemID = 636; break; // RingofGrandMage
 		case 8: if (dice(1, 30) == 3) iItemID = 734; break; // RingOfArcmage
+		case 9: if (dice(1, 10) == 3) iItemID = 1138; break; // ScanManual
 		}
 		break;
 
@@ -31671,6 +31847,10 @@ BOOL CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType)
 	case 71: // Centaurus
 		if (dice(1, 20) == 11) iItemID = 848; break; // Lighting Blade
 		if (dice(1, 19) == 11) iItemID = 20; break; // Excalibur
+		break;
+
+	case 78:
+		if (dice(1, 10) == 10) iItemID = 1137; break; // MIM.Manual
 		break;
 
 	}
