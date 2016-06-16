@@ -27279,7 +27279,8 @@ bool CGame::_bItemLog(int iAction,int iClientH , char * cName, class CItem * pIt
 
 
 
-#else  
+#else
+
 bool CGame::_bItemLog(int iAction,int iGiveH, int iRecvH, class CItem * pItem, bool bForceItemLog)
 {
 	if (!pItem || !m_pClientList[iGiveH]->m_cCharName) 
@@ -27387,7 +27388,7 @@ bool CGame::_bItemLog(int iAction,int iGiveH, int iRecvH, class CItem * pItem, b
 		default:
 			return FALSE ;
 	}
-	bSendMsgToLS(MSGID_GAMEITEMLOG, iGiveH, NULL,cTxt);
+	bSendMsgToLS(MSGID_GAMEITEMLOG, iGiveH, NULL, cTxt);
 	return TRUE;
 }
 
