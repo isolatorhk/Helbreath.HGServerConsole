@@ -21642,138 +21642,34 @@ BOOL CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability,
 
 		switch (sNpcType)
 		{
-		case 69: // Wyvern...stupid koreans
-			// ÃÖ»ó±Þ
-			switch (dice(1, 4)) {
-			case 1: if (dice(1, (6000 * fProbA)) == 3) iItemID = 845; break; // StormBringer
-			case 2: if (dice(1, (5000 * fProbA)) == 3) iItemID = 848; break; // LightingBlade
-			case 3: if (dice(1, (3000 * fProbA)) == 2) iItemID = 614; break; // SwordofIceElemental
-			case 4: if (dice(1, (4500 * fProbA)) == 3) iItemID = 380; break; // IceStormManual
-			}
+		case 69: { // Wyvern
+			BossDropConfiguration *configuration = new BossDropConfiguration();
+			iItemID = configuration->GetWyvernRareDrop(fProbA, fProbB);
+			delete configuration;
+		}
+				 break;
 
-			// »ó±Þ
-			if (iItemID == 0)
-			{
-				switch (dice(1, 6)) {
-				case  1: if (dice(1, (500 * fProbB)) == 2) iItemID = 642; break; // KnecklaceOfIcePro       
-				case  2: if (dice(1, (2000 * fProbB)) == 2) iItemID = 643; break; // KnecklaceOfIceEle
-				case  3: if (dice(1, (1000 * fProbB)) == 3) iItemID = 636; break; // RingofGrandMage         	
-				case  4: if (dice(1, (1500 * fProbB)) == 3) iItemID = 734; break; // RingOfArcmage           
-				case  5: if (dice(1, (500 * fProbB)) == 3) iItemID = 634; break; // RingofWizard            
-				case  6: if (dice(1, (500 * fProbB)) == 2) iItemID = 290; break; // Flameberge+3(LLF)
-				}
-			}
-			break;
+		case 73: { // Fire-Wyvern
+			BossDropConfiguration *configuration = new BossDropConfiguration();
+			iItemID = configuration->GetFireWyvernRareDrop(fProbA, fProbB);
+			delete configuration;
+		}
+				 break;
 
-		case 73: // Fire-Wyvern
-			// ÃÖ»ó±Þ
-			switch (dice(1, 7)) {
-			case  1: if (dice(1, (5000 * fProbA)) == 3) iItemID = 847; break; // DarkExecutor            
-			case  2: if (dice(1, (3000 * fProbA)) == 2) iItemID = 630; break; // RingoftheXelima
-			case  3: if (dice(1, (3000 * fProbA)) == 2) iItemID = 860; break; // NecklaceOfXelima        
-			case  4: if (dice(1, (3000 * fProbA)) == 2) iItemID = 735; break; // RingOfDragonpower       
-			case  5: if (dice(1, (3000 * fProbA)) == 2) iItemID = 20; break; // Excaliber
-			case  6: if (dice(1, (3000 * fProbA)) == 3) iItemID = 382; break; // BloodyShockW.Manual
-			case  7: if (dice(1, (3000 * fProbA)) == 3) iItemID = 381; break; // MassFireStrikeManual  			
-			}
-
-			// »ó±Þ
-			if (iItemID == 0)
-			{
-				switch (dice(1, 9)) {
-				case  1: if (dice(1, (1000 * fProbB)) == 2) iItemID = 645; break; // KnecklaceOfEfreet       	
-				case  2: if (dice(1, (500 * fProbB)) == 2) iItemID = 638; break; // KnecklaceOfFirePro			
-				case  3: if (dice(1, (1000 * fProbB)) == 3) iItemID = 636; break; // RingofGrandMage	
-				case  4: if (dice(1, (800 * fProbB)) == 3) iItemID = 734; break; // RingOfArcmage           
-				case  5: if (dice(1, (500 * fProbB)) == 3) iItemID = 634; break; // RingofWizard            
-				case  6: if (dice(1, (500 * fProbB)) == 2) iItemID = 290; break; // Flameberge+3(LLF)
-				case  7: if (dice(1, (500 * fProbB)) == 3) iItemID = 490; break; // BloodSword              
-				case  8: if (dice(1, (500 * fProbB)) == 3) iItemID = 491; break; // BloodAxe              
-				case  9: if (dice(1, (500 * fProbB)) == 3) iItemID = 492; break; // BloodRapier
-				}
-			}
-
-			break;
-
-		case 81: // Abaddon
-
-			// ÃÖ»ó±Þ
-			switch (dice(1, 13)) {
-			case 1: if (dice(1, (100 * fProbA)) == 3) iItemID = 846; break; // The_Devastator
-			case 2: if (dice(1, (100 * fProbA)) == 3) iItemID = 847; break; // DarkExecutor            
-			case 3: if (dice(1, (100 * fProbA)) == 3) iItemID = 860; break; // NecklaceOfXelima
-			case 4: if (dice(1, (100 * fProbA)) == 3) iItemID = 865; break; // ResurWand(MS.20)
-			case 5: if (dice(1, (100 * fProbA)) == 2) iItemID = 631; break; // RingoftheAbaddon        	
-			case 6: if (dice(1, (100 * fProbA)) == 2) iItemID = 866; break; // ResurWand (MS.10)
-			case 7: if (dice(1, (100 * fProbA)) == 2) iItemID = 862; break; // BerserkWand(MS.20)
-			case 8: if (dice(1, (100 * fProbA)) == 2) iItemID = 861; break; // BerserkWand(MS.10)
-			case 9: if (dice(1, (100 * fProbA)) == 2) iItemID = 863; break; // KlonessWand(MS.20)
-		   case 10: if (dice(1, (100 * fProbA)) == 2) iItemID = 864; break; // KlonessWand(MS.10)
-           case 11: if (dice(1, (100 * fProbA)) == 2) iItemID = 734; break; // RingofArchMage
-		   case 12: if (dice(1, (100 * fProbA)) == 2) iItemID = 853; break; // E.S.W.Manual
-		   case 13: if (dice(1, (100 * fProbA)) == 2) iItemID = 852; break; // CancelManual
-			}
-
-
-			// »ó±Þ
-			if (iItemID == 0)
-			{
-				switch (dice(1, 20)) {
-				case  1: if (dice(1, (4 * fProbB)) == 3) iItemID = 762; break; // GBattleHammer           
-				case  2: if (dice(1, (4 * fProbB)) == 3) iItemID = 490; break; // BloodSword              
-				case  3: if (dice(1, (4 * fProbB)) == 3) iItemID = 491; break; // BloodAxe                
-				case  4: if (dice(1, (4 * fProbB)) == 3) iItemID = 492; break; // BloodRapier             
-				case  5: if (dice(1, (4 * fProbB)) == 3) iItemID = 611; break; // XelimaAxe
-				case  6: if (dice(1, (4 * fProbB)) == 3) iItemID = 610; break; // XelimaBlade
-				case  7: if (dice(1, (4 * fProbB)) == 3) iItemID = 612; break; // XelimaRapier
-				case 10: if (dice(1, (4 * fProbB)) == 3) iItemID = 645; break; // KnecklaceOfEfreet       	
-				case 11: if (dice(1, (4 * fProbB)) == 3) iItemID = 638; break; // KnecklaceOfFirePro      			
-				case 12: if (dice(1, (4 * fProbB)) == 3) iItemID = 382; break; // BloodyShockW.Manual
-				case 13: if (dice(1, (4 * fProbB)) == 3) iItemID = 381; break; // MassFireStrikeManual  
-				case 14: if (dice(1, (4 * fProbB)) == 3) iItemID = 259; break; // MagicWand(M.Shield)
-				case 15: if (dice(1, (4 * fProbB)) == 3) iItemID = 291; break; // MagicWand(MS30-LLF)
-				case 17: if (dice(1, (4 * fProbB)) == 3) iItemID = 850; break; // Kloness Axe
-				case 18: if (dice(1, (4 * fProbB)) == 3) iItemID = 851; break; // Kloness Esterk
-				case 19: if (dice(1, (4 * fProbB)) == 3) iItemID = 859; break; // Kloness Neck
-				case 20: if (dice(1, (4 * fProbB)) == 3) iItemID = 854; break; // I.M.C.Manual
-				}
-			}
-			break;
-		} // switch
-
-		// ÀÏ¹Ý ¾ÆÀÌÅÛ ....dumb korean idiots
-		if (iItemID == 0)
-		{
-			switch (dice(1, 24)) {
-			case  1: if (dice(1, (2 * fProbC)) == 2) iItemID = 740; break; // BagOfGold-medium
-			case  2: if (dice(1, (2 * fProbC)) == 2) iItemID = 741; break; // BagOfGold-large
-			case  3: if (dice(1, (2 * fProbC)) == 2) iItemID = 742; break; // BagOfGold-largest
-			case  4: if (dice(1, (2 * fProbC)) == 2) iItemID = 868; break; // AcientTablet(LU)
-			case  5:
-			case  6:
-			case  7: if (dice(1, (2 * fProbC)) == 2) iItemID = 650; break; // ZemstoneOfSacrifice
-			case  8:
-			case  9: if (dice(1, (2 * fProbC)) == 2) iItemID = 656; break; // StoneOfXelima
-			case 10:
-			case 11:
-			case 12: if (dice(1, (2 * fProbC)) == 2) iItemID = 657; break; // StoneOfMerien
-			case 13: if (dice(1, (2 * fProbC)) == 2) iItemID = 333; break; // PlatinumRing          
-			case 14: if (dice(1, (2 * fProbC)) == 2) iItemID = 334; break; // LuckyGoldRing         
-			case 15: if (dice(1, (2 * fProbC)) == 2) iItemID = 335; break; // EmeraldRing           
-			case 16: if (dice(1, (2 * fProbC)) == 2) iItemID = 336; break; // SapphireRing          
-			case 17: if (dice(1, (2 * fProbC)) == 2) iItemID = 337; break; // RubyRing              
-			case 18: if (dice(1, (2 * fProbC)) == 2) iItemID = 290; break; // Flameberge+3(LLF)
-			case 19: if (dice(1, (2 * fProbC)) == 2) iItemID = 292; break; // GoldenAxe(LLF)
-			case 20: if (dice(1, (2 * fProbC)) == 2) iItemID = 259; break; // MagicWand(M.Shield)
-			case 21: if (dice(1, (2 * fProbC)) == 2) iItemID = 300; break; // MagicNecklace(RM10)
-			case 22: if (dice(1, (2 * fProbC)) == 2) iItemID = 311; break; // MagicNecklace(DF+10)
-			case 23: if (dice(1, (2 * fProbC)) == 2) iItemID = 305; break; // MagicNecklace(DM+1)
-			case 24: if (dice(1, (2 * fProbC)) == 2) iItemID = 308; break; // MagicNecklace(MS10)
-			}
+		case 81: { // Abaddon
+			BossDropConfiguration *configuration = new BossDropConfiguration();
+			iItemID = configuration->GetAbaddonRareDrop(fProbA, fProbB);
+			delete configuration;
+		}
+				 break;
 		}
 
-		// È®·üÀÌ 100 ÀÎµ¥ ¾Æ¹« °Íµµ ³ª¿ÀÁö ¾Ê¾Ò´Ù.
-		// Gold ÁØ´Ù. retarded koreans -_-
+		if (iItemID == 0) {
+			BossDropConfiguration *configuration = new BossDropConfiguration();
+			iItemID = configuration->GetThirdRareDrop(fProbC);
+			delete configuration;
+		}
+
 		if (iItemID == 0 && iProb == 100) iItemID = 90; // Gold
 
 		if (iItemID != 0)
@@ -36932,8 +36828,12 @@ void CGame::AdminOrder_CheckRep(int iClientH, char *pData,DWORD dwMsgSize)
 	char   * token, cName[11], cTargetName[11], cRepMessage[256], cTemp[256], seps[] = "= \t\n", cBuff[256];
 	register int i;
 
-	if (m_pClientList[iClientH] == NULL) return;
-	if ((dwMsgSize)	<= 0) return;
+	if (m_pClientList[iClientH] == NULL) {
+		return;
+	}
+	if ((dwMsgSize) <= 0) {
+		return;
+	}
 	ZeroMemory(cTemp, sizeof(cTemp));
 	ZeroMemory(cRepMessage, sizeof(cRepMessage));
 	ZeroMemory(cTargetName, sizeof(cTargetName));
@@ -36946,7 +36846,9 @@ void CGame::AdminOrder_CheckRep(int iClientH, char *pData,DWORD dwMsgSize)
 
 
 	if (token != NULL) {
-		if (!m_pClientList[iClientH]->IsGM()) return;
+		if (!m_pClientList[iClientH]->IsGM()) {
+			return;
+		}
 		ZeroMemory(cName, sizeof(cName));
 		strcpy(cName, token);
 	} 
@@ -36959,15 +36861,19 @@ void CGame::AdminOrder_CheckRep(int iClientH, char *pData,DWORD dwMsgSize)
 	if (cName != NULL) {
 		token = cName;
 
-		if (strlen(token) > 10) 
+		if (strlen(token) > 10) {
 			memcpy(cTargetName, token, 10);
-		else memcpy(cTargetName, token, strlen(token));
+		}
+		else {
+			memcpy(cTargetName, token, strlen(token));
+		}
 
-		for (i = 1; i < MAXCLIENTS; i++) 
+		for (i = 1; i < MAXCLIENTS; i++) {
 			if ((m_pClientList[i] != NULL) && (memcmp(m_pClientList[i]->m_cCharName, cTargetName, 10) == 0)) {
 				wsprintf(cRepMessage, " %s has %d reputation points.", m_pClientList[i]->m_cCharName, m_pClientList[i]->m_reputation);
 				ShowClientMsg(iClientH, cRepMessage);
 			}
+		}
 	}
 }
 
