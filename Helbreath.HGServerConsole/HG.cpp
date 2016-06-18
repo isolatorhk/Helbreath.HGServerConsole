@@ -17771,6 +17771,12 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 			}
 			break;
 
+        case ITEMEFFECTTYPE_REPPLUS:
+            iMax = 10000;
+            if (m_pClientList[iClientH]->m_reputation < iMax) m_pClientList[iClientH]->m_reputation += 3;
+            iEffectResult = 7;
+           break;
+
 		case ITEMEFFECTTYPE_STUDYMAGIC:
 
 			iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;
@@ -17996,6 +18002,11 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 		case 6: // EXP
 			SendNotifyMsg(NULL, iClientH, NOTIFY_SLATE_EXP, NULL, NULL, NULL, NULL);
 			break;
+			 case 7: //Rep
+            char cRepMessage[60];
+            wsprintf(cRepMessage,"You have Earned 3 Rep Points");
+            ShowClientMsg(iClientH,cRepMessage);
+            break;
 		default:
 			break;
 		}
@@ -29430,7 +29441,8 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					case 2: iItemID = 650; break; // Zemstone of Sacrifice
 					case 3: iItemID = 656; break; // Xelima Stone
 					case 4: iItemID = 657; break; // Merien Stone
-					case 5: iItemID = 95;  break; // Green Potion				
+					case 5: iItemID = 95;  break; // Green Potion
+					case 6: iItemID = 1139;  break; // Rep Potion	
 					} break;
 				case 9:
 					SYSTEMTIME SysTime;

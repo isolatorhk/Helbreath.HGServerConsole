@@ -138,6 +138,7 @@ enum ItemTypes
 #define ITEMEFFECTTYPE_ITEMFARM				30  
 #define ITEMEFFECTTYPE_SLATES			31
 #define ITEMEFFECTTYPE_JEWELRY			32
+#define ITEMEFFECTTYPE_REPPLUS         33
 
 enum WandEffectTypes{
 	WET_NONE,

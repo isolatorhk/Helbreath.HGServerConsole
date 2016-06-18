@@ -10,7 +10,7 @@ int BossDropConfiguration::GetThirdRareDrop(float fProbC)
 	case  3: if (dice(1, (2 * fProbC)) == 2) itemId = 742; break; // BagOfGold-largest
 	case  4: if (dice(1, (2 * fProbC)) == 2) itemId = 868; break; // AcientTablet(LU)
 	case  5:
-	case  6:
+	case  6: if (dice(1, (2 * fProbC)) == 2) itemId = 1139; break; // Rep Potion
 	case  7: if (dice(1, (2 * fProbC)) == 2) itemId = 650; break; // ZemstoneOfSacrifice
 	case  8:
 	case  9: if (dice(1, (2 * fProbC)) == 2) itemId = 656; break; // StoneOfXelima
