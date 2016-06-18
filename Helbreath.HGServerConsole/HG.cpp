@@ -35533,35 +35533,48 @@ void CGame::GetExp(int iClientH, int iExp, bool bIsAttackerOwn)
 
 				for (i = 0; i < m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iTotalMembers; i++, slateMulti = 1) {
 					iH = m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iIndex[i];
-					if ((m_pClientList[iH] != NULL) && (m_pClientList[iH]->m_iHP > 0))
-					{
-						if((m_pClientList[iH]->m_iStatus & STATUS_GREENSLATE) != 0) slateMulti = 3;
-						if(m_pClientList[iH]->m_iLevel == PLAYERMAXLEVEL)
-							m_pClientList[iH]->m_iExpStock += (iUnitValue/3) * slateMulti;
-						else
+					if ((m_pClientList[iH] != NULL) && (m_pClientList[iH]->m_iHP > 0)) {
+						if ((m_pClientList[iH]->m_iStatus & STATUS_GREENSLATE) != 0) {
+							slateMulti = 2;
+						}
+						if (m_pClientList[iH]->m_iLevel == PLAYERMAXLEVEL) {
+							m_pClientList[iH]->m_iExpStock += (iUnitValue / 3) * slateMulti;
+						}
+						else {
 							m_pClientList[iH]->m_iExpStock += iUnitValue * slateMulti;
+						}
 					}
 				}
-				if((m_pClientList[iClientH]->m_iStatus & STATUS_GREENSLATE) != 0) iUnitValue *= 3;
-				if(m_pClientList[iClientH]->m_iLevel == PLAYERMAXLEVEL)
+				if ((m_pClientList[iClientH]->m_iStatus & STATUS_GREENSLATE) != 0) {
+					iUnitValue *= 2;
+				}
+				if (m_pClientList[iClientH]->m_iLevel == PLAYERMAXLEVEL) {
 					iUnitValue /= 3;
-				if ((bIsAttackerOwn == TRUE) && (iPartyTotalMember > 1))
-					m_pClientList[iClientH]->m_iExpStock += (int)(iUnitValue/10);
+				}
+				if ((bIsAttackerOwn == TRUE) && (iPartyTotalMember > 1)) {
+					m_pClientList[iClientH]->m_iExpStock += (int)(iUnitValue / 10);
+				}
 
 			}
 			else
 			{
-				if((m_pClientList[iClientH]->m_iStatus & STATUS_GREENSLATE) != 0) iExp *= 3;
-				if(m_pClientList[iClientH]->m_iLevel == PLAYERMAXLEVEL)
+				if ((m_pClientList[iClientH]->m_iStatus & STATUS_GREENSLATE) != 0) {
+					iExp *= 2;
+				}
+				if (m_pClientList[iClientH]->m_iLevel == PLAYERMAXLEVEL) {
 					iExp /= 3;
+				}
 				m_pClientList[iClientH]->m_iExpStock += iExp;
 			}
-	} // if
+	}
 	else
 	{
-		if((m_pClientList[iClientH]->m_iStatus & STATUS_GREENSLATE) != 0) iExp *= 3;
-		if(m_pClientList[iClientH]->m_iLevel == PLAYERMAXLEVEL)
+		if ((m_pClientList[iClientH]->m_iStatus & STATUS_GREENSLATE) != 0) {
+			iExp *= 2;
+		}
+		if (m_pClientList[iClientH]->m_iLevel == PLAYERMAXLEVEL) {
 			iExp /= 3;
+		}
 		m_pClientList[iClientH]->m_iExpStock += iExp;
 	}
 }
