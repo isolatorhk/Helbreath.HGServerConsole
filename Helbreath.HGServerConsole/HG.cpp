@@ -2980,27 +2980,6 @@ bool CGame::bSendMsgToLS(DWORD dwMsg, int iClientH, bool bFlag,char * pData)
 		iSendSize = 6 + iSize;
 		break;
 
-	case MSGID_REQUEST_LGNPTS:
-		if (_bCheckSubLogSocketIndex() == FALSE) return FALSE;
-
-		dwp  = (DWORD *)(G_cData50000 + INDEX4_MSGID);
-		*dwp = dwMsg;
-		wp   = (WORD *)(G_cData50000 + INDEX2_MSGTYPE);
-		*wp  = NULL;
-
-		cp = (char *)(G_cData50000 + INDEX2_MSGTYPE + 2);
-
-		wp = (WORD *)cp;
-		*wp = iClientH;
-		cp += 2;
-
-		memcpy(cp, m_pClientList[iClientH]->m_cAccountName, 10);
-		cp += 10;
-
-		iSendSize = 18;
-		iRet = m_pSubLogSock[m_iCurSubLogSockIndex]->iSendMsg(G_cData50000, iSendSize);
-		break;
-
 	case MSGID_REQUEST_LGNSVC:
 		if (_bCheckSubLogSocketIndex() == FALSE) return FALSE;
 
@@ -7063,11 +7042,7 @@ void CGame::MsgProcess()
 
 			case MSGID_STATECHANGEPOINT:
 				StateChangeHandler(iClientH, pData, dwMsgSize);
-				break;
-
-			case MSGID_REQUEST_LGNPTS:
-				bSendMsgToLS(MSGID_REQUEST_LGNPTS, iClientH);
-				break;
+				break;			
 
 			case MSGID_REQUEST_LGNSVC:
 				bSendMsgToLS(MSGID_REQUEST_LGNSVC, iClientH, NULL, pData);
@@ -7315,13 +7290,6 @@ void CGame::MsgProcess()
 				_bDecodeTeleportListConfigFileContents((char *)(pData + INDEX2_MSGTYPE + 2), dwMsgSize);
 				break;
 
-			case MSGID_RESPONSE_LGNPTS:
-				SendNotifyMsg(NULL, *(WORD *)(pData+ INDEX2_MSGTYPE + 2), NOTIFY_LGNPTS, 
-					*(DWORD *)(pData+ INDEX2_MSGTYPE + 2 + 2), NULL, NULL, NULL);
-				break;
-			case MSGID_RESPONSE_LGNSVC:
-				HandleLegionService(pData);
-				break;
 			case MSGID_CONFIRMEDIP:
 				ConfirmedIP data;
 				strcpy(data.ip, pData+ INDEX2_MSGTYPE);
@@ -38825,103 +38793,6 @@ void CGame::AddGroundItem(CItem * pItem, short x, short y, char mapIndex, DWORD 
 	PutLogList("WARNING: Ground NPC item list is full, item will not be cleared.");
 }
 
-void CGame::HandleLegionService(char * data)
-{
-	WORD clientH = *(WORD *)(data+6);
-	WORD cmd = *(WORD *)(data+4);
-	CClient * player;
-
-	player = m_pClientList[clientH];
-
-	if (!player || !player->m_bIsInitComplete || 
-		memcmp(player->m_cMapName, "cityhall", 8) != 0) return;
-
-	int i=0;
-	while(lgnPtsSvcs[i].price && 
-		lgnPtsSvcs[i].cmd != cmd) 
-	{i++;}
-
-	switch(cmd)
-	{
-	case CMD_LGNSVC_TOARE:
-		if(!ChangeNation(clientH, ARESDEN))
-			return;
-		break;
-	case CMD_LGNSVC_TOELV:
-		if(!ChangeNation(clientH, ELVINE))
-			return;
-		break;
-	case CMD_LGNSVC_GOLD10:
-		if(!GetLegionGold(clientH, 10000))
-			return;
-		break;
-	case CMD_LGNSVC_GOLD100:
-		if(!GetLegionGold(clientH, 100000))
-			return;
-		break;
-	case CMD_LGNSVC_MAGEHAT:
-	case CMD_LGNSVC_BMAGEHAT:
-	case CMD_LGNSVC_WARRIORHELM:
-	case CMD_LGNSVC_BMAGEHELM:
-	case CMD_LGNSVC_XPSLATE:
-	case CMD_LGNSVC_ZERKSLATE:
-	case CMD_LGNSVC_MPSLATE:
-	case CMD_LGNSVC_HPSLATE:
-	case CMD_LGNSVC_ZEM:
-	case CMD_LGNSVC_SOM:
-	case CMD_LGNSVC_SOX:
-		if(!GetLegionItem(clientH, cmd))
-			return;
-		break;
-	case CMD_LGNSVC_MAJ2:
-	case CMD_LGNSVC_MAJ20:
-		player->m_iGizonItemUpgradeLeft += 2 * lgnPtsSvcs[cmd].price;
-		SendNotifyMsg(NULL, clientH, NOTIFY_GIZONITEMUPGRADELEFT, player->m_iGizonItemUpgradeLeft, 1, NULL, NULL);
-		break;
-	case CMD_LGNSVC_REP10:
-	case CMD_LGNSVC_REP100:
-		player->m_reputation += 10 * lgnPtsSvcs[cmd].price;
-		break;
-	default:
-		return;
-	}
-
-	bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA, clientH);
-
-	SubstractCash(player->m_cAccountName, lgnPtsSvcs[i].cmd);
-}
-
-bool CGame::GetLegionGold(int clientH, long count)
-{
-	int iEraseReq;
-	char  cItemName[21];
-	class CItem * pItem;
-
-	pItem = new class CItem;
-	ZeroMemory(cItemName, sizeof(cItemName));
-	wsprintf(cItemName, "Gold");
-	_bInitItemAttr(pItem, cItemName);
-	pItem->m_dwCount = count;
-
-
-	if (_bAddClientItemList(clientH, pItem, &iEraseReq)) 
-	{
-		SendItemNotifyMsg(clientH, NOTIFY_ITEMOBTAINED, pItem, NULL, true);
-		
-		if (iEraseReq == 1) delete pItem;
-
-		return true;
-	}
-	else {
-		delete pItem;
-
-		SendItemNotifyMsg(clientH,	NOTIFY_CANNOTCARRYMOREITEM, NULL, NULL, false);
-		return false;
-	}
-
-	return false;
-}
-
 bool CGame::ChangeNation(int clientH, Side side)
 {
 	char cData[20];
@@ -38959,149 +38830,6 @@ bool CGame::ChangeNation(int clientH, Side side)
 		RequestDeletePartyHandler(clientH);
 
 	return true;
-}
-
-void CGame::SubstractCash(char * account, WORD cmd)
-{
-	char data[20];
-	WORD * wp; char * cp;
-
-	cp = (char *)data;
-	memcpy(cp, account, 10);
-	cp += 10;
-
-	wp = (WORD*)cp;
-	*wp = cmd;
-
-	bSendMsgToLS(MSGID_SUBCASH, NULL, NULL, data);
-}
-
-bool CGame::GetLegionItem(int clientH, WORD cmd)
-{
-	class CItem * pItem;
-	int   iEraseReq;
-	char  cItemName[21];
-	DWORD attr = 0;
-
-	CClient * player = m_pClientList[clientH];
-
-	if (_iGetItemSpaceLeft(clientH) == 0) 
-	{
-		SendItemNotifyMsg(clientH,	NOTIFY_CANNOTCARRYMOREITEM, NULL, NULL, false);
-		return false;
-	}
-
-	switch (cmd) 
-	{
-	case CMD_LGNSVC_MAGEHAT:
-	case CMD_LGNSVC_BMAGEHAT:
-		if (player->m_cSex == MALE) wsprintf(cItemName, "LegionHat(M)");
-		else if (player->m_cSex == FEMALE) wsprintf(cItemName, "LegionHat(W)");
-		if(cmd == CMD_LGNSVC_MAGEHAT)
-			attr = 0x6200; // mp14
-		else if(cmd == CMD_LGNSVC_BMAGEHAT)
-			attr = 0x4200; // hp14
-		break;
-	case CMD_LGNSVC_WARRIORHELM:
-	case CMD_LGNSVC_BMAGEHELM:
-		if (player->m_cSex == MALE) wsprintf(cItemName, "LegionHelm(M)");
-		else if (player->m_cSex == FEMALE) wsprintf(cItemName, "LegionHelm(W)");
-		if(cmd == CMD_LGNSVC_WARRIORHELM)
-			attr = 0x4200; // hp14
-		else if(cmd == CMD_LGNSVC_BMAGEHELM)
-			attr = 0x6200; // mp14
-		break;
-	case CMD_LGNSVC_XPSLATE:
-	case CMD_LGNSVC_ZERKSLATE:
-	case CMD_LGNSVC_MPSLATE:
-	case CMD_LGNSVC_HPSLATE:
-		wsprintf(cItemName, "AcientTablet");
-		break;
-	case CMD_LGNSVC_ZEM:
-		wsprintf(cItemName, "ZemstoneofSacrifice");
-		break;
-	case CMD_LGNSVC_SOM:
-		wsprintf(cItemName, "StoneOfMerien");
-		break;
-	case CMD_LGNSVC_SOX:
-		wsprintf(cItemName, "StoneOfXelima");
-		break;
-	default:
-		return false;
-	}
-
-	pItem = NULL;
-	pItem = new class CItem;
-	if (pItem == NULL) return false;
-
-	pItem->m_dwAttribute = attr;
-
-	if ((_bInitItemAttr(pItem, cItemName) == TRUE)) 
-	{
-		if(strcmp(cItemName, "AcientTablet") == 0)
-		{
-			int iSlateType = 0;
-			char cSlateColour = 0;
-
-			switch(cmd)
-			{
-			case CMD_LGNSVC_XPSLATE:
-				iSlateType = 4;
-				cSlateColour = 7;
-				break;
-			case CMD_LGNSVC_ZERKSLATE:
-				iSlateType = 2;
-				cSlateColour = 3;
-				break;
-			case CMD_LGNSVC_MPSLATE:
-				iSlateType = 3;
-				cSlateColour = 37;
-				break;
-			case CMD_LGNSVC_HPSLATE:
-				iSlateType = 1;
-				cSlateColour = 32;
-				break;
-			}
-
-			pItem->m_sItemSpecEffectValue2 = iSlateType;
-			pItem->m_cItemColor = cSlateColour;
-		}
-		else if(memcmp(cItemName, "Legion", 6) == 0)
-		{
-			pItem->m_sTouchEffectType = ITET_UNIQUE_OWNER;
-			pItem->m_sTouchEffectValue1 = player->m_sCharIDnum1;
-			pItem->m_sTouchEffectValue2 = player->m_sCharIDnum2;
-			pItem->m_sTouchEffectValue3 = player->m_sCharIDnum3;
-		}
-		else
-		{
-			pItem->m_sTouchEffectType   = ITET_ID;
-			pItem->m_sTouchEffectValue1 = dice(1,100000);
-			pItem->m_sTouchEffectValue2 = dice(1,100000);
-			pItem->m_sTouchEffectValue3 = (short)timeGetTime();
-		}
-
-
-		if (_bAddClientItemList(clientH, pItem, &iEraseReq) == TRUE) 
-		{
-			SendItemNotifyMsg(clientH, NOTIFY_ITEMOBTAINED, pItem, NULL, true);
-			if (iEraseReq == 1) delete pItem;
-			_bItemLog(ITEMLOG_GET, clientH, -1, pItem);
-			return true;
-		}
-		else 
-		{
-			delete pItem;
-			SendItemNotifyMsg(clientH,	NOTIFY_CANNOTCARRYMOREITEM, NULL, NULL, false);
-			return false;
-		}
-	}
-	else 
-	{
-		delete pItem;
-		return false;
-	}
-	return false;
 }
 
 uint32 CGame::FindNPC(const string npcName)

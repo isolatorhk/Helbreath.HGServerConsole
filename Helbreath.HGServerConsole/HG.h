@@ -683,13 +683,8 @@ public:
 	} m_stGroundNpcItem[MAXGROUNDITEMS];
 	void TileCleaner();
 	void AddGroundItem(CItem * pItem, short x, short y, char mapIndex, DWORD dwTime);
-
-	// Legion point functions
-	void HandleLegionService(char * data);
+		
 	bool ChangeNation(int clientH, Side side);
-	void SubstractCash(char * account, WORD cmd);
-	bool GetLegionGold(int clientH, long count);
-	bool GetLegionItem(int clientH, WORD cmd);
 
 	uint32 FindNPC(const string npcName);
 	uint32 FindItem(const string itemName);
