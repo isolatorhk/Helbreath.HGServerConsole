@@ -37492,6 +37492,11 @@ void CGame::GetDKItemHandler(int iClientH, char * pData, DWORD dwMsgSize)
 	if (m_pClientList[iClientH] == NULL) {
 		return;
 	}
+
+	if (m_pClientList[iClientH]->GetLevel() != MAXLEVEL) {
+		return;
+	}
+
 	if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) {
 		return;
 	}
