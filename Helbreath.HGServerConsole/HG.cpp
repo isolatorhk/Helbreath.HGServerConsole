@@ -15964,10 +15964,14 @@ void CGame::MobGenerator()
 		if (m_pMapList[i] != NULL) {
 			iResultNum = (m_pMapList[i]->m_iMaximumObject - 30);
 		}
-		if (m_bHeldenianMode && m_iHeldenianType == 1) return;
+		if (m_bHeldenianMode && m_iHeldenianType == 1) {
+			return;
+		}
 		if ( (m_pMapList[i] != NULL) && (m_pMapList[i]->m_bRandomMobGenerator == TRUE) && (iResultNum > m_pMapList[i]->m_iTotalActiveObject) ) {
 
-			if ((m_iMiddlelandMapIndex != -1) && (m_iMiddlelandMapIndex == i) && (m_bIsCrusadeMode == TRUE)) break;
+			if ((m_iMiddlelandMapIndex != -1) && (m_iMiddlelandMapIndex == i) && (m_bIsCrusadeMode == TRUE)) {
+				break;
+			}
 
 			iNamingValue = m_pMapList[i]->iGetEmptyNamingValue();
 			if (iNamingValue != -1) {
@@ -15985,17 +15989,20 @@ void CGame::MobGenerator()
 				switch (m_pMapList[i]->m_cRandomMobGeneratorLevel) {
 				case 1:
 					if ((iResult >= 1) && (iResult < 20)) {
-						iResult = 1;  					}
+						iResult = 1;
+					}
 					else if ((iResult >= 20) && (iResult < 40)) {
-						iResult = 2;  
+						iResult = 2;
 					}
 					else if ((iResult >= 40) && (iResult < 85)) {
-						iResult = 24; 					}
+						iResult = 24;
+					}
 					else if ((iResult >= 85) && (iResult < 95)) {
-						iResult = 25; 
+						iResult = 25;
 					}
 					else if ((iResult >= 95) && (iResult <= 100)) {
-						iResult = 3;  					}
+						iResult = 3;
+					}
 
 					iMapLevel = 1;
 					break;
@@ -16011,18 +16018,18 @@ void CGame::MobGenerator()
 					iMapLevel = 1;
 					break;
 
-				case 3:     
+				case 3:
 					if ((iResult >= 1) && (iResult < 20)) {
-						switch ( dice(1,2) ) {
+						switch (dice(1, 2)) {
 						case 1: iResult = 3; break;
 						case 2: iResult = 4; break;
 						}
 					}
 					else if ((iResult >= 20) && (iResult < 25)) {
-						iResult = 30;  
+						iResult = 30;
 					}
 					else if ((iResult >= 25) && (iResult < 50)) {
-						switch ( dice(1,3) ) {
+						switch (dice(1, 3)) {
 						case 1: iResult = 5; break;
 						case 2:	iResult = 6; break;
 						case 3: iResult = 7; break;
@@ -16030,8 +16037,8 @@ void CGame::MobGenerator()
 					}
 					else if ((iResult >= 50) && (iResult < 75)) {
 
-						switch ( dice(1,7) ) {
-						case 1: 
+						switch (dice(1, 7)) {
+						case 1:
 						case 2: iResult = 8;  break;
 						case 3:	iResult = 11; break;
 						case 4:	iResult = 12; break;
@@ -16042,7 +16049,7 @@ void CGame::MobGenerator()
 					}
 					else if ((iResult >= 75) && (iResult <= 100)) {
 
-						switch ( dice(1,5) ) {
+						switch (dice(1, 5)) {
 						case 1:
 						case 2:	iResult = 9;  break;
 						case 3:	iResult = 13; break;
@@ -16055,19 +16062,19 @@ void CGame::MobGenerator()
 
 				case 4:
 					if ((iResult >= 1) && (iResult < 50)) {
-						switch ( dice(1,2) ) {
+						switch (dice(1, 2)) {
 						case 1:	iResult = 2; break;
 						case 2: iResult = 10; break;
 						}
 					}
 					else if ((iResult >= 50) && (iResult < 80)) {
-						switch ( dice(1,2) ) {
+						switch (dice(1, 2)) {
 						case 1: iResult = 8; break;
 						case 2: iResult = 11; break;
 						}
 					}
 					else if ((iResult >= 80) && (iResult < 100)) {
-						switch ( dice(1,2) ) {
+						switch (dice(1, 2)) {
 						case 1: iResult = 14; break;
 						case 2:	iResult = 9; break;
 						}
@@ -16077,35 +16084,35 @@ void CGame::MobGenerator()
 
 				case 5:
 					if ((iResult >= 1) && (iResult < 30)) {
-						switch ( dice(1,5) ) {
+						switch (dice(1, 5)) {
 						case 1:
-						case 2: 
+						case 2:
 						case 3:
-						case 4: 
+						case 4:
 						case 5: iResult = 2; break;
 						}
 					}
 					else if ((iResult >= 30) && (iResult < 60)) {
-						switch ( dice(1,2) ) {
+						switch (dice(1, 2)) {
 						case 1: iResult = 3; break;
 						case 2: iResult = 4; break;
 						}
 					}
 					else if ((iResult >= 60) && (iResult < 80)) {
-						switch ( dice(1,2) ) {
+						switch (dice(1, 2)) {
 						case 1: iResult = 5; break;
 						case 2: iResult = 7; break;
 						}
 					}
 					else if ((iResult >= 80) && (iResult < 95)) {
-						switch ( dice(1,3) ) {
+						switch (dice(1, 3)) {
 						case 1:
 						case 2: iResult = 8;  break;
 						case 3:	iResult = 11; break;
 						}
 					}
 					else if ((iResult >= 95) && (iResult <= 100)) {
-						switch ( dice(1,3) ) {
+						switch (dice(1, 3)) {
 						case 1: iResult = 11; break;
 						case 2: iResult = 14; break;
 						case 3: iResult = 9; break;
@@ -16116,7 +16123,7 @@ void CGame::MobGenerator()
 
 				case 6: // huntzone 2,4
 					if ((iResult >= 1) && (iResult < 60)) {
-						switch ( dice(1,4) ) {
+						switch (dice(1, 4)) {
 						case 1: iResult = 5; break;
 						case 2:	iResult = 6; break;
 						case 3: iResult = 7; break;
@@ -16124,7 +16131,7 @@ void CGame::MobGenerator()
 						}
 					}
 					else if ((iResult >= 60) && (iResult < 90)) {
-						switch ( dice(1,4) ) {
+						switch (dice(1, 4)) {
 						case 1:
 						case 2: iResult = 8;  break;
 						case 3:	iResult = 11; break;
@@ -16134,7 +16141,7 @@ void CGame::MobGenerator()
 					else if ((iResult >= 90) && (iResult <= 100)) {
 
 
-						switch ( dice(1,7) ) {
+						switch (dice(1, 7)) {
 						case 1: iResult = 26; break;
 						case 2:	iResult = 9;  break;
 						case 3:	iResult = 13; break;
@@ -16149,7 +16156,7 @@ void CGame::MobGenerator()
 
 				case 7: // areuni, elvuni
 					if ((iResult >= 1) && (iResult < 50)) {
-						switch (dice(1,5)) {
+						switch (dice(1, 5)) {
 						case 1: iResult = 3;  break; // Orc
 						case 2: iResult = 6;  break; // Orc-Mage
 						case 3: iResult = 10; break; // Amphis
@@ -16161,22 +16168,22 @@ void CGame::MobGenerator()
 						iResult = 30; // Rudolph
 					}
 					else if ((iResult >= 60) && (iResult < 85)) {
-						switch (dice(1,4)) {
+						switch (dice(1, 4)) {
 						case 1: iResult = 50; break; // Giant-Tree
-						case 2: 
+						case 2:
 						case 3: iResult = 6;  break; // Orc-Mage
 						case 4: iResult = 12; break; // Troll
 						}
 					}
 					else if ((iResult >= 85) && (iResult <= 100)) {
-						switch (dice(1,3)) {
+						switch (dice(1, 3)) {
 						case 1: iResult = 12;  break; // Troll
 						case 2:
 						case 3:
-						if (dice(1,100) < 3) 
-							iResult = 17; // Unicorn
-						else iResult = 12; // Troll
-						break;
+							if (dice(1, 100) < 3)
+								iResult = 17; // Unicorn
+							else iResult = 12; // Troll
+							break;
 						}
 					}
 					iMapLevel = 4;
@@ -16184,20 +16191,20 @@ void CGame::MobGenerator()
 
 				case 8:
 					if ((iResult >= 1) && (iResult < 70)) {
-						switch ( dice(1,2) ) {
+						switch (dice(1, 2)) {
 						case 1:	iResult = 4;  break;
 						case 2: iResult = 5;  break;
 						}
 					}
 					else if ((iResult >= 70) && (iResult < 90)) {
-						switch ( dice(1,3) ) {
+						switch (dice(1, 3)) {
 						case 1: iResult = 8;  break;
 						case 2: iResult = 11; break;
 						case 3: iResult = 14; break;
 						}
 					}
 					else if ((iResult >= 90) && (iResult < 100)) {
-						switch ( dice(1,2) ) {
+						switch (dice(1, 2)) {
 						case 1: iResult = 9;  break;
 						case 2: iResult = 14; break;
 						}
@@ -16207,20 +16214,20 @@ void CGame::MobGenerator()
 
 				case 9:
 					if ((iResult >= 1) && (iResult < 70)) {
-						switch ( dice(1,2) ) {
+						switch (dice(1, 2)) {
 						case 1:	iResult = 4;  break;
 						case 2: iResult = 5;  break;
 						}
 					}
 					else if ((iResult >= 70) && (iResult < 95)) {
-						switch ( dice(1,3) ) {
+						switch (dice(1, 3)) {
 						case 1: iResult = 8;  break;
 						case 2: iResult = 9;  break;
 						case 3: iResult = 13; break;
 						}
 					}
 					else if ((iResult >= 95) && (iResult < 100)) {
-						switch ( dice(1,6) ) {
+						switch (dice(1, 6)) {
 						case 1:
 						case 2:
 						case 3: iResult = 9;  break;
@@ -16231,28 +16238,28 @@ void CGame::MobGenerator()
 					}
 
 
-					if ((dice(1,3) == 1) && (iResult != 16)) bFirmBerserk = TRUE;
+					if ((dice(1, 3) == 1) && (iResult != 16)) bFirmBerserk = TRUE;
 
 					iMapLevel = 4;
 					break;
 
 				case 10:
 					if ((iResult >= 1) && (iResult < 70)) {
-						switch ( dice(1,2) ) {
+						switch (dice(1, 2)) {
 						case 1:	iResult = 4; break;
 						case 2: iResult = 5; break;
 						}
 					}
 					else if ((iResult >= 70) && (iResult < 95)) {
 						// 
-						switch ( dice(1,3) ) {
+						switch (dice(1, 3)) {
 						case 1:
 						case 2:	iResult = 13; break;
 						case 3: iResult = 14; break;
 						}
 					}
 					else if ((iResult >= 95) && (iResult < 100)) {
-						switch (dice(1,3)) {
+						switch (dice(1, 3)) {
 						case 1:
 						case 2: iResult = 14; break;
 						case 3: iResult = 15; break;
@@ -16260,42 +16267,42 @@ void CGame::MobGenerator()
 					}
 
 
-					if ((dice(1,3) == 1) && (iResult != 16)) bFirmBerserk = TRUE;
+					if ((dice(1, 3) == 1) && (iResult != 16)) bFirmBerserk = TRUE;
 
 					iMapLevel = 5;
 					break;
 
 				case 11:
 					if ((iResult >= 1) && (iResult < 30)) {
-						switch ( dice(1,5) ) {
+						switch (dice(1, 5)) {
 						case 1:
-						case 2: 
+						case 2:
 						case 3:
-						case 4: 
+						case 4:
 						case 5: iResult = 2; break;
 						}
 					}
 					else if ((iResult >= 30) && (iResult < 60)) {
-						switch ( dice(1,2) ) {
+						switch (dice(1, 2)) {
 						case 1: iResult = 3; break;
 						case 2: iResult = 4; break;
 						}
 					}
 					else if ((iResult >= 60) && (iResult < 80)) {
-						switch ( dice(1,2) ) {
+						switch (dice(1, 2)) {
 						case 1: iResult = 5; break;
 						case 2: iResult = 7; break;
 						}
 					}
 					else if ((iResult >= 80) && (iResult < 95)) {
-						switch ( dice(1,3) ) {
+						switch (dice(1, 3)) {
 						case 1:
 						case 2: iResult = 10;  break;
 						case 3:	iResult = 11; break;
 						}
 					}
 					else if ((iResult >= 95) && (iResult <= 100)) {
-						switch ( dice(1,3) ) {
+						switch (dice(1, 3)) {
 						case 1: iResult = 11; break;
 						case 2: iResult = 7; break;
 						case 3: iResult = 8; break;
@@ -16306,20 +16313,20 @@ void CGame::MobGenerator()
 
 				case 12: // middled1n
 					if ((iResult >= 1) && (iResult < 50)) {
-						switch ( dice(1,3) ) {
-						case 1:	iResult = 1 ; break;
-						case 2: iResult = 2 ; break;
+						switch (dice(1, 3)) {
+						case 1:	iResult = 1; break;
+						case 2: iResult = 2; break;
 						case 3: iResult = 10; break;
 						}
 					}
 					else if ((iResult >= 50) && (iResult < 85)) {
-						switch ( dice(1,2) ) {
+						switch (dice(1, 2)) {
 						case 1: iResult = 5; break;
 						case 2: iResult = 4; break;
 						}
 					}
 					else if ((iResult >= 85) && (iResult < 100)) {
-						switch ( dice(1,3) ) {
+						switch (dice(1, 3)) {
 						case 1: iResult = 8; break;
 						case 2: iResult = 11; break;
 						case 3: iResult = 26; break;
@@ -16328,27 +16335,27 @@ void CGame::MobGenerator()
 					iMapLevel = 4;
 					break;
 
-				case 13: 					
+				case 13:
 					if ((iResult >= 1) && (iResult < 15)) {
 						iResult = 4;
 						bFirmBerserk = TRUE;
-						iFirmSAType  = 4 - (dice(1,2)-1);
+						iFirmSAType = 4 - (dice(1, 2) - 1);
 					}
 					else if ((iResult >= 15) && (iResult < 40)) {
 						iResult = 14;
 						bFirmBerserk = TRUE;
-						iFirmSAType  = 4 - (dice(1,2)-1);
+						iFirmSAType = 4 - (dice(1, 2) - 1);
 					}
 
 					else if ((iResult >= 40) && (iResult < 60)) {
 						iResult = 9;
 						bFirmBerserk = TRUE;
-						iFirmSAType  = 4 - (dice(1,2)-1);
+						iFirmSAType = 4 - (dice(1, 2) - 1);
 					}
 					else if ((iResult >= 60) && (iResult < 75)) {
 						iResult = 13;
 						bFirmBerserk = TRUE;
-						iFirmSAType  = 4 - (dice(1,2)-1);
+						iFirmSAType = 4 - (dice(1, 2) - 1);
 					}
 					else if ((iResult >= 75) && (iResult < 95)) {
 
@@ -16361,7 +16368,7 @@ void CGame::MobGenerator()
 					iMapLevel = 4;
 					break;
 
-				case 14: 					
+				case 14:
 					if ((iResult >= 1) && (iResult < 30)) {
 						iResult = 23;
 					}
@@ -16372,7 +16379,7 @@ void CGame::MobGenerator()
 					else if ((iResult >= 50) && (iResult < 70)) {
 						iResult = 15;
 						bFirmBerserk = TRUE;
-						iFirmSAType  = 4 - (dice(1,2)-1);
+						iFirmSAType = 4 - (dice(1, 2) - 1);
 					}
 					else if ((iResult >= 70) && (iResult < 90)) {
 						iResult = 16;
@@ -16384,7 +16391,7 @@ void CGame::MobGenerator()
 					iMapLevel = 4;
 					break;
 
-				case 15: 
+				case 15:
 					if ((iResult >= 1) && (iResult < 35)) {
 
 						iResult = 23;
@@ -16405,11 +16412,11 @@ void CGame::MobGenerator()
 					}
 					iMapLevel = 4;
 					break;
-				case 16: 
+				case 16:
 					if ((iResult >= 1) && (iResult < 40)) {
-						switch ( dice(1,3) ) {
-						case 1:	iResult = 1 ; break;
-						case 2: iResult = 2 ; break;
+						switch (dice(1, 3)) {
+						case 1:	iResult = 1; break;
+						case 2: iResult = 2; break;
 						case 3: iResult = 10; break;
 						}
 					}
@@ -16417,26 +16424,26 @@ void CGame::MobGenerator()
 						iResult = 30;
 					}
 					else if ((iResult >= 50) && (iResult < 85)) {
-						switch ( dice(1,2) ) {
+						switch (dice(1, 2)) {
 						case 1: iResult = 5; break;
 						case 2: iResult = 4; break;
 						}
 					}
 					else if ((iResult >= 85) && (iResult < 100)) {
-						switch ( dice(1,3) ) {
+						switch (dice(1, 3)) {
 						case 1: iResult = 8; break;
 						case 2: iResult = 11; break;
 						case 3: iResult = 26; break;
 						}
 					}
-					iMapLevel = 1 ;
+					iMapLevel = 1;
 					break;
 				case 17:
 					if ((iResult >= 1) && (iResult < 30)) {
-						switch ( dice(1,4) ) {
-						case 1:	iResult = 22 ; break;
+						switch (dice(1, 4)) {
+						case 1:	iResult = 22; break;
 						case 2: iResult = 8; break;
-						case 3: iResult = 24 ; break;
+						case 3: iResult = 24; break;
 						case 4: iResult = 5; break;
 						}
 					}
@@ -16449,89 +16456,158 @@ void CGame::MobGenerator()
 					}
 					else if ((iResult >= 70) && (iResult < 90)) {
 						iResult = 31;
-						if (dice(1,5) == 1) bFirmBerserk = TRUE;
+						if (dice(1, 5) == 1) bFirmBerserk = TRUE;
 					}
 					else if ((iResult >= 90) && (iResult <= 100)) {
 						iResult = 33;
 					}
-					iMapLevel = 1 ;
+					iMapLevel = 1;
 					break;
 				case 18:
-					if ((iResult == 1) || (iResult == 2)) 
-					{	iResult = 35; // Hellclaw
-					}else if ((iResult > 2) && (iResult <= 12)) 
-					{	iResult = 48; // Nizie
-					}else if ((iResult > 12) && (iResult <= 50)) 
-					{	iResult = 44; // ClawTurtle
-					}else if ((iResult > 50) && (iResult <= 85)) 
-					{	iResult = 45; // Giant-Crayfish
-					}else if ((iResult > 85) && (iResult <= 95)) 
-					{	iResult = 34; // Stalker							
-					}else if ((iResult > 95) && (iResult <= 100)) 
-					{	iResult = 26; // Frog
+					if ((iResult == 1) || (iResult == 2))
+					{
+						iResult = 35; // Hellclaw
+					}
+					else if ((iResult > 2) && (iResult <= 12))
+					{
+						iResult = 48; // Nizie
+					}
+					else if ((iResult > 12) && (iResult <= 50))
+					{
+						iResult = 44; // ClawTurtle
+					}
+					else if ((iResult > 50) && (iResult <= 85))
+					{
+						iResult = 45; // Giant-Crayfish
+					}
+					else if ((iResult > 85) && (iResult <= 95))
+					{
+						iResult = 34; // Stalker							
+					}
+					else if ((iResult > 95) && (iResult <= 100))
+					{
+						iResult = 26; // Frog
 					}
 					break;
 
 				case 19: // Maze Map from HBChina351
-					if ((iResult >= 1) && (iResult <= 15)) 
-					{	iResult = 40; // Centaur
-					}else if ((iResult > 15) && (iResult <= 25)) 
-					{	iResult = 42; // Minaus
-					}else if ((iResult > 25) && (iResult <= 35)) 
-					{	iResult = 21; // Gagoyle
-					}else if ((iResult > 35) && (iResult <= 60)) 
-					{	iResult = 43; // Tentocle					
-					}else if ((iResult > 60) && (iResult < 90)) 
-					{	iResult = 23; // Dark-Elf					
-					}else if ((iResult >= 90) && (iResult <= 100)) 
-					{	iResult = 22; // Beholder
+					if ((iResult >= 1) && (iResult <= 15))
+					{
+						iResult = 40; // Centaur
+					}
+					else if ((iResult > 15) && (iResult <= 25))
+					{
+						iResult = 42; // Minaus
+					}
+					else if ((iResult > 25) && (iResult <= 35))
+					{
+						iResult = 21; // Gagoyle
+					}
+					else if ((iResult > 35) && (iResult <= 60))
+					{
+						iResult = 43; // Tentocle					
+					}
+					else if ((iResult > 60) && (iResult < 90))
+					{
+						iResult = 23; // Dark-Elf					
+					}
+					else if ((iResult >= 90) && (iResult <= 100))
+					{
+						iResult = 22; // Beholder
 					}
 					break;
 
 				case 20: // Heldenian Map from HBChina351
-					if (iResult == 1)  
-					{	iResult = 37; // Fire-Wyvern
-					}else if ((iResult > 1) && (iResult <=3)) 
-					{	iResult = 36; // Wyvern
-					}else if ((iResult > 3) && (iResult <= 8)) 
-					{	iResult = 49; // TigerWorm
-					}else if ((iResult == 9)) 
-					{	iResult = 38; // HC
-					}else if ((iResult > 9) && (iResult <= 20)) 
-					{	iResult = 21; // Gagoyle
-					}else if ((iResult > 20) && (iResult <= 35)) 
-					{	iResult = 16; // Demon
-					}else if ((iResult > 35) && (iResult <= 45)) 
-					{	iResult = 40; // Centaurus
-					}else if ((iResult > 45) && (iResult <= 55)) 
-					{	iResult = 41; // Giant Lizard
-					}else if ((iResult > 55) && (iResult <= 75)) 
-					{	iResult = 28; // Ettin					
-					}else if ((iResult > 75) && (iResult <= 95)) 
-					{	iResult = 43; // Tentocle
-					}else if ((iResult > 95) && (iResult <= 100)) 
-					{	iResult = 22; // Beholder
+					if (iResult == 1)
+					{
+						iResult = 37; // Fire-Wyvern
+					}
+					else if ((iResult > 1) && (iResult <= 3))
+					{
+						iResult = 36; // Wyvern
+					}
+					else if ((iResult > 3) && (iResult <= 8))
+					{
+						iResult = 49; // TigerWorm
+					}
+					else if ((iResult == 9))
+					{
+						iResult = 38; // HC
+					}
+					else if ((iResult > 9) && (iResult <= 20))
+					{
+						iResult = 21; // Gagoyle
+					}
+					else if ((iResult > 20) && (iResult <= 35))
+					{
+						iResult = 16; // Demon
+					}
+					else if ((iResult > 35) && (iResult <= 45))
+					{
+						iResult = 40; // Centaurus
+					}
+					else if ((iResult > 45) && (iResult <= 55))
+					{
+						iResult = 41; // Giant Lizard
+					}
+					else if ((iResult > 55) && (iResult <= 75))
+					{
+						iResult = 28; // Ettin					
+					}
+					else if ((iResult > 75) && (iResult <= 95))
+					{
+						iResult = 43; // Tentocle
+					}
+					else if ((iResult > 95) && (iResult <= 100))
+					{
+						iResult = 22; // Beholder
 					}
 					break;
 
 				case 21: // ????????
-					if ((iResult >= 1) && (iResult < 94)) 
-					{	iResult = 17; // Unicorn
+					if ((iResult >= 1) && (iResult < 94))
+					{
+						iResult = 17; // Unicorn
 						bFirmBerserk = TRUE;
-					}else if ((iResult >= 94) && (iResult < 95)) 
-					{	iResult = 36; // Wyvern
-					}else if ((iResult >= 95) && (iResult < 96)) 
-					{	iResult = 37; // Fire-Wyvern
-					}else if ((iResult >= 96) && (iResult < 97)) 
-					{	iResult = 47; // MasterMage-Orc
-					}else if ((iResult >= 97) && (iResult < 98)) 
-					{	iResult = 35; // Hellclaw
-					}else if ((iResult >= 98) && (iResult < 99)) 
-					{	iResult = 49; // Tigerworm
-					}else if ((iResult >= 99) && (iResult <= 100)) 
-					{	iResult = 51; // Abaddon
+					}
+					else if ((iResult >= 94) && (iResult < 95))
+					{
+						iResult = 36; // Wyvern
+					}
+					else if ((iResult >= 95) && (iResult < 96))
+					{
+						iResult = 37; // Fire-Wyvern
+					}
+					else if ((iResult >= 96) && (iResult < 97))
+					{
+						iResult = 47; // MasterMage-Orc
+					}
+					else if ((iResult >= 97) && (iResult < 98))
+					{
+						iResult = 35; // Hellclaw
+					}
+					else if ((iResult >= 98) && (iResult < 99))
+					{
+						iResult = 49; // Tigerworm
+					}
+					else if ((iResult >= 99) && (iResult <= 100))
+					{
+						iResult = 51; // Abaddon
 					}
 					break;
+
+				case 22: {
+					if (iResult > 0 && iResult <= 30) {
+						iResult = 28;
+					}
+					else if (iResult > 30 && iResult <= 60) {
+						iResult = 27;
+					}
+					else if (iResult > 60 && iResult <= 100) {
+						iResult = 17;
+					}
+				}
+						 break;
 				}
 
 				pX = NULL;
