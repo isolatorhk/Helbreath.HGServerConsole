@@ -58,6 +58,7 @@
 #include "CombatConfig.h"
 #include "DropConfig.h"
 #include "ClientEventSender.h"
+#include "BossDropConfiguration.h"
 
 #define SERVERSOCKETBLOCKLIMIT	300
 
@@ -682,13 +683,8 @@ public:
 	} m_stGroundNpcItem[MAXGROUNDITEMS];
 	void TileCleaner();
 	void AddGroundItem(CItem * pItem, short x, short y, char mapIndex, DWORD dwTime);
-
-	// Legion point functions
-	void HandleLegionService(char * data);
+		
 	bool ChangeNation(int clientH, Side side);
-	void SubstractCash(char * account, WORD cmd);
-	bool GetLegionGold(int clientH, long count);
-	bool GetLegionItem(int clientH, WORD cmd);
 
 	uint32 FindNPC(const string npcName);
 	uint32 FindItem(const string itemName);
@@ -702,6 +698,8 @@ public:
 	void CreateAstoriaFlags();
 	void UpdateRelicPos(int iClientH = NULL);
 
+	void CleanMaps();
+
 	void UpdateWebsiteStats();
 	void OnWebSocketEvent(UINT message, WPARAM wParam, LPARAM lParam);
 	//=======================================================================================
@@ -712,6 +710,7 @@ public:
 		int *iItemIDs, POINT *BasePos, int *iNumItem);
 	void _AdjustRareItemValue(class CItem * pItem);
 	char CheckHeroItemEquipped(int iClientH);
+	void CreateDKItem(int iClientH, char *cItemName);
 
 	CGame(HWND hWnd);
 	~CGame();
@@ -972,6 +971,8 @@ private:
 	int __iSearchForQuest(int iClientH, int iWho, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, int * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange);
 	int _iTalkToNpcResult_Cityhall(int iClientH, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, int * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange);
 	int _iGetItemSpaceLeft(int iClientH);
+	void RequestForWarriorDKSet(int iClientH);
+	void RequestForMageDKSet(int iClientH);
 
 };
 
