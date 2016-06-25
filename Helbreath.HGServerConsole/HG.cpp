@@ -5549,7 +5549,7 @@ void CGame::NpcProcess()
 				m_pNpcList[i]->behavior_attack();
 				break;
 			case BEHAVIOR_FLEE:
-				NpcBehavior_Flee(i);
+				m_pNpcList[i]->behavior_flee();				
 				break;
 			}
 
@@ -6296,7 +6296,7 @@ int CGame::iClientMotion_Attack_Handler(int iClientH, short sX, short sY, short 
 
 	m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwner, &cOwnerType, dX, dY);
 
-	if (sOwner != NULL) {
+	if (sOwner != 0) {
 		if ((wType != 0) && ((dwTime - m_pClientList[iClientH]->m_dwRecentAttackTime) > 100)) {
 			if (m_pClientList[iClientH]->m_bIsInBuilding == FALSE) {
 				sItemIndex = m_pClientList[iClientH]->m_sItemEquipmentStatus[EQUIPPOS_TWOHAND];
@@ -6807,80 +6807,7 @@ void CGame::NpcBehavior_Dead(int iNpcH)
 
 void CGame::NpcBehavior_Flee(int iNpcH)
 {
-	char cDir;
-	short sX, sY, dX, dY;
-	short sTarget;
-	char  cTargetType;
-
-	if (m_pNpcList[iNpcH] == NULL) return;
-	if (m_pNpcList[iNpcH]->m_bIsKilled == TRUE) return;
-
-	m_pNpcList[iNpcH]->m_sBehaviorTurnCount++;
-
-
-	switch (m_pNpcList[iNpcH]->m_iAttackStrategy) {
-	case ATTACKAI_EXCHANGEATTACK: 
-	case ATTACKAI_TWOBYONEATTACK: 
-		if (m_pNpcList[iNpcH]->m_sBehaviorTurnCount >= 2) {
-
-			m_pNpcList[iNpcH]->m_cBehavior          = BEHAVIOR_ATTACK;
-			m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
-			return;
-		}
-		break;
-
-	default:
-		if (dice(1,2) == 1) NpcRequestAssistance(iNpcH);
-		break;
-	}
-
-	if (m_pNpcList[iNpcH]->m_sBehaviorTurnCount > 10) {
-
-		m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
-		m_pNpcList[iNpcH]->m_cBehavior          = BEHAVIOR_MOVE;
-		m_pNpcList[iNpcH]->m_tmp_iError         = 0;
-		if (m_pNpcList[iNpcH]->m_iHP <= 3) {
-			m_pNpcList[iNpcH]->m_iHP += dice(1, m_pNpcList[iNpcH]->m_iHitDice); 
-			if (m_pNpcList[iNpcH]->m_iHP <= 0) m_pNpcList[iNpcH]->m_iHP = 1;
-		}
-		return;
-	}
-
-	m_pNpcList[iNpcH]->targetSearch(&sTarget, &cTargetType);
-	if (sTarget != NULL) {
-		m_pNpcList[iNpcH]->m_iTargetIndex = sTarget;
-		m_pNpcList[iNpcH]->m_cTargetType  = cTargetType;
-	}
-
-	sX = m_pNpcList[iNpcH]->m_sX;
-	sY = m_pNpcList[iNpcH]->m_sY;
-	switch (m_pNpcList[iNpcH]->m_cTargetType) {
-	case OWNERTYPE_PLAYER:
-		dX = m_pClientList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_sX;
-		dY = m_pClientList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_sY;
-		break;
-	case OWNERTYPE_NPC:
-		dX = m_pNpcList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_sX;
-		dY = m_pNpcList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_sY;
-		break;
-	}
-	dX = sX - (dX - sX);
-	dY = sY - (dY - sY);
-
-	cDir = cGetNextMoveDir(sX, sY, dX, dY, m_pNpcList[iNpcH]->m_cMapIndex, m_pNpcList[iNpcH]->m_cTurn, &m_pNpcList[iNpcH]->m_tmp_iError);
-	if (cDir == 0) {
-	}
-	else {
-		dX = m_pNpcList[iNpcH]->m_sX + _tmp_cTmpDirX[cDir];
-		dY = m_pNpcList[iNpcH]->m_sY + _tmp_cTmpDirY[cDir];
-		m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->ClearOwner(/*11,*/ iNpcH, OWNERTYPE_NPC, m_pNpcList[iNpcH]->m_sX, m_pNpcList[iNpcH]->m_sY);
-
-		m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->SetOwner(iNpcH, OWNERTYPE_NPC, dX, dY);
-		m_pNpcList[iNpcH]->m_sX   = dX;
-		m_pNpcList[iNpcH]->m_sY   = dY;
-		m_pNpcList[iNpcH]->m_cDir = cDir;
-		SendEventToNearClient_TypeA(iNpcH, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTMOVE, NULL, NULL, NULL);
-	}
+	
 }
 
 

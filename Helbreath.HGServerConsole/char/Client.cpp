@@ -1303,7 +1303,7 @@ void CClient::Notify(int iFromH, WORD wMsgType, DWORD sV1, DWORD sV2, DWORD sV3,
 
 DWORD CClient::HasItem(char * name) const
 {
-	char cTmpName[21];
+	char cTmpName[30];
 
 	ZeroMemory(cTmpName, sizeof(cTmpName));
 	strcpy(cTmpName, name);
