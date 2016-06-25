@@ -9,7 +9,7 @@
 #include "..\HG.h"
 #include "..\net\UserMessages.h"
 #include "..\GlobalDef.h"
-#include "..\res\Resource.h"
+
 
 // --------------------------------------------------------------
 
