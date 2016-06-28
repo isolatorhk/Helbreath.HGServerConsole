@@ -753,6 +753,8 @@ void CGame::ClientMotionHandler(int iClientH, char * pData)
 	dwClientTime = *dwp;
 	cp += 4;
 
+	CheckDenialServiceAttack(iClientH, dwClientTime);
+
 	if (wCommand == OBJECTMAGIC) {
 		sp = (short *)cp;
 		magicType = *sp;
@@ -4947,7 +4949,9 @@ bool CGame::_bInitItemAttr(class CItem * pItem, char * pItemName)
 	register int i;
 	char cTmpName[22];
 
-	if (strlen(pItemName) > 21) return false;
+	if (strlen(pItemName) > 21) {
+		return false;
+	}
 
 	ZeroMemory(cTmpName, sizeof(cTmpName));
 	strcpy(cTmpName, pItemName);
@@ -4993,8 +4997,6 @@ bool CGame::_bInitItemAttr(class CItem * pItem, char * pItemName)
 				return TRUE;
 			}
 		}
-
-
 		return FALSE;
 }
 
@@ -32505,6 +32507,8 @@ void CGame::CheckConnectionHandler(int iClientH, char *pData)
 	dwp = (DWORD *)cp;
 	dwTimeRcv = *dwp;
 
+	CheckDenialServiceAttack(iClientH, dwTimeRcv);
+
 	if (m_pClientList[iClientH]->m_dwInitCCTimeRcv == NULL) {
 		m_pClientList[iClientH]->m_dwInitCCTimeRcv = dwTimeRcv;
 		m_pClientList[iClientH]->m_dwInitCCTime = dwTime;
@@ -37155,8 +37159,8 @@ void CGame::RequestForWarriorDKSet(int iClientH)
 	logMessage += m_pClientList[iClientH]->m_cCharName;
 	PutLogList(logMessage + " asked for Warrior DKSet");
 
-	char *DKWarriorSetMale[5] = { "DarkKnightHauberk(M)","DarkKnightFullHelm(M)","DarkKnightLeggings(M)", "DarkKnightPlateMail(M)", "DarkKnightFlameberge" };
-	char *DKWarriorSetFemale[5] = { "DarkKnightHauberk(W)","DarkKnightFullHelm(W)","DarkKnightLeggings(W)", "DarkKnightPlateMail(W)", "DarkKnightFlameberge" };
+	char *DKWarriorSetMale[5] = { "DarkKnightHauberk(M)","DarkKnightFullHelm(M)","DarkKnightLeggings(M)", "DKPlateMail(M)", "DarkKnightFlameberge" };
+	char *DKWarriorSetFemale[5] = { "DarkKnightHauberk(W)","DarkKnightFullHelm(W)","DarkKnightLeggings(W)", "DKPlateMail(W)", "DarkKnightFlameberge" };
 
 	int playerSex = m_pClientList[iClientH]->m_cSex;
 	if (playerSex == 1) {
@@ -37169,6 +37173,63 @@ void CGame::RequestForWarriorDKSet(int iClientH)
 		for (int i = 0; i < 5; i++)
 		{
 			CreateDKItem(iClientH, DKWarriorSetFemale[i]);
+		}
+	}
+}
+
+void CGame::CheckDenialServiceAttack(int iClientH, DWORD dwClientTime)
+{
+	DWORD dwTime = timeGetTime();
+	char *G_cTxt;
+
+	ZeroMemory(G_cTxt, sizeof(G_cTxt));
+
+	if (m_pClientList[iClientH] == NULL) {
+		return;
+	}
+
+	// Find a Denial of service attack by packet sent time
+	if (m_pClientList[iClientH]->m_dwDSLAT == 0)
+		// Start with 1st msg
+	{
+		m_pClientList[iClientH]->m_dwDSLAT = dwClientTime;
+		m_pClientList[iClientH]->m_dwDSLATOld = dwClientTime;
+		m_pClientList[iClientH]->m_dwDSLATS = dwTime;
+		m_pClientList[iClientH]->m_iDSCount = 0;
+	}
+	else
+	{
+		if (dwClientTime >= m_pClientList[iClientH]->m_dwDSLAT)
+			// current message was sent later than previous (normal case)
+		{
+			m_pClientList[iClientH]->m_dwDSLAT = dwClientTime;
+		}
+		else
+			// current message was sent before previous
+		{
+			if (m_pClientList[iClientH]->m_dwDSLATOld == dwClientTime)
+				// If we receive more late msg with same time
+			{
+				m_pClientList[iClientH]->m_iDSCount++;
+				if (((dwTime - m_pClientList[iClientH]->m_dwDSLATS) > 10 * 1000)
+					&& (m_pClientList[iClientH]->m_iDSCount > 5))
+					// Receiving a "late" msg more than 10 sec after !
+					// This is an attack!
+				{
+					wsprintf(G_cTxt, "DS check: PC(%s) - Denial of service attack! (Disc.) \tIP(%s)"
+						, m_pClientList[iClientH]->m_cCharName
+						, m_pClientList[iClientH]->m_cIPaddress);
+					PutLogList(G_cTxt);
+					return;
+				}
+			}
+			else
+				// else this message become late msg
+			{
+				m_pClientList[iClientH]->m_dwDSLATOld = dwClientTime;
+				m_pClientList[iClientH]->m_iDSCount = 1;
+				m_pClientList[iClientH]->m_dwDSLATS = dwTime;
+			}
 		}
 	}
 }

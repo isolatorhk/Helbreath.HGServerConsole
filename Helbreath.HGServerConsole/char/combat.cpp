@@ -113,6 +113,10 @@ int calculateAttackEffect(Unit *_target, Unit *_attacker, int tdX, int tdY, int 
 	iAttackerSAvalue = NULL;
 	wWeaponType      = NULL;
 	
+	if (_attacker == NULL || _target == NULL) {
+		return 0;
+	}
+
 	if(_attacker->IsPlayer()) {
 		CClient *client_attacker = (CClient*) _attacker;
 		if (g_mapList[ client_attacker->GetMapID() ]->m_bIsAttackEnabled == FALSE) return 0;
@@ -1594,10 +1598,16 @@ void EnduStrippingDamage(Unit *_target, Unit *_attacker, int item, int higherStr
 {
 	int equiptItem, enduDamage = 1;
 	float stripChance = 0;
-	if(!_target) return;
-	if(!_target->IsPlayer()) return;
+	if (!_target) {
+		return;
+	}
+	if (!_target->IsPlayer()) {
+		return;
+	}
 	CClient *client_target = (CClient*) _target;
-	if (_attacker == NULL) return;
+	if (_attacker == NULL) {
+		return;
+	}
 	if (item == -1 || client_target->m_pItemList[item] == NULL) return;
 
 	if (_attacker->m_ownerType	== OWNERTYPE_PLAYER && 

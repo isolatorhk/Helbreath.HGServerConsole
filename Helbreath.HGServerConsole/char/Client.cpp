@@ -47,6 +47,8 @@ CClient::CClient(HWND hWnd, int clientH): Unit(UNITTYPE_PLAYER)
 
 	m_dwCharID = 0;
 
+	m_dwDSLAT = m_dwDSLATOld = m_dwDSLATS = 0;
+	m_iDSCount = 0;
 
 	//m_iHitRatio_ItemEffect_SM = 0;
 	//m_iHitRatio_ItemEffect_L  = 0;
