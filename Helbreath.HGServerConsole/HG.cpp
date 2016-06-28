@@ -37179,10 +37179,7 @@ void CGame::RequestForWarriorDKSet(int iClientH)
 
 void CGame::CheckDenialServiceAttack(int iClientH, DWORD dwClientTime)
 {
-	DWORD dwTime = timeGetTime();
-	char *G_cTxt;
-
-	ZeroMemory(G_cTxt, sizeof(G_cTxt));
+	DWORD dwTime = timeGetTime();	
 
 	if (m_pClientList[iClientH] == NULL) {
 		return;
@@ -37216,10 +37213,10 @@ void CGame::CheckDenialServiceAttack(int iClientH, DWORD dwClientTime)
 					// Receiving a "late" msg more than 10 sec after !
 					// This is an attack!
 				{
-					wsprintf(G_cTxt, "DS check: PC(%s) - Denial of service attack! (Disc.) \tIP(%s)"
+					wsprintf(g_cTxt, "DS check: PC(%s) - Denial of service attack! (Disc.) \tIP(%s)"
 						, m_pClientList[iClientH]->m_cCharName
 						, m_pClientList[iClientH]->m_cIPaddress);
-					PutLogList(G_cTxt);
+					PutLogList(g_cTxt);
 					return;
 				}
 			}
