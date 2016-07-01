@@ -394,7 +394,10 @@ public:
 	bool m_bIsOnWarehouse ; 
 	bool m_bIsInBuilding; 
 
-	DWORD m_dwWarmEffectTime; 
+	DWORD m_dwWarmEffectTime;
+
+	DWORD m_dwDSLAT, m_dwDSLATOld, m_dwDSLATS;
+	int m_iDSCount;
 
 	bool  m_bIsRight;
 	char m_heroArmourBonus;

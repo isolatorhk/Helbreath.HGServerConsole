@@ -20,13 +20,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -117,6 +117,7 @@
     <ClCompile Include="Misc.cpp" />
     <ClCompile Include="net\Msg.cpp" />
     <ClCompile Include="net\XSocket.cpp" />
+    <ClCompile Include="NormalDropConfiguration.cpp" />
     <ClCompile Include="PlayerHelpers.cpp" />
     <ClCompile Include="ui\Wmain.cpp" />
   </ItemGroup>
@@ -163,16 +164,10 @@
     <ClInclude Include="net\Msg.h" />
     <ClInclude Include="net\UserMessages.h" />
     <ClInclude Include="net\XSocket.h" />
+    <ClInclude Include="NormalDropConfiguration.h" />
     <ClInclude Include="PlayerHelpers.h" />
-    <ClInclude Include="res\resource.h" />
     <ClInclude Include="StrTok.h" />
     <ClInclude Include="ui\winmain.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="res\1.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="res\resources.rc" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs\StrTok.lib" />

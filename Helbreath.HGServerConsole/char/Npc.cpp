@@ -383,6 +383,10 @@ void CNpc::behavior_move()
 			dX = g_npcList[m_iFollowOwnerIndex]->m_sX;
 			dY = g_npcList[m_iFollowOwnerIndex]->m_sY;
 			break;
+		default:
+			PutLogList("Nobody...");
+			return;
+			break;
 		}
 
 		if (abs(sX - dX) >= abs(sY - dY)) 
@@ -492,6 +496,7 @@ void CNpc::behavior_stop()
 		return;
 	}
 }
+
 void CNpc::behavior_attack()
 {
 	int   iMagicType;
@@ -548,7 +553,7 @@ void CNpc::behavior_attack()
 	case OWNERTYPE_PLAYER:
 		if (g_clientList[m_iTargetIndex] == NULL) {
 			m_sBehaviorTurnCount = 0;
-			m_cBehavior    = BEHAVIOR_MOVE;
+			m_cBehavior = BEHAVIOR_MOVE;
 			return;
 		}
 		dX = g_clientList[m_iTargetIndex]->m_sX;
@@ -558,12 +563,16 @@ void CNpc::behavior_attack()
 	case OWNERTYPE_NPC:
 		if (g_npcList[m_iTargetIndex] == NULL) {
 			m_sBehaviorTurnCount = 0;
-			m_cBehavior    = BEHAVIOR_MOVE;
+			m_cBehavior = BEHAVIOR_MOVE;
 			return;
-	}
-	dX = g_npcList[m_iTargetIndex]->m_sX;
-	dY = g_npcList[m_iTargetIndex]->m_sY;
-	break;
+		}
+		dX = g_npcList[m_iTargetIndex]->m_sX;
+		dY = g_npcList[m_iTargetIndex]->m_sY;
+		break;
+	default:
+		PutLogList("Nobody...");
+		return;
+		break;
 	}
 
 	if ( (getDangerValue(dX, dY) > m_cBravery) && 
@@ -773,24 +782,28 @@ void CNpc::behavior_attack()
 							if (g_clientList[m_iTargetIndex]->m_cMagicEffectStatus[MAGICTYPE_PROTECT] == MAGICPROTECT_PFM) {
 								if ((abs(sX - dX) > m_iAttackRange) || (abs(sY - dY) > m_iAttackRange)) {
 									m_sBehaviorTurnCount = 0;
-									m_cBehavior    = BEHAVIOR_MOVE;
+									m_cBehavior = BEHAVIOR_MOVE;
 									return;
 								}
 								else goto NBA_CHASE;
 							}
-							if ((iMagicType == 35) && (g_clientList[m_iTargetIndex]->m_cMagicEffectStatus[ MAGICTYPE_HOLDOBJECT ] != 0)) goto NBA_CHASE;
+							if ((iMagicType == 35) && (g_clientList[m_iTargetIndex]->m_cMagicEffectStatus[MAGICTYPE_HOLDOBJECT] != 0)) goto NBA_CHASE;
 							break;
 
 						case OWNERTYPE_NPC:
 							if (g_npcList[m_iTargetIndex]->m_cMagicEffectStatus[MAGICTYPE_PROTECT] == MAGICPROTECT_PFM) {
 								if ((abs(sX - dX) > m_iAttackRange) || (abs(sY - dY) > m_iAttackRange)) {
 									m_sBehaviorTurnCount = 0;
-									m_cBehavior    = BEHAVIOR_MOVE;
+									m_cBehavior = BEHAVIOR_MOVE;
 									return;
 								}
 								else goto NBA_CHASE;
 							}
-							if ((iMagicType == 35) && (g_npcList[m_iTargetIndex]->m_cMagicEffectStatus[ MAGICTYPE_HOLDOBJECT ] != 0)) goto NBA_CHASE;
+							if ((iMagicType == 35) && (g_npcList[m_iTargetIndex]->m_cMagicEffectStatus[MAGICTYPE_HOLDOBJECT] != 0)) goto NBA_CHASE;
+							break;
+						default:
+							PutLogList("Nobody...");
+							return;
 							break;
 						}
 					}
@@ -942,6 +955,95 @@ NBA_CHASE:;
 			m_cDir = cDir;
 			g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTMOVE, NULL, NULL, NULL);
 		}
+	}
+}
+
+void CNpc::behavior_flee()
+{	
+	char cDir;
+	short sX, sY, dX, dY;
+	short sTarget;
+	char  cTargetType;
+
+	if (this->m_bIsKilled == TRUE) {
+		return;
+	}
+
+	this->m_sBehaviorTurnCount++;
+
+	switch (this->m_iAttackStrategy) {
+
+	case ATTACKAI_EXCHANGEATTACK:
+	case ATTACKAI_TWOBYONEATTACK:
+		if (this->m_sBehaviorTurnCount >= 2) {
+			this->m_cBehavior = BEHAVIOR_ATTACK;
+			this->m_sBehaviorTurnCount = 0;
+			return;
+		}
+		break;
+	default:
+		if (dice(1, 2) == 1) {
+			g_gameCopy->NpcRequestAssistance(m_handle);
+		}
+		break;
+	}
+
+	if (this->m_sBehaviorTurnCount > 10) {
+
+		this->m_sBehaviorTurnCount = 0;
+		this->m_cBehavior = BEHAVIOR_MOVE;
+		this->m_tmp_iError = 0;
+		if (this->m_iHP <= 3) {
+			this->m_iHP += dice(1,this->m_iHitDice);
+			if (this->m_iHP <= 0) {
+				this->m_iHP = 1;
+			}
+		}
+		return;
+	}
+
+	this->targetSearch(&sTarget, &cTargetType);
+
+	if (sTarget != NULL) {
+		this->m_iTargetIndex = sTarget;
+		this->m_cTargetType = cTargetType;
+	}	
+
+	sX = this->m_sX;
+	sY = this->m_sY;
+
+	switch (this->m_cTargetType) {
+	case OWNERTYPE_PLAYER:
+		dX = g_clientList[this->m_iTargetIndex]->m_sX;
+		dY = g_clientList[this->m_iTargetIndex]->m_sY;
+		break;
+	case OWNERTYPE_NPC:
+		dX = g_npcList[this->m_iTargetIndex]->m_sX;
+		dY = g_npcList[this->m_iTargetIndex]->m_sY;
+		break;
+	default:
+		PutLogList("Nobody...");
+		return;
+		break;
+	}	
+
+	dX = sX - (dX - sX);
+	dY = sY - (dY - sY);
+
+	cDir = g_gameCopy->cGetNextMoveDir(sX, sY, dX, dY, this->m_cMapIndex, this->m_cTurn, &this->m_tmp_iError);
+	if (cDir == 0) {
+
+	}
+	else {
+		dX = this->m_sX + _tmp_cTmpDirX[cDir];
+		dY = this->m_sY + _tmp_cTmpDirY[cDir];
+		g_mapList[this->m_cMapIndex]->ClearOwner(/*11,*/ m_handle, OWNERTYPE_NPC, this->m_sX, this->m_sY);
+
+		g_mapList[this->m_cMapIndex]->SetOwner(m_handle, OWNERTYPE_NPC, dX, dY);
+		this->m_sX = dX;
+		this->m_sY = dY;
+		this->m_cDir = cDir;
+		g_gameCopy->SendEventToNearClient_TypeA(m_handle, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTMOVE, NULL, NULL, NULL);
 	}
 }
 
@@ -1151,20 +1253,20 @@ void CNpc::targetSearch(short * pTarget, char * pTargetType)
 			cOwnerType = owner->m_ownerType;
 
 			iPKCount = 0;
-			switch (cOwnerType) 
+			switch (cOwnerType)
 			{
 			case OWNERTYPE_PLAYER:
 				if (g_clientList[sOwner] == NULL) {
 					g_mapList[m_cMapIndex]->ClearOwner(/*5,*/ sOwner, OWNERTYPE_PLAYER, ix, iy);
 				}
 				else {
-					if(g_clientList[sOwner]->IsNoAggro() || iSearchType == 1) 
+					if (g_clientList[sOwner]->IsNoAggro() || iSearchType == 1)
 						continue;
 
 					dX = g_clientList[sOwner]->m_sX;
 					dY = g_clientList[sOwner]->m_sY;
 					cTargetSide = g_clientList[sOwner]->m_side;
-					iPKCount    = g_clientList[sOwner]->m_iPKCount;
+					iPKCount = g_clientList[sOwner]->m_iPKCount;
 				}
 				break;
 
@@ -1173,28 +1275,28 @@ void CNpc::targetSearch(short * pTarget, char * pTargetType)
 					g_mapList[m_cMapIndex]->ClearOwner(/*6,*/ sOwner, OWNERTYPE_NPC, ix, iy);
 				}
 				else {
-					switch (iSearchType) 
+					switch (iSearchType)
 					{
 					case 1:
-						switch (g_npcList[sOwner]->m_sType) 
+						switch (g_npcList[sOwner]->m_sType)
 						{
 						case 36:
 						case 37:
 						case 38:
 						case 39:
 						case 40:
-						case 41: 
+						case 41:
 							break;
 						default:
 							continue;
 						}
 						break;
-  					case 0:
-						switch (g_npcList[sOwner]->m_sType) 
+					case 0:
+						switch (g_npcList[sOwner]->m_sType)
 						{
-							case NPC_CT:
-							case NPC_AGC:
-								continue;
+						case NPC_CT:
+						case NPC_AGC:
+							continue;
 						}
 						break;
 
@@ -1203,15 +1305,19 @@ void CNpc::targetSearch(short * pTarget, char * pTargetType)
 					dX = g_npcList[sOwner]->m_sX;
 					dY = g_npcList[sOwner]->m_sY;
 					cTargetSide = g_npcList[sOwner]->m_side;
-					iPKCount    = 0;
+					iPKCount = 0;
 
 					if (m_sType == 21) {
 						if (g_gameCopy->getPlayerNum(g_npcList[sOwner]->m_cMapIndex, dX, dY, 2) != 0) {
-							sOwner     = NULL;
+							sOwner = NULL;
 							cOwnerType = NULL;
 						}
 					}
 				}
+				break;
+			default:
+				PutLogList("Nobody...");
+				return;
 				break;
 			}
 

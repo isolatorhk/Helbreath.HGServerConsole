@@ -753,6 +753,8 @@ void CGame::ClientMotionHandler(int iClientH, char * pData)
 	dwClientTime = *dwp;
 	cp += 4;
 
+	CheckDenialServiceAttack(iClientH, dwClientTime);
+
 	if (wCommand == OBJECTMAGIC) {
 		sp = (short *)cp;
 		magicType = *sp;
@@ -2117,18 +2119,18 @@ void CGame::OnTimer(char cType)
 		m_dwFishTime = dwTime;
 	}
 
-	if ((dwTime - m_dwWhetherTime) > 40 _m) {
+	if ((dwTime - m_dwWhetherTime) > 30 _s) {
 		SYSTEMTIME SysTime;
 		GetLocalTime(&SysTime);
 
-		if (SysTime.wHour == 23) {
+		if (SysTime.wHour == 23 && SysTime.wMinute == 30) {
 			CleanMaps();
 		}
 		m_dwWhetherTime = dwTime;
 	}
 
 	if ((dwTime - m_dwWhetherTime) > 1 _m) {
-		UpdateWebsiteStats();
+		//UpdateWebsiteStats();
 		WhetherProcessor();
 		if (m_bIsApocalypseMode == TRUE) DoAbaddonThunderDamageHandler(-1);
 		if (m_bHeldenianMode) UpdateHeldenianStatus();
@@ -4947,7 +4949,9 @@ bool CGame::_bInitItemAttr(class CItem * pItem, char * pItemName)
 	register int i;
 	char cTmpName[22];
 
-	if (strlen(pItemName) > 21) return false;
+	if (strlen(pItemName) > 21) {
+		return false;
+	}
 
 	ZeroMemory(cTmpName, sizeof(cTmpName));
 	strcpy(cTmpName, pItemName);
@@ -4993,8 +4997,6 @@ bool CGame::_bInitItemAttr(class CItem * pItem, char * pItemName)
 				return TRUE;
 			}
 		}
-
-
 		return FALSE;
 }
 
@@ -5549,7 +5551,7 @@ void CGame::NpcProcess()
 				m_pNpcList[i]->behavior_attack();
 				break;
 			case BEHAVIOR_FLEE:
-				NpcBehavior_Flee(i);
+				m_pNpcList[i]->behavior_flee();				
 				break;
 			}
 
@@ -6296,7 +6298,7 @@ int CGame::iClientMotion_Attack_Handler(int iClientH, short sX, short sY, short 
 
 	m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwner, &cOwnerType, dX, dY);
 
-	if (sOwner != NULL) {
+	if (sOwner != 0) {
 		if ((wType != 0) && ((dwTime - m_pClientList[iClientH]->m_dwRecentAttackTime) > 100)) {
 			if (m_pClientList[iClientH]->m_bIsInBuilding == FALSE) {
 				sItemIndex = m_pClientList[iClientH]->m_sItemEquipmentStatus[EQUIPPOS_TWOHAND];
@@ -6807,80 +6809,7 @@ void CGame::NpcBehavior_Dead(int iNpcH)
 
 void CGame::NpcBehavior_Flee(int iNpcH)
 {
-	char cDir;
-	short sX, sY, dX, dY;
-	short sTarget;
-	char  cTargetType;
-
-	if (m_pNpcList[iNpcH] == NULL) return;
-	if (m_pNpcList[iNpcH]->m_bIsKilled == TRUE) return;
-
-	m_pNpcList[iNpcH]->m_sBehaviorTurnCount++;
-
-
-	switch (m_pNpcList[iNpcH]->m_iAttackStrategy) {
-	case ATTACKAI_EXCHANGEATTACK: 
-	case ATTACKAI_TWOBYONEATTACK: 
-		if (m_pNpcList[iNpcH]->m_sBehaviorTurnCount >= 2) {
-
-			m_pNpcList[iNpcH]->m_cBehavior          = BEHAVIOR_ATTACK;
-			m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
-			return;
-		}
-		break;
-
-	default:
-		if (dice(1,2) == 1) NpcRequestAssistance(iNpcH);
-		break;
-	}
-
-	if (m_pNpcList[iNpcH]->m_sBehaviorTurnCount > 10) {
-
-		m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
-		m_pNpcList[iNpcH]->m_cBehavior          = BEHAVIOR_MOVE;
-		m_pNpcList[iNpcH]->m_tmp_iError         = 0;
-		if (m_pNpcList[iNpcH]->m_iHP <= 3) {
-			m_pNpcList[iNpcH]->m_iHP += dice(1, m_pNpcList[iNpcH]->m_iHitDice); 
-			if (m_pNpcList[iNpcH]->m_iHP <= 0) m_pNpcList[iNpcH]->m_iHP = 1;
-		}
-		return;
-	}
-
-	m_pNpcList[iNpcH]->targetSearch(&sTarget, &cTargetType);
-	if (sTarget != NULL) {
-		m_pNpcList[iNpcH]->m_iTargetIndex = sTarget;
-		m_pNpcList[iNpcH]->m_cTargetType  = cTargetType;
-	}
-
-	sX = m_pNpcList[iNpcH]->m_sX;
-	sY = m_pNpcList[iNpcH]->m_sY;
-	switch (m_pNpcList[iNpcH]->m_cTargetType) {
-	case OWNERTYPE_PLAYER:
-		dX = m_pClientList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_sX;
-		dY = m_pClientList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_sY;
-		break;
-	case OWNERTYPE_NPC:
-		dX = m_pNpcList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_sX;
-		dY = m_pNpcList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_sY;
-		break;
-	}
-	dX = sX - (dX - sX);
-	dY = sY - (dY - sY);
-
-	cDir = cGetNextMoveDir(sX, sY, dX, dY, m_pNpcList[iNpcH]->m_cMapIndex, m_pNpcList[iNpcH]->m_cTurn, &m_pNpcList[iNpcH]->m_tmp_iError);
-	if (cDir == 0) {
-	}
-	else {
-		dX = m_pNpcList[iNpcH]->m_sX + _tmp_cTmpDirX[cDir];
-		dY = m_pNpcList[iNpcH]->m_sY + _tmp_cTmpDirY[cDir];
-		m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->ClearOwner(/*11,*/ iNpcH, OWNERTYPE_NPC, m_pNpcList[iNpcH]->m_sX, m_pNpcList[iNpcH]->m_sY);
-
-		m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->SetOwner(iNpcH, OWNERTYPE_NPC, dX, dY);
-		m_pNpcList[iNpcH]->m_sX   = dX;
-		m_pNpcList[iNpcH]->m_sY   = dY;
-		m_pNpcList[iNpcH]->m_cDir = cDir;
-		SendEventToNearClient_TypeA(iNpcH, OWNERTYPE_NPC, MSGID_EVENT_MOTION, OBJECTMOVE, NULL, NULL, NULL);
-	}
+	
 }
 
 
@@ -27338,7 +27267,7 @@ bool CGame::_bItemLog(int iAction,int iClientH , char * cName, class CItem * pIt
 
 bool CGame::_bItemLog(int iAction,int iGiveH, int iRecvH, class CItem * pItem, bool bForceItemLog)
 {
-	if (!pItem || !m_pClientList[iGiveH]->m_cCharName) 
+	/*if (!pItem || !m_pClientList[iGiveH]->m_cCharName) 
 		return FALSE;
 
 	if (!bForceItemLog) {
@@ -27443,7 +27372,7 @@ bool CGame::_bItemLog(int iAction,int iGiveH, int iRecvH, class CItem * pItem, b
 		default:
 			return FALSE ;
 	}
-	bSendMsgToLS(MSGID_GAMEITEMLOG, iGiveH, NULL, cTxt);
+	bSendMsgToLS(MSGID_GAMEITEMLOG, iGiveH, NULL, cTxt);*/
 	return TRUE;
 }
 
@@ -29368,16 +29297,20 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 #endif
 
 	CNpc *& npc = m_pNpcList[iNpcH];
-	if (!npc) return;
-
-	if (m_pNpcList[iNpcH] == NULL) return;
-	if ((cAttackerType != OWNERTYPE_PLAYER) || (m_pNpcList[iNpcH]->m_bIsSummoned == TRUE)) return;
+	if (!npc) {
+		return;
+	}
+	if (m_pNpcList[iNpcH] == NULL) {
+		return;
+	}
+	if ((cAttackerType != OWNERTYPE_PLAYER) || (m_pNpcList[iNpcH]->m_bIsSummoned == TRUE)) {
+		return;
+	}
 
 	ZeroMemory(cItemName, sizeof(cItemName));
 	bIsGold = FALSE;
 
 	switch (m_pNpcList[iNpcH]->m_sType) {
-		// NPC not dropping Gold
 	case 21: // Guard
 	case 34: // Dummy
 	case 64: // Crop
@@ -29453,6 +29386,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 				dTmp1 = -3000;
 			}
 			dTmp2 = (DropConfig::NORMAL_ITEM_DROP_CHANCE_MODIFIER - (dTmp1));
+
 			if (dice(1, 10000) <= dTmp2) {
 				// 40% Drop 90% of that is a standard drop
 				// Standard Drop Calculation: (35/100) * (40/100) * (90/100) = 12.6%
@@ -29485,7 +29419,12 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					case 2: iItemID = 650; break; // Zemstone of Sacrifice
 					case 3: iItemID = 656; break; // Xelima Stone
 					case 4: iItemID = 657; break; // Merien Stone
-					case 5: iItemID = 95;  break; // Green Potion
+					case 5: {
+						NormalDropConfiguration *configuration = new NormalDropConfiguration();
+						iItemID = configuration->GetAncientStonePiece();
+						delete configuration;
+						break;
+					}
 					case 6: iItemID = 1139;  break; // Rep Potion	
 					} break;
 				case 9:
@@ -29597,112 +29536,12 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 
 				// Weapon Drop: 
 				// 1.4% chance Valuable Drop 60% that it is a Weapon
-				if (dice(1, 10000) <= 6000) {
-					if (dice(1, 10000) <= 8000) {
+				if (dice(1, 10000) <= DropConfig::WEAPON_ITEM_DROP_CHANCE_MODIFIER) {
+					if (dice(1, 10000) <= DropConfig::MELEE_WEAPON_ITEM_DROP_CHANCE_MODIFIER) {
 						// 70% the Weapon is Melee
-						switch (iGenLevel) {
-						case 1: // Slime, Giant-Ant, Amphis, Rabbit, Cat							
-							switch (dice(1, 3)) {
-							case 1: {
-								iItemID = 1;// Dagger
-							}
-									break;
-							case 2: iItemID = 8;  break; // ShortSword
-							case 3: iItemID = 59; break; // LightAxe
-							}
-							break;
-
-						case 2: // Skeleton, Orc, Orc-Mage, Scorpion, Zombie
-							switch (dice(1, 6)) {
-							case 1: iItemID = 12;  break; // MainGauche
-							case 2: iItemID = 15;  break; // Gradius
-							case 3: iItemID = 65;  break; // SexonAxe
-							case 4: iItemID = 62;  break; // Tomahoc
-							case 5: iItemID = 23;  break; // Sabre
-							case 6: iItemID = 31;  break; // Esterk
-							}
-							break;
-
-						case 3: // Stone-Golem, Clay-Golem
-							switch (dice(1, 4)) {
-							case 1: iItemID = 17;  break; // LongSword
-							case 2: iItemID = 68;  break; // DoubleAxe
-							case 3: iItemID = 23;  break; // Sabre
-							case 4: iItemID = 31;  break; // Esterk
-							}
-							break;
-
-						case 4: // Hellbound, Rudolph
-							switch (dice(1, 5)) {
-							case 1: iItemID = 23;  break; // Sabre
-							case 2: iItemID = 25;  break; // Scimitar
-							case 3: iItemID = 28;  break; // Falchion
-							case 4: iItemID = 31;  break; // Esterk
-							case 5: iItemID = 34;  break; // Rapier
-							}
-							break;
-
-						case 5: // Cyclops, Troll, Beholder, Cannibal-Plant, DireBoar
-							switch (dice(1, 3)) {
-							case 1: iItemID = 31;  break; // Esterk
-							case 2: iItemID = 34;  break; // Rapier
-							case 3: iItemID = 71;  break; // WarAxe							
-							}
-							break;
-
-						case 6: // Orge, WereWolf, Stalker, Dark-Elf, Ice-Golem
-							switch (dice(1, 6)) {
-							case 1: iItemID = 50;  break; // GreatSword
-							case 2: iItemID = 54;  break; // Flameberge
-							case 3: iItemID = 46;  break; // Claymore
-							case 4: iItemID = 31;  break; // Esterk
-							case 5: iItemID = 34;  break; // Rapier
-							}
-							break;
-
-						case 7: // Liche, Frost
-							switch (dice(1, 4)) {
-							case 1: iItemID = 50;  break; // GreatSword
-							case 2: iItemID = 54;  break; // Flameberge
-							case 3: iItemID = 31;  break; // Esterk
-							case 4: iItemID = 34;  break; // Rapier
-							}
-							break;
-
-						case 8: // Demon, Unicorn, Hellclaw, Tigerworm, Gagoyle
-							switch (dice(1, 7)) {
-							case 1: iItemID = 50;  break; // GreatSword
-							case 2: iItemID = 54;  break; // Flameberge
-							case 3: iItemID = 560; break; // BattleAxe
-							case 4: iItemID = 31;  break; // Esterk
-							case 5: iItemID = 34;  break; // Rapier
-							case 6: iItemID = 55;  break; // Flameberge+1
-							case 7: iItemID = 615; break; // GiantSword
-							}
-							break;
-
-						case 9: // MountainGiant
-							switch (dice(1, 6)) {
-							case 1: iItemID = 23;  break; // Sabre
-							case 2: iItemID = 25;  break; // Scimitar
-							case 3: iItemID = 28;  break; // Falchion
-							case 4: iItemID = 31;  break; // Esterk
-							case 5: iItemID = 34;  break; // Rapier
-							case 6: iItemID = 760; break; // Hammer
-							}
-							break;
-
-						case 10: // Ettin
-							switch (dice(1, 5)) {
-							case 1: iItemID = 46;  break; // Claymore
-							case 2: iItemID = 31;  break; // Esterk
-							case 3: iItemID = 34;  break; // Rapier
-							case 4: iItemID = 760; break; // Hammer
-							case 5: iItemID = 761; break; // GiantHammer
-							}
-							break;
-
-						}
+						NormalDropConfiguration *configuration = new NormalDropConfiguration();
+						iItemID = configuration->WeaponDropByGenerationLevel(iGenLevel);
+						delete configuration;
 					}
 					else {
 						// 30% the weapon is a Wand
@@ -29717,296 +29556,16 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 							iItemID = 257; break; // MagicWand(MS10)
 						case 7:
 						case 8:
-							iItemID = 256; break; // MagicWand(MS20)
 						case 9:
 						case 10:
-							break;
+							iItemID = 256; break; // MagicWand(MS20)
 						}
 					}
 				}
 				else {
-					// 1.4% chance Valuable Drop 40% that drop is an Armor/Shield
-					switch (iGenLevel) {
-
-					case 1: // Slime, Giant-Ant, Amphis, Rabbit, Cat
-					case 2: // Skeleton, Orc, Orc-Mage, Scorpion, Zombie
-						switch (dice(1, 2)) {
-						case 1: iItemID = 79;  break; // WoodShield
-						case 2: iItemID = 81;  break; // TargeShield
-						}
-						break;
-
-					case 3: // Stone-Golem, Clay-Golem
-						iItemID = 81; // TargeShield
-						iItemID = 79; // TargeShield
-						break;
-
-					case 4: // Hellbound, Rudolph
-						switch (dice(1, 5)) {
-						case 1: iItemID = 454; break; // Hauberk(M)
-						case 2: iItemID = 472; break; // Hauberk(W)
-						case 3: iItemID = 461; break; // ChainHose(M)
-						case 4: iItemID = 482; break; // ChainHose(W)
-						case 5: iItemID = 83;  break; // BlondeShield
-						}
-						break;
-
-					case 5: // Cyclops, Troll, Beholder, Cannibal-Plant, DireBoar
-						switch (dice(1, 9)) {
-						case 1: iItemID = 455; break; // LeatherArmor(M)
-						case 2: iItemID = 475; break; // LeatherArmor(W)
-						case 3: iItemID = 84;  break; // IronShield
-						case 4: iItemID = 454; break; // Hauberk(M)
-						case 5: iItemID = 472; break; // Hauberk(W)
-						case 6: iItemID = 461; break; // ChainHose(M)
-						case 7: iItemID = 482; break; // ChainHose(W)
-						case 8: iItemID = 601; break; // Full-Helm(M)
-						case 9: iItemID = 603; break; // Full-Helm(W)
-						}
-						break;
-
-					case 6: // Orge, WereWolf, Stalker, Dark-Elf, Ice-Golem
-						switch (dice(1, 6)) {
-						case 1: switch (dice(1, 2)) {
-						case 1: iItemID = 456; break; // ChainMail(M)
-						case 2: iItemID = 476; break; // ChainMail(W)
-						}
-								break;
-						case 2: switch (dice(1, 2)) {
-						case 1: iItemID = 458; break; // PlateMail(M)
-						case 2: iItemID = 478; break; // PlateMail(W)
-						}
-								break;
-						case 3: iItemID = 85; break; // LagiShield
-						case 4: switch (dice(1, 8)) {
-						case 1: iItemID = 750; break; // Horned-Helm(M)
-						case 2: iItemID = 751; break; // Wings-Helm(M)
-						case 3: iItemID = 754; break; // Horned-Helm(W)
-						case 4: iItemID = 755; break; // Wings-Helm(W)
-						case 5: iItemID = 752; break; // Wizard-Cap(M) 
-						case 6: iItemID = 753; break; // Wizard-Hat(M)
-						case 7: iItemID = 756; break; // Wizard-Cap(W) 
-						case 8: iItemID = 757; break; // Wizard-Hat(W) 
-						}
-								break;
-						case 5: switch (dice(1, 2)) {
-						case 1: iItemID = 454; break; // Hauberk(M)
-						case 2: iItemID = 472; break; // Hauberk(W)
-						}
-								break;
-						case 6: switch (dice(1, 2)) {
-						case 1: iItemID = 461; break; // ChainHose(M)
-						case 2: iItemID = 482; break; // ChainHose(W)
-						}
-								break;
-						}
-						break;
-
-
-					case 7: // Liche, Frost
-						switch (dice(1, 6)) {
-						case 1:
-							switch (dice(1, 2)) {
-							case 1: iItemID = 457; break; // ScaleMail(M)
-							case 2: iItemID = 477; break; // ScaleMail(W)
-							}
-							break;
-						case 2:
-							switch (dice(1, 2)) {
-							case 1: iItemID = 458; break; // PlateMail(M)
-							case 2: iItemID = 478; break; // PlateMail(W)
-							}
-							break;
-						case 3: iItemID = 86; break; // KnightShield
-						case 4: iItemID = 87; break; // TowerShield
-						case 5:
-							switch (dice(1, 2)) {
-							case 1: iItemID = 600; break; // Helm(M)
-							case 2: iItemID = 602; break; // Helm(M)
-							}
-							break;
-						case 6:
-							switch (dice(1, 2)) {
-							case 1: iItemID = 601; break; // Full-Helm(M)
-							case 2: iItemID = 603; break; // Full-Helm(M)
-							}
-							break;
-						}
-						break;
-
-					case 8: // Demon, Unicorn, Hellclaw, Tigerworm, Gagoyle
-						switch (dice(1, 6)) {
-						case 1:
-							switch (dice(1, 3)) {
-							case 1: iItemID = 85; break;    // LagiShield
-							case 2: iItemID = 86; break;    // KnightShield
-							case 3: iItemID = 87; break;    // TowerShield
-							}
-							break;
-						case 2:
-							switch (dice(1, 3)) {
-							case 1: iItemID = 402; break;   // Cape
-							case 2: if (dice(1, 10) == 3) iItemID = 462; break;  // PlateLeggings(M)
-							case 3: if (dice(1, 10) == 3) iItemID = 483; break;  // PlateLeggings(W)
-							}
-							break;
-						case 3:
-							switch (dice(1, 4)) {
-							case 1: iItemID = 454; break;  // Hauberk(M)
-							case 2: iItemID = 472; break;  // Hauberk(W)
-							case 3: iItemID = 461; break;  // ChainHose(M)
-							case 4: iItemID = 482; break;  // ChainHose(W)
-							}
-							break;
-						case 4:
-							switch (dice(1, 4)) {
-							case 1: iItemID = 750; break;   // Horned-Helm(M)								
-							case 2: iItemID = 754; break;   // Horned-Helm(W)
-							case 3: iItemID = 751; break;   // Wings-Helm(M)
-							case 4: iItemID = 755; break;   // Wings-Helm(W)
-							}
-							break;
-						case 5:
-							switch (dice(1, 10)) {
-							case 1: iItemID = 752; break;   // Wizard-Cap(M)	
-							case 2: iItemID = 756; break;   // Wizard-Cap(W)
-							case 3: iItemID = 753; break;   // Wizard-Hat(M)
-							case 4: iItemID = 757; break;   // Wizard-Hat(W)
-							case 5: iItemID = 685; break;   // WizardRobe(M)
-							case 6: iItemID = 686; break;   // WizardRobe(W)
-							case 7: iItemID = 601; break;   // Full-Helm(M)
-							case 8: iItemID = 603; break;   // Full-Helm(W)
-							case 9: iItemID = 600; break;   // Helm(M)
-							case 10: iItemID = 602; break;  // Helm(W)
-							}
-							break;
-						case 6:
-							switch (dice(1, 5)) {
-							case 1: iItemID = 458; break;  // PlateMail(M)
-							case 2: iItemID = 478; break;  // PlateMail(W)
-							case 3: iItemID = 456; break;  // ChainMail(M)
-							case 4: iItemID = 476; break;  // ChainMail(W)
-							case 5: iItemID = 402; break;  // Cape
-							}
-							break;
-						}
-						break;
-
-					case 9: // Mount-Giant
-						switch (dice(1, 6)) {
-						case 1:
-							switch (dice(1, 3)) {
-							case 1: iItemID = 85; break;    // LagiShield
-							case 2: iItemID = 86; break;    // KnightShield
-							case 3: iItemID = 87; break;    // TowerShield
-							}
-							break;
-						case 2:
-							switch (dice(1, 3)) {
-							case 1: iItemID = 402; break;   // Cape
-							case 2: if (dice(1, 10) == 3) iItemID = 462; break;  // PlateLeggings(M)
-							case 3: if (dice(1, 10) == 3) iItemID = 483; break;  // PlateLeggings(W)
-							}
-							break;
-						case 3:
-							switch (dice(1, 4)) {
-							case 1: iItemID = 454; break;  // Hauberk(M)
-							case 2: iItemID = 472; break;  // Hauberk(W)
-							case 3: iItemID = 461; break;  // ChainHose(M)
-							case 4: iItemID = 482; break;  // ChainHose(W)
-							}
-							break;
-						case 4:
-							switch (dice(1, 4)) {
-							case 1: iItemID = 750; break;   // Horned-Helm(M)								
-							case 2: iItemID = 754; break;   // Horned-Helm(W)
-							case 3: iItemID = 751; break;   // Wings-Helm(M)
-							case 4: iItemID = 755; break;   // Wings-Helm(W)
-							}
-							break;
-						case 5:
-							switch (dice(1, 10)) {
-							case 1: iItemID = 752; break;   // Wizard-Cap(M)	
-							case 2: iItemID = 756; break;   // Wizard-Cap(W)
-							case 3: iItemID = 753; break;   // Wizard-Hat(M)
-							case 4: iItemID = 757; break;   // Wizard-Hat(W)
-							case 5: iItemID = 685; break;   // WizardRobe(M)
-							case 6: iItemID = 686; break;   // WizardRobe(W)
-							case 7: iItemID = 601; break;   // Full-Helm(M)
-							case 8: iItemID = 603; break;   // Full-Helm(W)
-							case 9: iItemID = 600; break;   // Helm(M)
-							case 10: iItemID = 602; break;  // Helm(W)
-							}
-							break;
-						case 6:
-							switch (dice(1, 5)) {
-							case 1: iItemID = 458; break;  // PlateMail(M)
-							case 2: iItemID = 478; break;  // PlateMail(W)
-							case 3: iItemID = 456; break;  // ChainMail(M)
-							case 4: iItemID = 476; break;  // ChainMail(W)
-							case 5: iItemID = 402; break;  // Cape
-							}
-							break;
-						}
-						break;
-					case 10:  //MasterMage-Orc, Ettin, Lizzard
-						switch (dice(1, 6)) {
-						case 1:
-							switch (dice(1, 3)) {
-							case 1: iItemID = 85; break;    // LagiShield
-							case 2: iItemID = 86; break;    // KnightShield
-							case 3: iItemID = 87; break;    // TowerShield
-							}
-							break;
-						case 2:
-							switch (dice(1, 3)) {
-							case 1: iItemID = 402; break;   // Cape
-							case 2: if (dice(1, 10) == 3) iItemID = 462; break;  // PlateLeggings(M)
-							case 3: if (dice(1, 10) == 3) iItemID = 483; break;  // PlateLeggings(W)
-							}
-							break;
-						case 3:
-							switch (dice(1, 4)) {
-							case 1: iItemID = 454; break;  // Hauberk(M)
-							case 2: iItemID = 472; break;  // Hauberk(W)
-							case 3: iItemID = 461; break;  // ChainHose(M)
-							case 4: iItemID = 482; break;  // ChainHose(W)
-							}
-							break;
-						case 4:
-							switch (dice(1, 4)) {
-							case 1: iItemID = 750; break;   // Horned-Helm(M)								
-							case 2: iItemID = 754; break;   // Horned-Helm(W)
-							case 3: iItemID = 751; break;   // Wings-Helm(M)
-							case 4: iItemID = 755; break;   // Wings-Helm(W)
-							}
-							break;
-						case 5:
-							switch (dice(1, 10)) {
-							case 1: iItemID = 752; break;   // Wizard-Cap(M)	
-							case 2: iItemID = 756; break;   // Wizard-Cap(W)
-							case 3: iItemID = 753; break;   // Wizard-Hat(M)
-							case 4: iItemID = 757; break;   // Wizard-Hat(W)
-							case 5: iItemID = 685; break;   // WizardRobe(M)
-							case 6: iItemID = 686; break;   // WizardRobe(W)
-							case 7: iItemID = 601; break;   // Full-Helm(M)
-							case 8: iItemID = 603; break;   // Full-Helm(W)
-							case 9: iItemID = 600; break;   // Helm(M)
-							case 10: iItemID = 602; break;  // Helm(W)
-							}
-							break;
-						case 6:
-							switch (dice(1, 5)) {
-							case 1: iItemID = 458; break;  // PlateMail(M)
-							case 2: iItemID = 478; break;  // PlateMail(W)
-							case 3: iItemID = 456; break;  // ChainMail(M)
-							case 4: iItemID = 476; break;  // ChainMail(W)
-							case 5: iItemID = 402; break;  // Cape
-							}
-							break;
-						}
-						break;
-					}
+					NormalDropConfiguration *configuration = new NormalDropConfiguration();
+					iItemID = configuration->ArmorDropByGenerationLevel(iGenLevel);
+					delete configuration;
 				}
 				
 				pItem = new class CItem;				
@@ -30050,13 +29609,9 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						cColor = 8;
 					}
 
-					// ¾ÆÀÌÅÛ »ö»ó ÀÔ·Â 
+					// set color of item
 					pItem->m_cItemColor = cColor;
-
-					// °¡º­¿î, °­È­µÈ, ÇÊ»ìÀÇ, ¹ÎÃ¸ÀÇ, Á¤ÀÇÀÇ, Áßµ¶ÀÇ, ¿¹¸®ÇÑ, °í´ë¹®¸íÀÇ
-					// ¾ÆÀÌÅÛ Main Æ¯¼ºÄ¡ Á¤µµ°ª ÀÔ·Â 
-
-					// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ Á¤µµ°ª ÀÔ·Â 
+					
 					iResult = dice(1, 30000);
 					if ((iResult >= 1) && (iResult < 10000))           dwValue = 1;  // 10000/29348 = 34%
 					else if ((iResult >= 10000) && (iResult < 17400))  dwValue = 2;  // 6600/29348 = 22.4%
@@ -30072,8 +29627,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					else if ((iResult >= 29900) && (iResult < 29970))  dwValue = 12; // 103/29348 = 0.3%
 					else if ((iResult >= 29970) && (iResult <= 30000))  dwValue = 13; // 68/29348 = 0.1%
 					else dwValue = 1; // v2.03 906
-
-					// ¹«±âÀÇ Main Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸Á¤ 
+					
 					switch (dwType) {
 					case 1: // ÇÊ»ì Å¸°Ý ÃÖÀú +5
 						if (dwValue <= 5) dwValue = 5;
@@ -30088,10 +29642,12 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						if (dwValue <= 2) dwValue = 2;
 						break;
 					}
-					// v2.03 912 ¾ÆÀÌÅÛ ¼öÁØÀÌ 2ÀÌÇÏÀÏ¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
-					if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
 
-					// ¾ÆÀÌÅÛ Main Æ¯¼ºÄ¡, °ª ÀÔ·Â
+					// v2.03 912 ¾ÆÀÌÅÛ ¼öÁØÀÌ 2ÀÌÇÏÀÏ¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
+					if ((iGenLevel <= 2) && (dwValue > 7)) {
+						dwValue = 7;
+					}
+					
 					pItem->m_dwAttribute = NULL;
 					dwType = dwType << 20;
 					dwValue = dwValue << 16;
@@ -30099,13 +29655,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 
 					// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡°¡ ÀÔ·ÂµÉ È®·üÀº 40%
 					if (dice(1, 10000) >= 6000) {
-
-						// Èñ±Í ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ È¿°ú Á¾·ù: 
-						//Ãß°¡ µ¶¼ºÀúÇ×(1), Ãß°¡ ¸íÁß°ª(2), Ãß°¡ ¹æ¾î°ª(3), HP È¸º¹·® Ãß°¡(4), SP È¸º¹·® Ãß°¡(5)
-						//MP È¸º¹·® Ãß°¡(6), Ãß°¡ ¸¶¹ýÀúÇ×(7), ¹°¸® ´ë¹ÌÁö Èí¼ö(8), ¸¶¹ý ´ë¹ÌÁö Èí¼ö(9)
-						//¿¬Å¸ ´ë¹ÌÁö Ãß°¡(10), ´õ ¸¹Àº °æÇèÄ¡(11), ´õ¸¹Àº Gold(12)
-
-						// ¹«±â·ùÀÌ±â ¶§¹®¿¡ °ø°Ý ¸íÁß Ãß°¡(50%), ¿¬Å¸ Å¸°ÝÄ¡ Áõ°¡(35%), ´õ ¸¹Àº Gold(10%), ´õ ¸¹Àº °æÇèÄ¡(5%)
+						
 						iResult = dice(1, 10000);
 						if ((iResult >= 1) && (iResult <= 4999))          dwType = 2;
 						else if ((iResult >= 5000) && (iResult <= 8499))  dwType = 10;
@@ -30122,14 +29672,14 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						else if ((iResult >= 27400) && (iResult < 28400))  dwValue = 6;  // 1252/29348 = 4.2%
 						else if ((iResult >= 28400) && (iResult < 28900))  dwValue = 7;  // 826/29348 = 2.8%
 						else if ((iResult >= 28900) && (iResult < 29300))  dwValue = 8;  // 545/29348 = 1.85%
-						else if ((iResult >= 29300) && (iResult < 29600))  dwValue = 9;  // 360/29348 = 1.2%
-						else if ((iResult >= 29600) && (iResult < 29800))  dwValue = 10; // 237/29348 = 0.8%
-						else if ((iResult >= 29800) && (iResult < 29900))  dwValue = 11; // 156/29348 = 0.5%
-						else if ((iResult >= 29900) && (iResult < 29970))  dwValue = 12; // 103/29348 = 0.3%
-						else if ((iResult >= 29970) && (iResult <= 30000))  dwValue = 13; // 68/29348 = 0.1%
+						else if ((iResult >= 29300) && (iResult < 29700))  dwValue = 9;  // 360/29348 = 1.2%
+						else if ((iResult >= 29700) && (iResult < 29880))  dwValue = 10; // 237/29348 = 0.8%
+						else if ((iResult >= 29880) && (iResult < 29950))  dwValue = 11; // 156/29348 = 0.5%
+						else if ((iResult >= 29950) && (iResult < 29990))  dwValue = 12; // 103/29348 = 0.3%
+						else if ((iResult >= 29990) && (iResult <= 30000))  dwValue = 13; // 68/29348 = 0.1%
 						else dwValue = 1; // v2.03 906
 
-						// ¹«±âÀÇ Sub Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸Á¤ 
+						
 						switch (dwType) {
 						case 2: // °ø°Ý¸íÁß ÃÖÀú +21%
 							if (dwValue <= 3) dwValue = 3;
@@ -30144,8 +29694,10 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 							dwValue = 5;
 							break;
 						}
-						// v2.03 912 ¾ÆÀÌÅÛ ¼öÁØÀÌ 2ÀÌÇÏÀÏ¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
-						if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
+						
+						if ((iGenLevel <= 2) && (dwValue > 7)) {
+							dwValue = 7;
+						}
 
 						// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ ÀÔ·Â
 						dwType = dwType << 12;
@@ -30156,8 +29708,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 				}
 
 				else if (pItem->m_sItemEffectType == ITEMEFFECTTYPE_ATTACK_MANASAVE) {
-					// ¸¶¹ý °ø°Ý ¹«±â·ù¿¡ ºÙÀ» ¼ö ÀÖ´Â Á¢µÎ»ç¸¦ ¼±ÅÃ 10, 11
-					// ¸¶¹ý ¼º°øÀÇ(100%) <- ÇöÀç ¸¶¹ý ÁöÆÎÀÌ¿¡ ºÙÀ» ¼ö ÀÖ´Â ¿ä¼Ò°¡ ÀÌ°Å ¹Û¿¡ ¾ø´Ù.
+
 					dwType = 10;
 					cColor = 5;
 
@@ -30173,17 +29724,18 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					else if ((iResult >= 27400) && (iResult < 28400))  dwValue = 6;  // 1252/29348 = 4.2%
 					else if ((iResult >= 28400) && (iResult < 28900))  dwValue = 7;  // 826/29348 = 2.8%
 					else if ((iResult >= 28900) && (iResult < 29300))  dwValue = 8;  // 545/29348 = 1.85%
-					else if ((iResult >= 29300) && (iResult < 29600))  dwValue = 9;  // 360/29348 = 1.2%
-					else if ((iResult >= 29600) && (iResult < 29800))  dwValue = 10; // 237/29348 = 0.8%
-					else if ((iResult >= 29800) && (iResult < 29900))  dwValue = 11; // 156/29348 = 0.5%
-					else if ((iResult >= 29900) && (iResult < 29970))  dwValue = 12; // 103/29348 = 0.3%
-					else if ((iResult >= 29970) && (iResult <= 30000))  dwValue = 13; // 68/29348 = 0.1%
+					else if ((iResult >= 29300) && (iResult < 29700))  dwValue = 9;  // 360/29348 = 1.2%
+					else if ((iResult >= 29700) && (iResult < 29880))  dwValue = 10; // 237/29348 = 0.8%
+					else if ((iResult >= 29880) && (iResult < 29950))  dwValue = 11; // 156/29348 = 0.5%
+					else if ((iResult >= 29950) && (iResult < 29990))  dwValue = 12; // 103/29348 = 0.3%
+					else if ((iResult >= 29990) && (iResult <= 30000))  dwValue = 13; // 68/29348 = 0.1%
 					else dwValue = 1; // v2.03 906
 
-					// v2.03 912 ¾ÆÀÌÅÛ ¼öÁØÀÌ 2ÀÌÇÏÀÏ¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
-					if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
-
-					// ¹æ¾î±¸ Main Æ¯¼ºÄ¡, °ª ÀÔ·Â
+					
+					if ((iGenLevel <= 2) && (dwValue > 7)) {
+						dwValue = 7;
+					}
+					
 					pItem->m_dwAttribute = NULL;
 					dwType = dwType << 20;
 					dwValue = dwValue << 16;
@@ -30191,13 +29743,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 
 					// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡°¡ ÀÔ·ÂµÉ È®·üÀº 40%
 					if (dice(1, 10000) >= 6000) {
-
-						// Èñ±Í ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ È¿°ú Á¾·ù: 
-						//Ãß°¡ µ¶¼ºÀúÇ×(1), Ãß°¡ ¸íÁß°ª(2), Ãß°¡ ¹æ¾î°ª(3), HP È¸º¹·® Ãß°¡(4), SP È¸º¹·® Ãß°¡(5)
-						//MP È¸º¹·® Ãß°¡(6), Ãß°¡ ¸¶¹ýÀúÇ×(7), ¹°¸® ´ë¹ÌÁö Èí¼ö(8), ¸¶¹ý ´ë¹ÌÁö Èí¼ö(9)
-						//¿¬Å¸ ´ë¹ÌÁö Ãß°¡(10), ´õ ¸¹Àº °æÇèÄ¡(11), ´õ¸¹Àº Gold(12)
-
-						// ¹«±â·ùÀÌ±â ¶§¹®¿¡ °ø°Ý ¸íÁß Ãß°¡(50%), ¿¬Å¸ Å¸°ÝÄ¡ Áõ°¡(35%), ´õ ¸¹Àº Gold(10%), ´õ ¸¹Àº °æÇèÄ¡(5%)
+						
 						iResult = dice(1, 10000);
 						if ((iResult >= 1) && (iResult <= 4999))          dwType = 2;
 						else if ((iResult >= 5000) && (iResult <= 8499))  dwType = 10;
@@ -30214,15 +29760,16 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						else if ((iResult >= 27400) && (iResult < 28400))  dwValue = 6;  // 1252/29348 = 4.2%
 						else if ((iResult >= 28400) && (iResult < 28900))  dwValue = 7;  // 826/29348 = 2.8%
 						else if ((iResult >= 28900) && (iResult < 29300))  dwValue = 8;  // 545/29348 = 1.85%
-						else if ((iResult >= 29300) && (iResult < 29600))  dwValue = 9;  // 360/29348 = 1.2%
-						else if ((iResult >= 29600) && (iResult < 29800))  dwValue = 10; // 237/29348 = 0.8%
-						else if ((iResult >= 29800) && (iResult < 29900))  dwValue = 11; // 156/29348 = 0.5%
-						else if ((iResult >= 29900) && (iResult < 29970))  dwValue = 12; // 103/29348 = 0.3%
-						else if ((iResult >= 29970) && (iResult <= 30000))  dwValue = 13; // 68/29348 = 0.1%
+						else if ((iResult >= 29300) && (iResult < 29700))  dwValue = 9;  // 360/29348 = 1.2%
+						else if ((iResult >= 29700) && (iResult < 29880))  dwValue = 10; // 237/29348 = 0.8%
+						else if ((iResult >= 29880) && (iResult < 29950))  dwValue = 11; // 156/29348 = 0.5%
+						else if ((iResult >= 29950) && (iResult < 29990))  dwValue = 12; // 103/29348 = 0.3%
+						else if ((iResult >= 29990) && (iResult <= 30000))  dwValue = 13; // 68/29348 = 0.1%
 						else dwValue = 1; // v2.03 906
-
-						// v2.03 912 ¾ÆÀÌÅÛ ¼öÁØÀÌ 2ÀÌÇÏÀÏ¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
-						if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
+												
+						if ((iGenLevel <= 2) && (dwValue > 7)) {
+							dwValue = 7;
+						}
 
 						// ¹«±âÀÇ Sub Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸Á¤ 
 						switch (dwType) {
@@ -30266,11 +29813,11 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					else if ((iResult >= 27400) && (iResult < 28400))  dwValue = 6;  // 1252/29348 = 4.2%
 					else if ((iResult >= 28400) && (iResult < 28900))  dwValue = 7;  // 826/29348 = 2.8%
 					else if ((iResult >= 28900) && (iResult < 29300))  dwValue = 8;  // 545/29348 = 1.85%
-					else if ((iResult >= 29300) && (iResult < 29600))  dwValue = 9;  // 360/29348 = 1.2%
-					else if ((iResult >= 29600) && (iResult < 29800))  dwValue = 10; // 237/29348 = 0.8%
-					else if ((iResult >= 29800) && (iResult < 29900))  dwValue = 11; // 156/29348 = 0.5%
-					else if ((iResult >= 29900) && (iResult < 29970))  dwValue = 12; // 103/29348 = 0.3%
-					else if ((iResult >= 29970) && (iResult <= 30000))  dwValue = 13; // 68/29348 = 0.1%
+					else if ((iResult >= 29300) && (iResult < 29700))  dwValue = 9;  // 360/29348 = 1.2%
+					else if ((iResult >= 29700) && (iResult < 29880))  dwValue = 10; // 237/29348 = 0.8%
+					else if ((iResult >= 29880) && (iResult < 29950))  dwValue = 11; // 156/29348 = 0.5%
+					else if ((iResult >= 29950) && (iResult < 29990))  dwValue = 12; // 103/29348 = 0.3%
+					else if ((iResult >= 29990) && (iResult <= 30000))  dwValue = 13; // 68/29348 = 0.1%
 					else dwValue = 1; // v2.03 906
 
 					// ¹æ¾î±¸ÀÇ Main Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸Á¤ 
@@ -30330,11 +29877,11 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						else if ((iResult >= 27400) && (iResult < 28400))  dwValue = 6;  // 1252/29348 = 4.2%
 						else if ((iResult >= 28400) && (iResult < 28900))  dwValue = 7;  // 826/29348 = 2.8%
 						else if ((iResult >= 28900) && (iResult < 29300))  dwValue = 8;  // 545/29348 = 1.85%
-						else if ((iResult >= 29300) && (iResult < 29600))  dwValue = 9;  // 360/29348 = 1.2%
-						else if ((iResult >= 29600) && (iResult < 29800))  dwValue = 10; // 237/29348 = 0.8%
-						else if ((iResult >= 29800) && (iResult < 29900))  dwValue = 11; // 156/29348 = 0.5%
-						else if ((iResult >= 29900) && (iResult < 29970))  dwValue = 12; // 103/29348 = 0.3%
-						else if ((iResult >= 29970) && (iResult <= 30000))  dwValue = 13; // 68/29348 = 0.1%
+						else if ((iResult >= 29300) && (iResult < 29700))  dwValue = 9;  // 360/29348 = 1.2%
+						else if ((iResult >= 29700) && (iResult < 29880))  dwValue = 10; // 237/29348 = 0.8%
+						else if ((iResult >= 29880) && (iResult < 29950))  dwValue = 11; // 156/29348 = 0.5%
+						else if ((iResult >= 29950) && (iResult < 29990))  dwValue = 12; // 103/29348 = 0.3%
+						else if ((iResult >= 29990) && (iResult <= 30000))  dwValue = 13; // 68/29348 = 0.1%
 						else dwValue = 1; // v2.03 906
 
 						// ¹æ¾î±¸ÀÇ Sub Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸Á¤ 
@@ -32959,6 +32506,8 @@ void CGame::CheckConnectionHandler(int iClientH, char *pData)
 	cp = (char *)(pData + INDEX2_MSGTYPE + 2);
 	dwp = (DWORD *)cp;
 	dwTimeRcv = *dwp;
+
+	CheckDenialServiceAttack(iClientH, dwTimeRcv);
 
 	if (m_pClientList[iClientH]->m_dwInitCCTimeRcv == NULL) {
 		m_pClientList[iClientH]->m_dwInitCCTimeRcv = dwTimeRcv;
@@ -37610,8 +37159,8 @@ void CGame::RequestForWarriorDKSet(int iClientH)
 	logMessage += m_pClientList[iClientH]->m_cCharName;
 	PutLogList(logMessage + " asked for Warrior DKSet");
 
-	char *DKWarriorSetMale[5] = { "DarkKnightHauberk(M)","DarkKnightFullHelm(M)","DarkKnightLeggings(M)", "DarkKnightPlateMail(M)", "DarkKnightFlameberge" };
-	char *DKWarriorSetFemale[5] = { "DarkKnightHauberk(W)","DarkKnightFullHelm(W)","DarkKnightLeggings(W)", "DarkKnightPlateMail(W)", "DarkKnightFlameberge" };
+	char *DKWarriorSetMale[5] = { "DarkKnightHauberk(M)","DarkKnightFullHelm(M)","DarkKnightLeggings(M)", "DKPlateMail(M)", "DarkKnightFlameberge" };
+	char *DKWarriorSetFemale[5] = { "DarkKnightHauberk(W)","DarkKnightFullHelm(W)","DarkKnightLeggings(W)", "DKPlateMail(W)", "DarkKnightFlameberge" };
 
 	int playerSex = m_pClientList[iClientH]->m_cSex;
 	if (playerSex == 1) {
@@ -37624,6 +37173,60 @@ void CGame::RequestForWarriorDKSet(int iClientH)
 		for (int i = 0; i < 5; i++)
 		{
 			CreateDKItem(iClientH, DKWarriorSetFemale[i]);
+		}
+	}
+}
+
+void CGame::CheckDenialServiceAttack(int iClientH, DWORD dwClientTime)
+{
+	DWORD dwTime = timeGetTime();	
+
+	if (m_pClientList[iClientH] == NULL) {
+		return;
+	}
+
+	// Find a Denial of service attack by packet sent time
+	if (m_pClientList[iClientH]->m_dwDSLAT == 0)
+		// Start with 1st msg
+	{
+		m_pClientList[iClientH]->m_dwDSLAT = dwClientTime;
+		m_pClientList[iClientH]->m_dwDSLATOld = dwClientTime;
+		m_pClientList[iClientH]->m_dwDSLATS = dwTime;
+		m_pClientList[iClientH]->m_iDSCount = 0;
+	}
+	else
+	{
+		if (dwClientTime >= m_pClientList[iClientH]->m_dwDSLAT)
+			// current message was sent later than previous (normal case)
+		{
+			m_pClientList[iClientH]->m_dwDSLAT = dwClientTime;
+		}
+		else
+			// current message was sent before previous
+		{
+			if (m_pClientList[iClientH]->m_dwDSLATOld == dwClientTime)
+				// If we receive more late msg with same time
+			{
+				m_pClientList[iClientH]->m_iDSCount++;
+				if (((dwTime - m_pClientList[iClientH]->m_dwDSLATS) > 10 * 1000)
+					&& (m_pClientList[iClientH]->m_iDSCount > 5))
+					// Receiving a "late" msg more than 10 sec after !
+					// This is an attack!
+				{
+					wsprintf(g_cTxt, "DS check: PC(%s) - Denial of service attack! (Disc.) \tIP(%s)"
+						, m_pClientList[iClientH]->m_cCharName
+						, m_pClientList[iClientH]->m_cIPaddress);
+					PutLogList(g_cTxt);
+					return;
+				}
+			}
+			else
+				// else this message become late msg
+			{
+				m_pClientList[iClientH]->m_dwDSLATOld = dwClientTime;
+				m_pClientList[iClientH]->m_iDSCount = 1;
+				m_pClientList[iClientH]->m_dwDSLATS = dwTime;
+			}
 		}
 	}
 }

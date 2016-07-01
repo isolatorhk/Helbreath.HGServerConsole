@@ -47,6 +47,7 @@ public:
 	void behavior_move();
 	void behavior_stop();
 	void behavior_attack();
+	void behavior_flee();
 	bool behavior_manaCollector();
 	void behavior_grandMagicGenerator();
 	bool behavior_detector();

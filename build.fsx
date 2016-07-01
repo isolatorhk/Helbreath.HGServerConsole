@@ -21,14 +21,14 @@ trace "Copying from build to debug"
 Target "BuildApp" (fun _ ->
 trace "--- Building app --- "
 !! "Helbreath.HGServerConsole/*.vcxproj"
- |> MSBuild "" "Build" ["Configuration", "Debug"; "PlatformToolset", "v120"; "Platform", "x86"; "OutDir", "../build"]
+ |> MSBuild "" "Build" ["Configuration", "Debug"; "PlatformToolset", "v140"; "Platform", "x86"; "OutDir", "../build"]
  |> Log "AppBuild-Output: "
 )
 
 Target "BuildInReleaseApp" (fun _ ->
 trace "--- Building app --- "
 !! "Helbreath.HGServerConsole/*.vcxproj"
- |> MSBuild "" "Build" ["Configuration", "Release"; "PlatformToolset", "v120"; "Platform", "x86"; "OutDir", "../release"]
+ |> MSBuild "" "Build" ["Configuration", "Release"; "PlatformToolset", "v140"; "Platform", "x86"; "OutDir", "../release"]
  |> Log "AppBuild-Output: "
 )
 

@@ -47,6 +47,8 @@ CClient::CClient(HWND hWnd, int clientH): Unit(UNITTYPE_PLAYER)
 
 	m_dwCharID = 0;
 
+	m_dwDSLAT = m_dwDSLATOld = m_dwDSLATS = 0;
+	m_iDSCount = 0;
 
 	//m_iHitRatio_ItemEffect_SM = 0;
 	//m_iHitRatio_ItemEffect_L  = 0;
@@ -1303,7 +1305,7 @@ void CClient::Notify(int iFromH, WORD wMsgType, DWORD sV1, DWORD sV2, DWORD sV3,
 
 DWORD CClient::HasItem(char * name) const
 {
-	char cTmpName[21];
+	char cTmpName[30];
 
 	ZeroMemory(cTmpName, sizeof(cTmpName));
 	strcpy(cTmpName, name);

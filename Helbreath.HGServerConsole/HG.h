@@ -59,6 +59,7 @@
 #include "DropConfig.h"
 #include "ClientEventSender.h"
 #include "BossDropConfiguration.h"
+#include "NormalDropConfiguration.h"
 
 #define SERVERSOCKETBLOCKLIMIT	300
 
@@ -632,6 +633,7 @@ public:
 	void RequestInitDataHandler(int iClientH);
 	void RequestInitPlayerHandler(int iClientH, char * pData, char cKey);
 	void PlayerMapEntry(int iClientH, bool setRecallTime = true);
+	void CheckDenialServiceAttack(int iClientH, DWORD dwClientTime);
 
 
 	bool bSendMsgToLS(DWORD dwMsg, int iClientH, bool bFlag = TRUE,char * pData = NULL );
