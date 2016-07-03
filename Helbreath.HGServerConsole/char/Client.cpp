@@ -55,6 +55,7 @@ CClient::CClient(HWND hWnd, int clientH): Unit(UNITTYPE_PLAYER)
 
 	m_iEnemyKillCount = 0;
 	m_iPKCount = 0;
+	m_iKillPoint = 0;
 	m_iRewardGold = 0;
 	m_iCurWeightLoad = 0;
 
