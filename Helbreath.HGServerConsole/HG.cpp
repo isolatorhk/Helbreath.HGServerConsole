@@ -4148,7 +4148,6 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 	m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = wGetOffsetValue(pData, 445);
 	m_pClientList[iClientH]->m_elo = wGetOffsetValue(pData, 447);
 	m_pClientList[iClientH]->m_iKillPoint = dwGetOffsetValue(pData, 449);
-	PutLogList("Decode: KP=" + std::to_string(m_pClientList[iClientH]->m_iKillPoint));
 	
 	for (i = 0; i < MAXITEMEQUIPPOS; i++) m_pClientList[iClientH]->m_sItemEquipmentStatus[i] = -1;
 	for (i = 0; i < MAXITEMS; i++) m_pClientList[iClientH]->m_bIsItemEquipped[i] = FALSE;
@@ -4524,7 +4523,6 @@ int CGame::_iComposePlayerDataFileContents(int iClientH, char * pData)
 	PutOffsetValue(pData, 242, DWORDSIZE, m_pClientList[iClientH]->m_iApprColor);
 	PutOffsetValue(pData, 246, WORDSIZE, m_pClientList[iClientH]->m_elo);
 	PutOffsetValue(pData, 248, DWORDSIZE, m_pClientList[iClientH]->m_iKillPoint);
-	PutLogList("Compose: KP=" + std::to_string(m_pClientList[iClientH]->m_iKillPoint));
 	Index = (WORD)(248 + 4);
 	for (i = 0; i < MAXMAGICTYPE; i++) PutOffsetValue(pData, Index + i, BYTESIZE, m_pClientList[iClientH]->m_cMagicMastery[i]+48);
 	Index += 100;
