@@ -893,6 +893,20 @@ void CClient::KilledHandler(int iAttackerH, char cAttackerType, short sDamage)
 		g_gameCopy->DropItemHandler(m_handle, itemInd, 1, m_pItemList[itemInd]->m_cName, FALSE);
 	}
 
+	if (memcmp(g_mapList[m_cMapIndex]->m_cName, "fightzone5", 10) == 0) {
+		// Killing anyone other than yourself grants you a Kill Point.
+		if (iAttackerH != m_handle) {
+			wsprintf(g_cTxt, "%s killed %s in fightzone5", cAttackerName, m_cCharName);
+			PutLogList(g_cTxt);
+			g_clientList[iAttackerH]->m_iKillPoint++;
+		}
+		else {
+			wsprintf(g_cTxt, "%s committed suicide in fightzone5", m_cCharName);
+			PutLogList(g_cTxt);
+		}
+		return;
+	}
+
 	if (g_mapList[m_cMapIndex]->m_cType == MAPTYPE_NOPENALTY_NOREWARD) return;
 
 	if (cAttackerType == OWNERTYPE_PLAYER) {
