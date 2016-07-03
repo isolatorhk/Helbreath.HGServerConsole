@@ -4053,7 +4053,7 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 	bool   IsItemEquipped;
 	CItem * item;
 	WORD   BankItemIndex, TotalSkillPoints, sTmpType, sTmpAppr1;
-	static long charIndexEnd = 449;
+	long charIndexEnd;
 
 	iNotUsedItemPrice = 0;
 
@@ -4148,6 +4148,8 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 	m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = wGetOffsetValue(pData, 445);
 	m_pClientList[iClientH]->m_elo = wGetOffsetValue(pData, 447);
 	m_pClientList[iClientH]->m_iKillPoint = dwGetOffsetValue(pData, 449);
+	// Update this for every additional character attribute.
+	charIndexEnd = 453;
 	
 	for (i = 0; i < MAXITEMEQUIPPOS; i++) m_pClientList[iClientH]->m_sItemEquipmentStatus[i] = -1;
 	for (i = 0; i < MAXITEMS; i++) m_pClientList[iClientH]->m_bIsItemEquipped[i] = FALSE;
