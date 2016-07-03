@@ -167,7 +167,7 @@ public:
 	int  m_iLU_Pool;
 
 	long m_elo;
-	int  m_iEnemyKillCount, m_iPKCount, m_iRewardGold;
+	int  m_iEnemyKillCount, m_iPKCount, m_iKillPoint, m_iRewardGold;
 	int  m_iCurWeightLoad;
 	DWORD m_dwLogoutHackCheck;
 
